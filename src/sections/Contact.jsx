@@ -1,173 +1,167 @@
-import React, { useState } from 'react';
-import { MessageCircle, Mail, Linkedin, Github, ArrowUpRight, Copy, Check, Send, Sparkles } from 'lucide-react';
+import { useRef } from 'react';
+import { motion, useInView } from 'framer-motion';
+import { Mail, MessageCircle, Github, Linkedin } from 'lucide-react';
 import { portfolioData } from '../data/portfolioData';
 
+const { personalInfo, socialLinks } = portfolioData;
+
+const links = [
+  {
+    label: 'EMAIL',
+    href: socialLinks.email,
+    Icon: Mail,
+    value: 'aryandadwal709@gmail.com',
+    color: 'rgba(56,189,248,0.15)',
+    border: 'rgba(56,189,248,0.2)',
+  },
+  {
+    label: 'WHATSAPP',
+    href: personalInfo.whatsAppUrl,
+    Icon: MessageCircle,
+    value: '+91 86269 63353',
+    color: 'rgba(16,185,129,0.12)',
+    border: 'rgba(16,185,129,0.2)',
+    external: true,
+  },
+  {
+    label: 'GITHUB',
+    href: socialLinks.github,
+    Icon: Github,
+    value: 'github.com/Aryan204227',
+    color: 'rgba(255,255,255,0.04)',
+    border: 'rgba(255,255,255,0.1)',
+    external: true,
+  },
+  {
+    label: 'LINKEDIN',
+    href: socialLinks.linkedin,
+    Icon: Linkedin,
+    value: 'linkedin.com/in/aryan-dadwal-cse',
+    color: 'rgba(59,130,246,0.1)',
+    border: 'rgba(59,130,246,0.2)',
+    external: true,
+  },
+];
+
+const fadeUp = {
+  hidden: { opacity: 0, y: 40 },
+  visible: (i) => ({
+    opacity: 1, y: 0,
+    transition: { delay: i * 0.1, duration: 0.7, ease: [0.22, 1, 0.36, 1] },
+  }),
+};
+
 export default function Contact() {
-  const { personalInfo, socialLinks } = portfolioData;
-  const [copied, setCopied] = useState(false);
-  const [note, setNote] = useState('');
-
-  const handleCopyEmail = () => {
-    navigator.clipboard.writeText(personalInfo.email);
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
-  };
-
-  const handleSendWhatsApp = (e) => {
-    e.preventDefault();
-    const text = note.trim()
-      ? `Hi Aryan, ${note}`
-      : "Hi Aryan, I came across your portfolio and would like to connect with you.";
-    const url = `https://wa.me/918626963353?text=${encodeURIComponent(text)}`;
-    window.open(url, '_blank', 'noopener,noreferrer');
-  };
+  const ref = useRef(null);
+  const inView = useInView(ref, { once: true, margin: '-100px' });
 
   return (
-    <section id="contact" className="py-32 px-6 sm:px-8 lg:px-12 relative border-t border-white/[0.06] bg-[#07080c] overflow-hidden">
-      {/* Background ambient lighting */}
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[700px] bg-cyan-600/5 rounded-full blur-[180px] pointer-events-none" />
+    <section id="contact" className="relative overflow-hidden" style={{ background: 'linear-gradient(180deg, #07080c 0%, #08091000 100%)' }}>
+      <div className="w-full h-px bg-gradient-to-r from-transparent via-white/8 to-transparent" />
 
-      <div className="max-w-7xl mx-auto space-y-20 relative">
-        
-        {/* Section Identifier */}
-        <div className="flex items-center gap-3">
-          <span className="text-xs font-mono text-cyan-400 font-semibold tracking-widest uppercase">
-            08 / GET IN TOUCH
-          </span>
-          <span className="w-12 h-[1px] bg-slate-800" />
-        </div>
+      {/* Ambient bottom glow */}
+      <div
+        className="absolute bottom-0 inset-x-0 pointer-events-none"
+        style={{ height: '60%', background: 'radial-gradient(ellipse 80% 60% at 50% 110%, rgba(56,189,248,0.06) 0%, transparent 70%)' }}
+      />
 
-        {/* Massive Final CTA Heading */}
-        <div className="space-y-4 max-w-4xl">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/30 text-[11px] font-mono tracking-widest text-emerald-400 uppercase">
-            <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
-            <span>AVAILABLE FOR INTERNSHIPS & FULL-TIME ROLES</span>
+      <div ref={ref} className="relative z-10 max-w-[1400px] mx-auto px-6 sm:px-10 lg:px-16 xl:px-20 py-32">
+
+        {/* Section label */}
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          animate={inView ? { opacity: 1, y: 0 } : {}}
+          transition={{ duration: 0.7 }}
+          className="flex items-center gap-3 mb-16"
+        >
+          <span className="font-mono text-[11px] tracking-[0.22em] text-white/30 uppercase">10 / Contact</span>
+          <div className="flex-1 h-px bg-white/8 max-w-[60px]" />
+        </motion.div>
+
+        {/* Giant CTA headline */}
+        <motion.div
+          initial={{ opacity: 0, y: 50 }}
+          animate={inView ? { opacity: 1, y: 0 } : {}}
+          transition={{ delay: 0.15, duration: 0.9, ease: [0.22, 1, 0.36, 1] }}
+          className="mb-6"
+        >
+          <div
+            className="font-black leading-[0.88] tracking-tight"
+            style={{ fontSize: 'clamp(52px, 10vw, 130px)' }}
+          >
+            <div className="text-white">LET'S BUILD</div>
+            <div style={{ WebkitTextStroke: '1.5px rgba(255,255,255,0.75)', WebkitTextFillColor: 'transparent' }}>
+              SOMETHING
+            </div>
+            <div className="text-white">USEFUL.</div>
           </div>
+        </motion.div>
 
-          <h2 className="font-display text-4xl sm:text-7xl lg:text-8xl font-black tracking-tighter text-white leading-[0.95]">
-            Let's build something <br />
-            <span className="text-stroke-title">worth remembering.</span>
-          </h2>
+        {/* Subline */}
+        <motion.p
+          initial={{ opacity: 0, y: 20 }}
+          animate={inView ? { opacity: 1, y: 0 } : {}}
+          transition={{ delay: 0.4, duration: 0.7 }}
+          className="text-white/40 font-light mb-16 max-w-lg"
+          style={{ fontSize: 'clamp(14px, 1.4vw, 17px)' }}
+        >
+          Available for internships &amp; full-time software engineering roles.
+          I'm open to collaborations, opportunities, and conversations.
+        </motion.p>
 
-          <p className="text-slate-300 text-base sm:text-lg max-w-2xl pt-2 font-normal leading-relaxed">
-            I am actively looking for software engineering internships and developer roles. Reach out directly for project discussions, technical roles, or engineering collaboration.
-          </p>
-        </div>
-
-        {/* Action Buttons Strip */}
+        {/* Contact links grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-          
-          {/* Email Me */}
-          <a
-            href={socialLinks.email}
-            className="group p-6 rounded-3xl bg-white/[0.02] border border-white/[0.08] hover:border-white/30 transition-all duration-300 flex flex-col justify-between space-y-8 hover:bg-white/[0.05]"
-          >
-            <div className="flex items-center justify-between">
-              <span className="text-xs font-mono text-slate-400 uppercase tracking-widest font-semibold">
-                EMAIL DIRECT
-              </span>
-              <Mail className="w-5 h-5 text-cyan-400 group-hover:scale-110 transition-transform" />
-            </div>
-            <div>
-              <span className="font-display text-lg font-bold text-white group-hover:text-cyan-300 transition-colors block break-all">
-                {personalInfo.email}
-              </span>
-              <span className="text-xs font-mono text-slate-500 block mt-1">Open email client</span>
-            </div>
-          </a>
-
-          {/* WhatsApp */}
-          <a
-            href={personalInfo.whatsAppUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="group p-6 rounded-3xl bg-emerald-950/20 border border-emerald-500/30 hover:border-emerald-500/60 hover:bg-emerald-950/40 transition-all duration-300 flex flex-col justify-between space-y-8"
-          >
-            <div className="flex items-center justify-between">
-              <span className="text-xs font-mono text-emerald-400 uppercase tracking-widest font-semibold">
-                WHATSAPP CHAT
-              </span>
-              <MessageCircle className="w-5 h-5 text-emerald-400 group-hover:scale-110 transition-transform" />
-            </div>
-            <div>
-              <span className="font-display text-lg font-bold text-white group-hover:text-emerald-300 transition-colors block">
-                +91 8626963353
-              </span>
-              <span className="text-xs font-mono text-emerald-400/80 block mt-1">Instant chat window</span>
-            </div>
-          </a>
-
-          {/* LinkedIn */}
-          <a
-            href={socialLinks.linkedin}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="group p-6 rounded-3xl bg-white/[0.02] border border-white/[0.08] hover:border-cyan-500/40 hover:bg-white/[0.05] transition-all duration-300 flex flex-col justify-between space-y-8"
-          >
-            <div className="flex items-center justify-between">
-              <span className="text-xs font-mono text-slate-400 uppercase tracking-widest font-semibold">
-                LINKEDIN
-              </span>
-              <ArrowUpRight className="w-5 h-5 text-slate-500 group-hover:text-cyan-400 transition-colors" />
-            </div>
-            <div>
-              <span className="font-display text-lg font-bold text-white group-hover:text-cyan-300 transition-colors block">
-                aryan-dadwal-cse
-              </span>
-              <span className="text-xs font-mono text-slate-500 block mt-1">Professional network</span>
-            </div>
-          </a>
-
-          {/* GitHub */}
-          <a
-            href={socialLinks.github}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="group p-6 rounded-3xl bg-white/[0.02] border border-white/[0.08] hover:border-white/30 hover:bg-white/[0.05] transition-all duration-300 flex flex-col justify-between space-y-8"
-          >
-            <div className="flex items-center justify-between">
-              <span className="text-xs font-mono text-slate-400 uppercase tracking-widest font-semibold">
-                GITHUB
-              </span>
-              <Github className="w-5 h-5 text-slate-400 group-hover:text-white transition-colors" />
-            </div>
-            <div>
-              <span className="font-display text-lg font-bold text-white group-hover:text-cyan-300 transition-colors block">
-                Aryan204227
-              </span>
-              <span className="text-xs font-mono text-slate-500 block mt-1">Open source codebases</span>
-            </div>
-          </a>
-
+          {links.map((link, i) => {
+            const { Icon } = link;
+            return (
+              <motion.a
+                key={link.label}
+                href={link.href}
+                target={link.external ? '_blank' : undefined}
+                rel={link.external ? 'noopener noreferrer' : undefined}
+                custom={i}
+                variants={fadeUp}
+                initial="hidden"
+                animate={inView ? 'visible' : 'hidden'}
+                className="group relative rounded-2xl p-6 flex flex-col gap-4 transition-all duration-300 cursor-pointer"
+                style={{
+                  background: link.color,
+                  border: `1px solid ${link.border}`,
+                }}
+                whileHover={{ y: -4, transition: { duration: 0.2 } }}
+              >
+                <div
+                  className="w-10 h-10 rounded-xl flex items-center justify-center"
+                  style={{ background: 'rgba(255,255,255,0.06)' }}
+                >
+                  <Icon className="w-4.5 h-4.5 text-white/60" />
+                </div>
+                <div>
+                  <div className="font-mono text-[10px] tracking-[0.22em] text-white/30 uppercase mb-1">{link.label}</div>
+                  <div className="font-medium text-white/80 text-sm leading-snug break-all">{link.value}</div>
+                </div>
+              </motion.a>
+            );
+          })}
         </div>
 
-        {/* Quick Instant WhatsApp Note Dispatcher */}
-        <div className="max-w-2xl mx-auto rounded-3xl bg-white/[0.02] border border-white/[0.08] p-6 sm:p-8 space-y-4">
-          <div className="flex items-center justify-between text-xs font-mono">
-            <span className="text-slate-300 font-semibold uppercase tracking-wider">
-              DIRECT WHATSAPP DISPATCHER
+        {/* Bottom stamp */}
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={inView ? { opacity: 1 } : {}}
+          transition={{ delay: 0.9, duration: 0.8 }}
+          className="mt-20 pt-8 border-t border-white/[0.06] flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4"
+        >
+          <p className="font-mono text-[10px] tracking-[0.22em] text-white/20 uppercase">
+            ARYAN DADWAL — FULL STACK DEVELOPER — 2026
+          </p>
+          <div className="flex items-center gap-2">
+            <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+            <span className="font-mono text-[10px] tracking-[0.18em] text-emerald-500/70 uppercase">
+              OPEN TO OPPORTUNITIES
             </span>
-            <span className="text-emerald-400 font-medium">Online</span>
           </div>
-
-          <div className="flex flex-col sm:flex-row gap-3">
-            <input
-              type="text"
-              value={note}
-              onChange={(e) => setNote(e.target.value)}
-              placeholder="Hi Aryan, let's connect regarding a software engineering role..."
-              className="flex-1 px-5 py-3.5 rounded-full bg-black/60 border border-white/10 text-white text-xs font-mono placeholder:text-slate-600 focus:outline-none focus:border-cyan-500 transition-all"
-            />
-            <button
-              onClick={handleSendWhatsApp}
-              className="px-7 py-3.5 rounded-full bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-display font-bold text-xs tracking-wider uppercase transition-all shadow-md flex items-center justify-center gap-2 shrink-0"
-            >
-              <span>SEND WHATSAPP</span>
-              <Send className="w-3.5 h-3.5" />
-            </button>
-          </div>
-        </div>
-
+        </motion.div>
       </div>
     </section>
   );

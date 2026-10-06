@@ -1,214 +1,292 @@
-import React from 'react';
-import { ArrowDown, Download, MessageCircle, Github, Linkedin, Mail, ArrowUpRight, Sparkles } from 'lucide-react';
+import { useEffect, useRef, useState } from 'react';
+import { motion, useScroll, useTransform } from 'framer-motion';
+import { Download, Github, Linkedin, Mail, MessageCircle, ArrowDownRight } from 'lucide-react';
 import { portfolioData } from '../data/portfolioData';
 
+const { personalInfo, socialLinks } = portfolioData;
+
+/* ── Per-character animated word ─────────────────────── */
+function SplitWord({ word, outlined = false, delay = 0 }) {
+  return (
+    <span className="inline-flex" style={{ perspective: '800px' }}>
+      {word.split('').map((char, i) => (
+        <motion.span
+          key={i}
+          initial={{ opacity: 0, y: 60, rotateX: 40 }}
+          animate={{ opacity: 1, y: 0, rotateX: 0 }}
+          transition={{
+            delay: delay + i * 0.042,
+            duration: 0.65,
+            ease: [0.22, 1, 0.36, 1],
+          }}
+          style={
+            outlined
+              ? {
+                  WebkitTextStroke: '1.5px rgba(255,255,255,0.82)',
+                  WebkitTextFillColor: 'transparent',
+                  display: 'inline-block',
+                }
+              : { display: 'inline-block' }
+          }
+        >
+          {char}
+        </motion.span>
+      ))}
+    </span>
+  );
+}
+
 export default function Hero() {
-  const { personalInfo, socialLinks } = portfolioData;
+  const sectionRef = useRef(null);
+  const imgRef = useRef(null);
+
+  /* Cursor-reactive ambient glow */
+  const [cursor, setCursor] = useState({ x: -9999, y: -9999 });
+  useEffect(() => {
+    const onMove = (e) => setCursor({ x: e.clientX, y: e.clientY });
+    window.addEventListener('mousemove', onMove);
+    return () => window.removeEventListener('mousemove', onMove);
+  }, []);
+
+  /* Parallax portrait on scroll */
+  const { scrollY } = useScroll();
+  const imgY = useTransform(scrollY, [0, 600], [0, -60]);
+
+  const metaItems = [
+    'B.TECH CSE',
+    'LPU',
+    'CGPA 7.07',
+    'FULL STACK',
+    'JAVA + DSA',
+  ];
 
   return (
-    <section 
+    <section
       id="home"
-      className="relative min-h-screen flex flex-col justify-between pt-28 pb-12 px-6 sm:px-8 lg:px-12 overflow-hidden bg-[#07080c]"
+      ref={sectionRef}
+      className="relative min-h-screen flex flex-col overflow-hidden bg-[#07080c]"
     >
-      {/* Subtle Top-Center Ambient Glow */}
-      <div className="absolute top-10 left-1/2 -translate-x-1/2 w-[800px] h-[350px] bg-gradient-to-b from-cyan-600/10 via-indigo-600/5 to-transparent rounded-full blur-[140px] pointer-events-none" />
+      {/* Cursor-reactive glow */}
+      <div
+        className="pointer-events-none fixed z-0"
+        style={{
+          width: 700,
+          height: 700,
+          borderRadius: '50%',
+          background: 'radial-gradient(circle, rgba(56,189,248,0.055) 0%, transparent 70%)',
+          transform: `translate(${cursor.x - 350}px, ${cursor.y - 350}px)`,
+          transition: 'transform 0.35s ease',
+          top: 0,
+          left: 0,
+        }}
+      />
 
-      {/* Marginal / Corner Technical Metadata Stamps (Inspired by award-winning portfolio layouts) */}
-      <div className="max-w-7xl mx-auto w-full flex items-start justify-between text-[9px] sm:text-[10px] font-mono tracking-widest text-slate-500 uppercase select-none pt-4">
-        <div className="max-w-[260px] leading-relaxed hidden md:block">
-          ARYAN DADWAL • ARCHITECTING PRACTICAL WEB PLATFORMS WITH CLEAN LOGIC.
-        </div>
-        <div className="flex items-center gap-2">
-          <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
-          <span className="text-slate-300">AVAILABLE FOR ROLES & INTERNSHIPS</span>
-        </div>
-        <div className="max-w-[260px] text-right leading-relaxed hidden md:block">
-          B.TECH CSE • LOVELY PROFESSIONAL UNIVERSITY • CGPA 7.07
-        </div>
-      </div>
+      {/* Top ambient gradient */}
+      <div className="absolute top-0 inset-x-0 h-[500px] pointer-events-none"
+        style={{ background: 'radial-gradient(ellipse 80% 60% at 50% -10%, rgba(56,189,248,0.07) 0%, transparent 70%)' }} />
 
-      {/* Main Center Cinematic Composition */}
-      <div className="max-w-7xl mx-auto w-full my-auto py-10 z-10">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 items-center">
-          
-          {/* Left Column: Colossal Typography & Statement */}
-          <div className="lg:col-span-7 space-y-8 text-center lg:text-left">
-            
-            {/* Role Eyebrow */}
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/[0.04] border border-white/[0.08] text-[11px] font-mono tracking-widest text-cyan-400 uppercase">
-              <Sparkles className="w-3.5 h-3.5" />
-              <span>FULL STACK DEVELOPER</span>
+      {/* Main layout */}
+      <div className="relative z-10 flex-1 max-w-[1600px] mx-auto w-full px-6 sm:px-10 lg:px-16 xl:px-20 grid grid-cols-1 lg:grid-cols-12 gap-8 items-center pt-28 pb-16 min-h-screen">
+
+        {/* ── Left Column ── */}
+        <div className="lg:col-span-7 flex flex-col justify-center space-y-6 lg:space-y-8">
+
+          {/* Eyebrow */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.1, duration: 0.6 }}
+            className="flex items-center gap-3"
+          >
+            <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+            <span className="font-mono text-[11px] tracking-[0.22em] text-slate-400 uppercase">
+              Available for internships &amp; full-time roles
+            </span>
+          </motion.div>
+
+          {/* Giant name typography */}
+          <div className="leading-[0.88] tracking-tight font-black font-display"
+            style={{ fontSize: 'clamp(68px, 12vw, 148px)' }}>
+            <div>
+              <SplitWord word="ARYAN" delay={0.15} />
             </div>
-
-            {/* Colossal Name & Title Heading */}
-            <div className="space-y-1">
-              <h1 className="font-display font-black text-5xl sm:text-7xl lg:text-8xl tracking-tighter text-white leading-[0.95]">
-                ARYAN <br />
-                <span className="text-stroke-title">DADWAL</span>
-              </h1>
-              <h2 className="font-display font-extrabold text-2xl sm:text-4xl text-slate-400 tracking-tight pt-2">
-                FULL STACK <span className="text-white">DEVELOPER</span>
-              </h2>
+            <div>
+              <SplitWord word="DADWAL" outlined delay={0.35} />
             </div>
-
-            {/* Concise CV-backed Statement */}
-            <p className="text-base sm:text-lg text-slate-300 max-w-xl font-normal leading-relaxed mx-auto lg:mx-0">
-              Computer Science student building practical full-stack applications, AI-powered solutions and algorithmic systems.
-            </p>
-
-            {/* Buttons */}
-            <div className="flex flex-wrap items-center justify-center lg:justify-start gap-4 pt-2">
-              <a
-                href="#work"
-                className="glowing-border-btn px-7 py-3.5 rounded-full text-white font-display font-bold text-xs uppercase tracking-wider flex items-center gap-2.5 shadow-xl"
-              >
-                <span>VIEW MY WORK</span>
-                <ArrowDown className="w-4 h-4 text-cyan-400" />
-              </a>
-
-              <a
-                href={personalInfo.resumePdf}
-                download="Aryan_Dadwal_Professional_Resume.pdf"
-                className="px-6 py-3.5 rounded-full bg-white text-slate-950 font-display font-bold text-xs uppercase tracking-wider hover:bg-slate-200 transition-all shadow-xl flex items-center gap-2"
-                title="Download Professional Resume PDF"
-              >
-                <Download className="w-3.5 h-3.5" />
-                <span>DOWNLOAD RESUME</span>
-              </a>
-
-              <a
-                href="#contact"
-                className="px-5 py-3.5 rounded-full text-slate-400 hover:text-white font-mono text-xs uppercase tracking-wider transition-colors"
-              >
-                <span>LET'S CONNECT</span>
-              </a>
-            </div>
-
-            {/* Social Icons Bar */}
-            <div className="flex items-center justify-center lg:justify-start gap-6 pt-2 text-slate-400">
-              <a
-                href={socialLinks.github}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="hover:text-white transition-colors flex items-center gap-1.5 text-xs font-mono"
-              >
-                <Github className="w-4 h-4" />
-                <span>GitHub</span>
-              </a>
-              <a
-                href={socialLinks.linkedin}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="hover:text-cyan-400 transition-colors flex items-center gap-1.5 text-xs font-mono"
-              >
-                <Linkedin className="w-4 h-4" />
-                <span>LinkedIn</span>
-              </a>
-              <a
-                href={personalInfo.whatsAppUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="hover:text-emerald-400 transition-colors flex items-center gap-1.5 text-xs font-mono"
-              >
-                <MessageCircle className="w-4 h-4" />
-                <span>WhatsApp</span>
-              </a>
-              <a
-                href={socialLinks.email}
-                className="hover:text-white transition-colors flex items-center gap-1.5 text-xs font-mono"
-              >
-                <Mail className="w-4 h-4" />
-                <span>Email</span>
-              </a>
-            </div>
-
           </div>
 
-          {/* Right Column: Layered Editorial Portrait */}
-          <div className="lg:col-span-5 flex justify-center relative">
-            <div className="relative w-full max-w-sm sm:max-w-md">
-              
-              {/* Giant background monogram letter */}
-              <div 
-                className="absolute -top-12 -right-6 font-display font-black text-9xl text-white/[0.03] select-none pointer-events-none tracking-tighter"
-                aria-hidden="true"
+          {/* Role line */}
+          <motion.div
+            initial={{ opacity: 0, y: 24 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.95, duration: 0.7 }}
+            className="flex items-center gap-4"
+          >
+            <div className="w-10 h-[1px] bg-white/30" />
+            <span className="font-mono text-xs tracking-[0.2em] text-slate-300 uppercase">
+              Full Stack Developer
+            </span>
+          </motion.div>
+
+          {/* Statement */}
+          <motion.p
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 1.1, duration: 0.7 }}
+            className="text-slate-400 font-light leading-relaxed max-w-lg"
+            style={{ fontSize: 'clamp(14px, 1.4vw, 17px)' }}
+          >
+            Computer Science student building practical full-stack applications,
+            AI-powered solutions and algorithmic systems.
+          </motion.p>
+
+          {/* CTA buttons */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 1.25, duration: 0.7 }}
+            className="flex flex-wrap items-center gap-4 pt-2"
+          >
+            <a
+              href="#work"
+              className="group relative inline-flex items-center gap-2 px-7 py-3.5 rounded-full bg-white text-slate-950 font-bold text-xs tracking-widest uppercase hover:bg-slate-100 transition-all shadow-lg"
+              onClick={(e) => {
+                e.preventDefault();
+                document.querySelector('#work')?.scrollIntoView({ behavior: 'smooth' });
+              }}
+            >
+              <span>View Work</span>
+              <ArrowDownRight className="w-3.5 h-3.5 group-hover:translate-x-0.5 group-hover:translate-y-0.5 transition-transform" />
+            </a>
+
+            <a
+              href={personalInfo.resumePdf}
+              download="Aryan_Dadwal_Professional_Resume.pdf"
+              className="inline-flex items-center gap-2 px-7 py-3.5 rounded-full border border-white/14 text-white text-xs tracking-widest uppercase font-medium hover:border-white/35 hover:bg-white/5 transition-all"
+            >
+              <Download className="w-3.5 h-3.5" />
+              <span>Resume</span>
+            </a>
+          </motion.div>
+
+          {/* Social links */}
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 1.5, duration: 0.8 }}
+            className="flex items-center gap-6 pt-1"
+          >
+            {[
+              { href: socialLinks.github, Icon: Github, label: 'GitHub' },
+              { href: socialLinks.linkedin, Icon: Linkedin, label: 'LinkedIn' },
+              { href: personalInfo.whatsAppUrl, Icon: MessageCircle, label: 'WhatsApp' },
+              { href: socialLinks.email, Icon: Mail, label: 'Email' },
+            ].map(({ href, Icon, label }) => (
+              <a
+                key={label}
+                href={href}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-slate-500 hover:text-white transition-colors duration-200 flex items-center gap-1.5 font-mono text-[11px] tracking-wider"
+                aria-label={label}
               >
-                AD
-              </div>
+                <Icon className="w-4 h-4" />
+                <span className="hidden sm:inline">{label}</span>
+              </a>
+            ))}
+          </motion.div>
+        </div>
 
-              {/* Atmospheric rim lighting glow */}
-              <div className="absolute inset-0 bg-gradient-to-tr from-cyan-500/20 via-transparent to-indigo-500/20 rounded-3xl blur-2xl opacity-70" />
+        {/* ── Right Column: Portrait ── */}
+        <div className="lg:col-span-5 flex justify-center lg:justify-end items-center relative">
+          {/* Ghost background word */}
+          <div
+            className="absolute select-none pointer-events-none font-black leading-none text-right right-0 bottom-0"
+            style={{
+              fontSize: 'clamp(80px, 14vw, 200px)',
+              color: 'rgba(255,255,255,0.025)',
+              letterSpacing: '-0.04em',
+              userSelect: 'none',
+            }}
+            aria-hidden
+          >
+            DADWAL
+          </div>
 
-              {/* Portrait container with subtle curved styling */}
-              <div className="relative rounded-3xl overflow-hidden border border-white/10 shadow-2xl bg-[#0d0f17]">
-                <div className="relative aspect-[3.9/5] overflow-hidden">
-                  <img
-                    src={personalInfo.profileImage}
-                    alt="Aryan Dadwal — Full Stack Developer"
-                    className="w-full h-full object-cover object-top filter contrast-[1.03] brightness-[0.98] transition-transform duration-700 ease-out hover:scale-105"
-                    loading="eager"
-                  />
+          <motion.div
+            initial={{ opacity: 0, scale: 0.96 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ delay: 0.45, duration: 1, ease: [0.22, 1, 0.36, 1] }}
+            className="relative w-full max-w-[380px] lg:max-w-[440px]"
+          >
+            {/* Atmospheric rim glow */}
+            <div className="absolute -inset-6 rounded-[40px] blur-3xl opacity-40 pointer-events-none"
+              style={{ background: 'radial-gradient(ellipse, rgba(56,189,248,0.18) 0%, rgba(99,102,241,0.1) 50%, transparent 80%)' }} />
 
-                  {/* Gradient overlays for cinematic depth */}
-                  <div className="absolute inset-0 bg-gradient-to-t from-[#07080c] via-transparent to-transparent pointer-events-none" />
+            {/* Portrait with parallax */}
+            <motion.div style={{ y: imgY }} className="relative" ref={imgRef}>
+              <div className="relative overflow-hidden rounded-[28px]">
+                <img
+                  src={personalInfo.profileImage}
+                  alt="Aryan Dadwal — Full Stack Developer"
+                  className="w-full object-cover object-top"
+                  style={{
+                    aspectRatio: '3/4',
+                    filter: 'contrast(1.04) brightness(0.97)',
+                  }}
+                  loading="eager"
+                />
+                {/* Bottom image gradient fade */}
+                <div
+                  className="absolute bottom-0 left-0 right-0 h-28 pointer-events-none"
+                  style={{ background: 'linear-gradient(to top, #07080c 0%, transparent 100%)' }}
+                />
 
-                  {/* Minimal glass overlay tag */}
-                  <div className="absolute bottom-4 left-4 right-4 p-3 rounded-2xl bg-[#0f1118]/80 backdrop-blur-xl border border-white/10 flex items-center justify-between">
-                    <div>
-                      <span className="font-display font-bold text-xs text-white block">
-                        Aryan Dadwal
-                      </span>
-                      <span className="text-[10px] font-mono text-cyan-400 block tracking-wider uppercase">
-                        B.Tech CSE • LPU (7.07 CGPA)
-                      </span>
-                    </div>
-                    <div className="flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-emerald-500/10 border border-emerald-500/30">
-                      <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
-                      <span className="text-[9px] font-mono text-emerald-400 uppercase tracking-wider">
-                        Available
-                      </span>
-                    </div>
-                  </div>
+                {/* Availability badge */}
+                <div className="absolute top-4 left-4 flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-black/50 backdrop-blur-md border border-white/10">
+                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+                  <span className="text-[10px] font-mono text-white/70 tracking-widest uppercase">Open to work</span>
                 </div>
               </div>
 
-              {/* Technical index badge below */}
-              <div className="mt-3 flex items-center justify-between text-[10px] font-mono text-slate-500 tracking-widest uppercase">
+              {/* Index stamp below photo */}
+              <div className="mt-4 flex items-center justify-between font-mono text-[10px] text-slate-600 tracking-[0.16em] uppercase px-1">
                 <span>IDENTITY // DEV-2026</span>
-                <span>MERN + JAVA + DSA</span>
+                <span>MERN · JAVA · DSA</span>
               </div>
-            </div>
-          </div>
-
+            </motion.div>
+          </motion.div>
         </div>
       </div>
 
-      {/* Atmospheric Horizon Curve Glow (Inspired by reference aesthetic) */}
-      <div className="relative w-full h-24 overflow-hidden pointer-events-none mt-auto">
-        <svg 
-          className="absolute bottom-0 inset-x-0 w-full h-full" 
-          viewBox="0 0 1200 200" 
-          preserveAspectRatio="none" 
-          xmlns="http://www.w3.org/2000/svg"
-          aria-hidden="true"
-        >
-          <defs>
-            <radialGradient id="horizonGlow" cx="50%" cy="100%" r="50%">
-              <stop offset="0%" stopColor="#38bdf8" stopOpacity="0.25" />
-              <stop offset="40%" stopColor="#6366f1" stopOpacity="0.1" />
-              <stop offset="100%" stopColor="#07080c" stopOpacity="0" />
-            </radialGradient>
-            <linearGradient id="horizonLine" x1="0%" y1="0%" x2="100%" y2="0%">
-              <stop offset="0%" stopColor="#38bdf8" stopOpacity="0" />
-              <stop offset="50%" stopColor="#38bdf8" stopOpacity="0.6" />
-              <stop offset="100%" stopColor="#38bdf8" stopOpacity="0" />
-            </linearGradient>
-          </defs>
-          <path d="M 0 200 Q 600 110, 1200 200" fill="url(#horizonGlow)" />
-          <path d="M 0 200 Q 600 110, 1200 200" fill="none" stroke="url(#horizonLine)" strokeWidth="1.5" />
-        </svg>
-      </div>
-
+      {/* ── Bottom metadata strip ── */}
+      <motion.div
+        initial={{ opacity: 0, y: 16 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 1.7, duration: 0.7 }}
+        className="relative z-10 border-t border-white/[0.06] w-full"
+      >
+        <div className="max-w-[1600px] mx-auto px-6 sm:px-10 lg:px-16 xl:px-20 py-5 flex items-center justify-between overflow-x-auto scrollbar-none">
+          <div className="flex items-center gap-0 shrink-0">
+            {metaItems.map((item, i) => (
+              <span key={item} className="flex items-center">
+                <span className="font-mono text-[10px] tracking-[0.18em] text-slate-500 uppercase px-5 whitespace-nowrap">
+                  {item}
+                </span>
+                {i < metaItems.length - 1 && (
+                  <span className="w-px h-3 bg-white/15 shrink-0" />
+                )}
+              </span>
+            ))}
+          </div>
+          <div className="flex items-center gap-2 pl-6 shrink-0">
+            <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+            <span className="font-mono text-[10px] tracking-[0.18em] text-emerald-500 uppercase">
+              AVAILABLE
+            </span>
+          </div>
+        </div>
+      </motion.div>
     </section>
   );
 }

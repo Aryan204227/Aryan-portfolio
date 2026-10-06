@@ -1,94 +1,130 @@
-import React from 'react';
-import { Calendar, MapPin, GraduationCap } from 'lucide-react';
+import { useRef } from 'react';
+import { motion, useInView } from 'framer-motion';
 import { portfolioData } from '../data/portfolioData';
 
+const { education } = portfolioData;
+
+const fadeUp = {
+  hidden: { opacity: 0, y: 40 },
+  visible: (i) => ({
+    opacity: 1, y: 0,
+    transition: { delay: i * 0.12, duration: 0.7, ease: [0.22, 1, 0.36, 1] },
+  }),
+};
+
 export default function Education() {
-  const { education } = portfolioData;
+  const ref = useRef(null);
+  const inView = useInView(ref, { once: true, margin: '-100px' });
 
   return (
-    <section id="education" className="py-28 px-6 sm:px-8 lg:px-12 relative border-t border-white/[0.06] bg-[#07080c]">
-      <div className="max-w-7xl mx-auto space-y-16">
-        
-        {/* Section Identifier */}
-        <div className="flex items-center gap-3">
-          <span className="text-xs font-mono text-cyan-400 font-semibold tracking-widest uppercase">
-            07 / EDUCATION & JOURNEY
-          </span>
-          <span className="w-12 h-[1px] bg-slate-800" />
-        </div>
+    <section id="education" className="relative overflow-hidden" style={{ background: 'linear-gradient(180deg, #07080c 0%, #090c14 100%)' }}>
+      <div className="w-full h-px bg-gradient-to-r from-transparent via-white/8 to-transparent" />
 
-        {/* Section Heading */}
-        <div className="max-w-3xl space-y-3">
-          <h2 className="font-display text-4xl sm:text-6xl font-black tracking-tight text-white leading-tight">
-            Academic Journey
-          </h2>
-          <p className="text-slate-400 text-base sm:text-lg leading-relaxed font-normal">
-            Formal computer science education and foundational science milestones.
-          </p>
-        </div>
+      {/* Ghost number */}
+      <div
+        className="absolute top-0 right-0 select-none pointer-events-none font-black"
+        style={{ fontSize: 'clamp(140px, 20vw, 280px)', color: 'rgba(255,255,255,0.022)', lineHeight: 1 }}
+        aria-hidden
+      >
+        08
+      </div>
 
-        {/* Cinematic Vertical Timeline */}
-        <div className="relative pl-8 sm:pl-12 space-y-12 before:absolute before:left-[13px] sm:before:left-[19px] before:top-3 before:bottom-3 before:w-[1.5px] before:bg-gradient-to-b before:from-cyan-400 before:via-white/20 before:to-transparent">
-          {education.map((item, idx) => (
-            <div key={idx} className="relative group space-y-2">
-              
-              {/* Timeline Indicator Node */}
-              <div 
-                className={`absolute -left-[32px] sm:-left-[38px] top-1.5 w-4 h-4 rounded-full border flex items-center justify-center transition-all ${
-                  item.isCurrent
-                    ? 'bg-cyan-400 border-cyan-300 shadow-md shadow-cyan-500/50'
-                    : 'bg-[#07080c] border-white/30 group-hover:border-white'
-                }`}
+      <div ref={ref} className="relative z-10 max-w-[1400px] mx-auto px-6 sm:px-10 lg:px-16 xl:px-20 py-32">
+
+        {/* Section header */}
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          animate={inView ? { opacity: 1, y: 0 } : {}}
+          transition={{ duration: 0.7 }}
+          className="mb-20"
+        >
+          <div className="flex items-center gap-3 mb-6">
+            <span className="font-mono text-[11px] tracking-[0.22em] text-white/30 uppercase">08 / Education</span>
+            <div className="flex-1 h-px bg-white/8 max-w-[60px]" />
+          </div>
+          <div
+            className="font-black leading-[0.9] tracking-tight"
+            style={{ fontSize: 'clamp(44px, 7vw, 88px)' }}
+          >
+            <span className="text-white">ACADEMIC </span>
+            <span style={{ WebkitTextStroke: '1.5px rgba(255,255,255,0.7)', WebkitTextFillColor: 'transparent' }}>
+              JOURNEY
+            </span>
+          </div>
+        </motion.div>
+
+        {/* Timeline */}
+        <div className="relative">
+          {/* Vertical line */}
+          <motion.div
+            initial={{ scaleY: 0 }}
+            animate={inView ? { scaleY: 1 } : {}}
+            transition={{ duration: 1.2, ease: [0.22, 1, 0.36, 1], delay: 0.2 }}
+            className="absolute left-6 lg:left-8 top-0 bottom-0 w-px origin-top"
+            style={{ background: 'linear-gradient(to bottom, rgba(56,189,248,0.5) 0%, rgba(255,255,255,0.06) 100%)' }}
+          />
+
+          <div className="space-y-0 pl-16 lg:pl-20">
+            {education.map((edu, i) => (
+              <motion.div
+                key={edu.institution + edu.period}
+                custom={i}
+                variants={fadeUp}
+                initial="hidden"
+                animate={inView ? 'visible' : 'hidden'}
+                className="relative pb-14 last:pb-0"
               >
-                {item.isCurrent && (
-                  <span className="w-1.5 h-1.5 rounded-full bg-slate-950 animate-ping" />
-                )}
-              </div>
+                {/* Timeline dot */}
+                <div
+                  className="absolute -left-[46px] lg:-left-[52px] top-1 w-3.5 h-3.5 rounded-full border-2 flex items-center justify-center"
+                  style={{
+                    background: edu.isCurrent ? '#07080c' : '#07080c',
+                    borderColor: edu.isCurrent ? '#38bdf8' : 'rgba(255,255,255,0.2)',
+                    boxShadow: edu.isCurrent ? '0 0 12px rgba(56,189,248,0.5)' : 'none',
+                  }}
+                >
+                  {edu.isCurrent && (
+                    <div className="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-pulse" />
+                  )}
+                </div>
 
-              {/* Card Container */}
-              <div className="p-8 rounded-3xl bg-white/[0.02] border border-white/[0.08] hover:border-white/20 transition-all duration-300 space-y-4">
-                <div className="flex flex-wrap items-center justify-between gap-2">
-                  <div className="flex items-center gap-3 text-xs font-mono">
-                    <span className="text-cyan-400 font-bold uppercase tracking-wider">
-                      {item.period}
+                {/* Content */}
+                <div className="space-y-3">
+                  <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4">
+                    <span className="font-mono text-[10px] tracking-[0.22em] text-white/30 uppercase">
+                      {edu.period}
                     </span>
-                    <span className="text-slate-600">•</span>
-                    <span className="text-slate-400 flex items-center gap-1">
-                      <MapPin className="w-3 h-3 text-slate-500" />
-                      {item.location}
-                    </span>
+                    {edu.isCurrent && (
+                      <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full font-mono text-[9px] tracking-widest uppercase"
+                        style={{ background: 'rgba(56,189,248,0.08)', color: '#38bdf8', border: '1px solid rgba(56,189,248,0.2)' }}>
+                        <span className="w-1 h-1 rounded-full bg-cyan-400 inline-block" />
+                        CURRENT
+                      </span>
+                    )}
                   </div>
 
-                  <span className="text-xs font-mono font-bold text-cyan-300 bg-cyan-950/70 px-3 py-1 rounded-full border border-cyan-800/40">
-                    {item.grade}
-                  </span>
-                </div>
+                  <div>
+                    <h3 className="font-bold text-white text-lg sm:text-xl">
+                      {edu.institution}
+                    </h3>
+                    <p className="font-mono text-[11px] text-white/40 tracking-wide mt-1">
+                      {edu.location}
+                    </p>
+                  </div>
 
-                <div>
-                  <h3 className="font-display text-2xl sm:text-3xl font-bold text-white tracking-tight">
-                    {item.institution}
-                  </h3>
-                  <p className="text-sm font-mono text-slate-300 mt-1">
-                    {item.degree} — <span className="text-slate-400">{item.field}</span>
+                  <p className="text-white/60 text-sm">
+                    {edu.degree} — {edu.field}
                   </p>
+
+                  <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-white/8"
+                    style={{ background: 'rgba(255,255,255,0.025)' }}>
+                    <span className="font-mono text-[11px] text-white/60 tracking-wider">{edu.grade}</span>
+                  </div>
                 </div>
-
-                {item.highlights && (
-                  <ul className="pt-2 border-t border-white/[0.06] space-y-1 text-xs text-slate-400 font-sans">
-                    {item.highlights.map((h, hIdx) => (
-                      <li key={hIdx} className="flex items-start gap-2">
-                        <span className="text-cyan-400 font-bold">•</span>
-                        <span>{h}</span>
-                      </li>
-                    ))}
-                  </ul>
-                )}
-              </div>
-
-            </div>
-          ))}
+              </motion.div>
+            ))}
+          </div>
         </div>
-
       </div>
     </section>
   );

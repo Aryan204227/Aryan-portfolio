@@ -1,109 +1,133 @@
-import React from 'react';
-import { Award, ExternalLink, Calendar, CheckCircle2, Terminal, Code2 } from 'lucide-react';
+import { useRef } from 'react';
+import { motion, useInView } from 'framer-motion';
+import { ExternalLink } from 'lucide-react';
 import { portfolioData } from '../data/portfolioData';
 
+const { training } = portfolioData;
+const t = training[0];
+
+const fadeUp = {
+  hidden: { opacity: 0, y: 40 },
+  visible: { opacity: 1, y: 0, transition: { duration: 0.75, ease: [0.22, 1, 0.36, 1] } },
+};
+
+const stagger = {
+  hidden: {},
+  visible: { transition: { staggerChildren: 0.1 } },
+};
+
 export default function Training() {
-  const { training } = portfolioData;
-  const item = training[0];
+  const ref = useRef(null);
+  const inView = useInView(ref, { once: true, margin: '-100px' });
 
   return (
-    <section id="training" className="py-28 px-6 sm:px-8 lg:px-12 relative border-t border-white/[0.06] bg-[#07080c]">
-      <div className="max-w-7xl mx-auto space-y-16">
-        
-        {/* Section Identifier */}
-        <div className="flex items-center gap-3">
-          <span className="text-xs font-mono text-cyan-400 font-semibold tracking-widest uppercase">
-            05 / LEARNING & TRAINING
-          </span>
-          <span className="w-12 h-[1px] bg-slate-800" />
-        </div>
+    <section id="training" className="relative overflow-hidden" style={{ background: 'linear-gradient(180deg, #07080c 0%, #090b14 100%)' }}>
+      <div className="w-full h-px bg-gradient-to-r from-transparent via-white/8 to-transparent" />
 
-        {/* Section Heading */}
-        <div className="max-w-3xl space-y-3">
-          <h2 className="font-display text-4xl sm:text-6xl font-black tracking-tight text-white leading-tight">
-            Algorithmic Rigor
-          </h2>
-          <p className="text-slate-400 text-base sm:text-lg leading-relaxed font-normal">
-            Intensive guided problem solving in Java, mastering core data structures and interview-ready algorithm patterns.
-          </p>
-        </div>
+      {/* Ghost number */}
+      <div
+        className="absolute top-0 right-0 select-none pointer-events-none font-black"
+        style={{ fontSize: 'clamp(140px, 20vw, 280px)', color: 'rgba(255,255,255,0.022)', lineHeight: 1 }}
+        aria-hidden
+      >
+        06
+      </div>
 
-        {/* Cinematic Credential Showcase */}
-        <div className="relative rounded-3xl bg-gradient-to-br from-[#0c0f18] to-[#07080c] border border-white/10 p-8 sm:p-12 shadow-2xl overflow-hidden">
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 items-center">
-            
-            <div className="lg:col-span-8 space-y-6">
-              <div className="flex flex-wrap items-center gap-3">
-                <span className="text-xs font-mono text-cyan-400 bg-cyan-950/70 border border-cyan-800/50 px-3 py-1 rounded-full font-semibold uppercase tracking-wider">
-                  GUIDED DSA BOOT CAMP
-                </span>
-                <span className="text-xs font-mono text-slate-400 flex items-center gap-1.5">
-                  <Calendar className="w-3.5 h-3.5 text-slate-500" />
-                  {item.duration}
-                </span>
+      <motion.div
+        ref={ref}
+        variants={stagger}
+        initial="hidden"
+        animate={inView ? 'visible' : 'hidden'}
+        className="relative z-10 max-w-[1400px] mx-auto px-6 sm:px-10 lg:px-16 xl:px-20 py-32"
+      >
+        {/* Section header */}
+        <motion.div variants={fadeUp} className="mb-20">
+          <div className="flex items-center gap-3 mb-6">
+            <span className="font-mono text-[11px] tracking-[0.22em] text-white/30 uppercase">06 / Training</span>
+            <div className="flex-1 h-px bg-white/8 max-w-[60px]" />
+          </div>
+          <div
+            className="font-black leading-[0.9] tracking-tight"
+            style={{ fontSize: 'clamp(44px, 7vw, 88px)' }}
+          >
+            <span className="text-white">TRAINING &</span>
+            <br />
+            <span style={{ WebkitTextStroke: '1.5px rgba(255,255,255,0.7)', WebkitTextFillColor: 'transparent' }}>
+              JOURNEY
+            </span>
+          </div>
+        </motion.div>
+
+        {/* Training card — editorial style */}
+        <motion.div variants={fadeUp}>
+          <div
+            className="relative rounded-3xl overflow-hidden"
+            style={{ background: 'rgba(255,255,255,0.025)', border: '1px solid rgba(255,255,255,0.08)' }}
+          >
+            {/* Subtle glow */}
+            <div
+              className="absolute top-0 left-0 w-full h-1 pointer-events-none"
+              style={{ background: 'linear-gradient(90deg, transparent, rgba(56,189,248,0.4), transparent)' }}
+            />
+
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-0">
+              {/* Left: headline */}
+              <div className="lg:col-span-4 p-8 sm:p-10 border-b lg:border-b-0 lg:border-r border-white/[0.06] flex flex-col justify-between gap-8">
+                <div className="space-y-4">
+                  <span className="font-mono text-[10px] tracking-[0.22em] text-cyan-400/60 uppercase block">
+                    INTENSIVE BOOT CAMP
+                  </span>
+                  <h3 className="font-black text-white leading-tight text-xl sm:text-2xl">
+                    Job Ready DSA Boot Camp<br />Using Java
+                  </h3>
+                  <p className="font-light text-white/50 text-sm leading-relaxed">
+                    {t.organization}
+                  </p>
+                </div>
+
+                <div className="space-y-3">
+                  <div className="flex items-center gap-2 text-[10px] font-mono">
+                    <div className="w-1.5 h-1.5 rounded-full bg-cyan-400" />
+                    <span className="text-white/40 uppercase tracking-widest">{t.duration}</span>
+                  </div>
+                  <a
+                    href={t.certificateUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full text-xs font-mono tracking-widest text-white border border-white/14 hover:border-white/35 hover:bg-white/5 transition-all uppercase"
+                  >
+                    <ExternalLink className="w-3.5 h-3.5" />
+                    <span>VIEW CERTIFICATE</span>
+                  </a>
+                </div>
               </div>
 
-              <div>
-                <h3 className="font-display text-2xl sm:text-4xl font-extrabold text-white tracking-tight">
-                  {item.title}
-                </h3>
-                <p className="text-sm font-mono text-cyan-400/90 mt-1">
-                  Issued by {item.organization}
+              {/* Right: description + topics */}
+              <div className="lg:col-span-8 p-8 sm:p-10 space-y-8">
+                <p className="text-white/55 font-light text-sm sm:text-base leading-relaxed">
+                  {t.description}
                 </p>
-              </div>
 
-              <p className="text-slate-300 text-sm sm:text-base leading-relaxed font-normal">
-                {item.description}
-              </p>
-
-              {/* Core Topics Pills */}
-              <div className="space-y-2 pt-2">
-                <span className="text-[10px] font-mono text-slate-500 uppercase tracking-widest block font-semibold">
-                  STRUCTURED PROBLEM DOMAINS
-                </span>
-                <div className="flex flex-wrap gap-2">
-                  {item.topics.map((topic, idx) => (
-                    <span
-                      key={idx}
-                      className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white/[0.04] border border-white/[0.08] text-xs font-mono text-slate-300"
-                    >
-                      <CheckCircle2 className="w-3.5 h-3.5 text-cyan-400" />
-                      <span>{topic}</span>
-                    </span>
-                  ))}
+                <div>
+                  <span className="font-mono text-[10px] tracking-[0.22em] text-white/25 uppercase block mb-4">
+                    TOPICS COVERED
+                  </span>
+                  <div className="flex flex-wrap gap-2">
+                    {t.topics.map((topic) => (
+                      <span
+                        key={topic}
+                        className="px-3 py-1.5 rounded-full font-mono text-[11px] text-white/50 border border-white/8 tracking-wide"
+                      >
+                        {topic}
+                      </span>
+                    ))}
+                  </div>
                 </div>
               </div>
             </div>
-
-            {/* Right: Visual Credential Verification Box */}
-            <div className="lg:col-span-4 flex flex-col items-center justify-center p-8 rounded-2xl bg-black/60 border border-white/[0.08] text-center space-y-4">
-              <div className="w-14 h-14 rounded-2xl bg-white/[0.05] border border-white/10 flex items-center justify-center text-cyan-400 shadow-inner">
-                <Award className="w-7 h-7" />
-              </div>
-              <div>
-                <h4 className="font-display text-base font-bold text-white">
-                  Verified Boot Camp Credential
-                </h4>
-                <p className="text-xs text-slate-400 font-mono mt-1">
-                  LeetCode curriculum completed
-                </p>
-              </div>
-
-              <a
-                href={item.certificateUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="w-full inline-flex items-center justify-center gap-2 py-3 px-5 rounded-full bg-white text-slate-950 font-display font-bold text-xs tracking-wider uppercase hover:bg-slate-200 transition-all shadow-md"
-              >
-                <span>VIEW CERTIFICATE</span>
-                <ExternalLink className="w-3.5 h-3.5" />
-              </a>
-            </div>
-
           </div>
-        </div>
-
-      </div>
+        </motion.div>
+      </motion.div>
     </section>
   );
 }

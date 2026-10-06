@@ -13,54 +13,45 @@ import Projects from './sections/Projects';
 import Training from './sections/Training';
 import Certificates from './sections/Certificates';
 import Education from './sections/Education';
+import EngineeringApproach from './sections/EngineeringApproach';
 import Contact from './sections/Contact';
 
 export default function App() {
   const [activeProjectModal, setActiveProjectModal] = useState(null);
 
-  const handleOpenProjectModal = (project) => {
-    setActiveProjectModal(project);
-  };
-
-  const handleCloseProjectModal = () => {
-    setActiveProjectModal(null);
-  };
-
   return (
-    <div className="min-h-screen bg-[#07080c] text-slate-100 flex flex-col font-sans selection:bg-cyan-500/20 selection:text-cyan-300 relative">
-      {/* Subtle Atmospheric Film Grain */}
+    <div className="min-h-screen bg-[#07080c] text-slate-100 flex flex-col font-sans relative overflow-x-hidden">
+      {/* Fine film grain overlay */}
       <div className="grain-overlay" aria-hidden="true" />
 
-      {/* Real-time reading progress */}
+      {/* Scroll progress bar */}
       <ScrollProgress />
 
-      {/* Floating Centered Pill Navbar */}
+      {/* Navigation */}
       <Navbar />
 
-      {/* Main Narrative Experience */}
+      {/* Main content */}
       <main className="flex-grow">
         <Hero />
         <About />
         <Expertise />
         <TechArsenal />
-        <Projects onSelectProject={handleOpenProjectModal} />
+        <Projects onSelectProject={setActiveProjectModal} />
         <Training />
         <Certificates />
         <Education />
+        <EngineeringApproach />
         <Contact />
       </main>
 
-      {/* Editorial Footer */}
       <Footer />
-
-      {/* Subtle Floating WhatsApp Action */}
       <WhatsAppFloat />
 
-      {/* Deep Dive Case Study Modal */}
+      {/* Project case study modal */}
       <ProjectModal
         project={activeProjectModal}
         isOpen={Boolean(activeProjectModal)}
-        onClose={handleCloseProjectModal}
+        onClose={() => setActiveProjectModal(null)}
       />
     </div>
   );
