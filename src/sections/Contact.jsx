@@ -1,14 +1,5 @@
 import React, { useState } from 'react';
-import { 
-  MessageCircle, 
-  Mail, 
-  Linkedin, 
-  Github, 
-  ArrowUpRight, 
-  Copy, 
-  Check, 
-  Send 
-} from 'lucide-react';
+import { MessageCircle, Mail, Linkedin, Github, ArrowUpRight, Copy, Check, Send, Sparkles } from 'lucide-react';
 import { portfolioData } from '../data/portfolioData';
 
 export default function Contact() {
@@ -32,7 +23,7 @@ export default function Contact() {
   };
 
   return (
-    <section id="contact" className="py-32 px-6 sm:px-8 lg:px-12 relative border-t border-white/[0.06] bg-[#07090e] overflow-hidden">
+    <section id="contact" className="py-32 px-6 sm:px-8 lg:px-12 relative border-t border-white/[0.06] bg-[#07080c] overflow-hidden">
       {/* Background ambient lighting */}
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[700px] bg-cyan-600/5 rounded-full blur-[180px] pointer-events-none" />
 
@@ -46,89 +37,84 @@ export default function Contact() {
           <span className="w-12 h-[1px] bg-slate-800" />
         </div>
 
-        {/* Huge Closing Statement */}
+        {/* Massive Final CTA Heading */}
         <div className="space-y-4 max-w-4xl">
-          <p className="text-sm sm:text-base font-mono uppercase tracking-widest text-slate-400">
-            HAVE A PROBLEM WORTH BUILDING?
-          </p>
-          <h2 className="font-display text-4xl sm:text-6xl lg:text-7xl font-extrabold tracking-tight text-white leading-tight">
-            Let's build <br />
-            <span className="text-gradient-cyan">something great.</span>
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/30 text-[11px] font-mono tracking-widest text-emerald-400 uppercase">
+            <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+            <span>AVAILABLE FOR INTERNSHIPS & FULL-TIME ROLES</span>
+          </div>
+
+          <h2 className="font-display text-4xl sm:text-7xl lg:text-8xl font-black tracking-tighter text-white leading-[0.95]">
+            Let's build something <br />
+            <span className="text-stroke-title">worth remembering.</span>
           </h2>
-          <p className="text-slate-300 text-base sm:text-lg max-w-2xl pt-2 font-normal">
-            Currently open to software engineering internships, full-stack developer roles, and collaborative product engineering.
+
+          <p className="text-slate-300 text-base sm:text-lg max-w-2xl pt-2 font-normal leading-relaxed">
+            I am actively looking for software engineering internships and developer roles. Reach out directly for project discussions, technical roles, or engineering collaboration.
           </p>
         </div>
 
-        {/* Primary Contact Action Hub */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+        {/* Action Buttons Strip */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
           
-          {/* WhatsApp Direct */}
+          {/* Email Me */}
           <a
-            href={personalInfo.whatsAppUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="group p-6 rounded-2xl bg-emerald-950/20 border border-emerald-500/30 hover:border-emerald-500/60 hover:bg-emerald-950/40 transition-all duration-300 flex flex-col justify-between space-y-8"
+            href={socialLinks.email}
+            className="group p-6 rounded-3xl bg-white/[0.02] border border-white/[0.08] hover:border-white/30 transition-all duration-300 flex flex-col justify-between space-y-8 hover:bg-white/[0.05]"
           >
-            <div className="flex items-center justify-between">
-              <span className="text-xs font-mono text-emerald-400 uppercase tracking-widest font-semibold">
-                FASTEST RESPONSE
-              </span>
-              <MessageCircle className="w-5 h-5 text-emerald-400 group-hover:scale-110 transition-transform" />
-            </div>
-            <div>
-              <span className="text-xs text-slate-400 font-mono block">Direct Mobile / Web</span>
-              <h3 className="font-display text-xl font-bold text-white group-hover:text-emerald-300 transition-colors mt-0.5">
-                WhatsApp Chat
-              </h3>
-              <span className="text-xs font-mono text-emerald-400/80 block mt-1">+91 8626963353</span>
-            </div>
-          </a>
-
-          {/* Email */}
-          <div className="p-6 rounded-2xl bg-white/[0.02] border border-white/[0.08] hover:border-white/20 transition-all duration-300 flex flex-col justify-between space-y-8">
             <div className="flex items-center justify-between">
               <span className="text-xs font-mono text-slate-400 uppercase tracking-widest font-semibold">
                 EMAIL DIRECT
               </span>
-              <button
-                onClick={handleCopyEmail}
-                className="text-xs font-mono text-slate-400 hover:text-white flex items-center gap-1"
-                title="Copy email address"
-              >
-                {copied ? <Check className="w-4 h-4 text-emerald-400" /> : <Copy className="w-4 h-4" />}
-              </button>
+              <Mail className="w-5 h-5 text-cyan-400 group-hover:scale-110 transition-transform" />
             </div>
             <div>
-              <a
-                href={socialLinks.email}
-                className="font-display text-lg sm:text-xl font-bold text-white hover:text-cyan-300 transition-colors block break-all"
-              >
+              <span className="font-display text-lg font-bold text-white group-hover:text-cyan-300 transition-colors block break-all">
                 {personalInfo.email}
-              </a>
+              </span>
               <span className="text-xs font-mono text-slate-500 block mt-1">Open email client</span>
             </div>
-          </div>
+          </a>
+
+          {/* WhatsApp */}
+          <a
+            href={personalInfo.whatsAppUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="group p-6 rounded-3xl bg-emerald-950/20 border border-emerald-500/30 hover:border-emerald-500/60 hover:bg-emerald-950/40 transition-all duration-300 flex flex-col justify-between space-y-8"
+          >
+            <div className="flex items-center justify-between">
+              <span className="text-xs font-mono text-emerald-400 uppercase tracking-widest font-semibold">
+                WHATSAPP CHAT
+              </span>
+              <MessageCircle className="w-5 h-5 text-emerald-400 group-hover:scale-110 transition-transform" />
+            </div>
+            <div>
+              <span className="font-display text-lg font-bold text-white group-hover:text-emerald-300 transition-colors block">
+                +91 8626963353
+              </span>
+              <span className="text-xs font-mono text-emerald-400/80 block mt-1">Instant chat window</span>
+            </div>
+          </a>
 
           {/* LinkedIn */}
           <a
             href={socialLinks.linkedin}
             target="_blank"
             rel="noopener noreferrer"
-            className="group p-6 rounded-2xl bg-white/[0.02] border border-white/[0.08] hover:border-cyan-500/40 hover:bg-white/[0.04] transition-all duration-300 flex flex-col justify-between space-y-8"
+            className="group p-6 rounded-3xl bg-white/[0.02] border border-white/[0.08] hover:border-cyan-500/40 hover:bg-white/[0.05] transition-all duration-300 flex flex-col justify-between space-y-8"
           >
             <div className="flex items-center justify-between">
               <span className="text-xs font-mono text-slate-400 uppercase tracking-widest font-semibold">
-                PROFESSIONAL NETWORK
+                LINKEDIN
               </span>
               <ArrowUpRight className="w-5 h-5 text-slate-500 group-hover:text-cyan-400 transition-colors" />
             </div>
             <div>
-              <span className="text-xs text-slate-400 font-mono block">Connect on</span>
-              <h3 className="font-display text-xl font-bold text-white group-hover:text-cyan-300 transition-colors mt-0.5">
-                LinkedIn
-              </h3>
-              <span className="text-xs font-mono text-slate-500 block mt-1">aryan-dadwal-cse</span>
+              <span className="font-display text-lg font-bold text-white group-hover:text-cyan-300 transition-colors block">
+                aryan-dadwal-cse
+              </span>
+              <span className="text-xs font-mono text-slate-500 block mt-1">Professional network</span>
             </div>
           </a>
 
@@ -137,32 +123,31 @@ export default function Contact() {
             href={socialLinks.github}
             target="_blank"
             rel="noopener noreferrer"
-            className="group p-6 rounded-2xl bg-white/[0.02] border border-white/[0.08] hover:border-white/20 hover:bg-white/[0.04] transition-all duration-300 flex flex-col justify-between space-y-8"
+            className="group p-6 rounded-3xl bg-white/[0.02] border border-white/[0.08] hover:border-white/30 hover:bg-white/[0.05] transition-all duration-300 flex flex-col justify-between space-y-8"
           >
             <div className="flex items-center justify-between">
               <span className="text-xs font-mono text-slate-400 uppercase tracking-widest font-semibold">
-                OPEN SOURCE
+                GITHUB
               </span>
               <Github className="w-5 h-5 text-slate-400 group-hover:text-white transition-colors" />
             </div>
             <div>
-              <span className="text-xs text-slate-400 font-mono block">Code Repositories</span>
-              <h3 className="font-display text-xl font-bold text-white group-hover:text-cyan-300 transition-colors mt-0.5">
-                GitHub
-              </h3>
-              <span className="text-xs font-mono text-slate-500 block mt-1">Aryan204227</span>
+              <span className="font-display text-lg font-bold text-white group-hover:text-cyan-300 transition-colors block">
+                Aryan204227
+              </span>
+              <span className="text-xs font-mono text-slate-500 block mt-1">Open source codebases</span>
             </div>
           </a>
 
         </div>
 
-        {/* Instant WhatsApp Quick Note Dispatcher */}
-        <div className="max-w-2xl mx-auto rounded-2xl bg-white/[0.02] border border-white/[0.08] p-6 sm:p-8 space-y-4">
+        {/* Quick Instant WhatsApp Note Dispatcher */}
+        <div className="max-w-2xl mx-auto rounded-3xl bg-white/[0.02] border border-white/[0.08] p-6 sm:p-8 space-y-4">
           <div className="flex items-center justify-between text-xs font-mono">
             <span className="text-slate-300 font-semibold uppercase tracking-wider">
-              DISPATCH A FAST NOTE TO ARYAN'S WHATSAPP
+              DIRECT WHATSAPP DISPATCHER
             </span>
-            <span className="text-emerald-400 font-medium">Instant</span>
+            <span className="text-emerald-400 font-medium">Online</span>
           </div>
 
           <div className="flex flex-col sm:flex-row gap-3">
@@ -170,12 +155,12 @@ export default function Contact() {
               type="text"
               value={note}
               onChange={(e) => setNote(e.target.value)}
-              placeholder="Hi Aryan, let's discuss an engineering role..."
-              className="flex-1 px-4 py-3 rounded-xl bg-black/60 border border-white/10 text-white text-xs font-mono placeholder:text-slate-600 focus:outline-none focus:border-cyan-500 transition-all"
+              placeholder="Hi Aryan, let's connect regarding a software engineering role..."
+              className="flex-1 px-5 py-3.5 rounded-full bg-black/60 border border-white/10 text-white text-xs font-mono placeholder:text-slate-600 focus:outline-none focus:border-cyan-500 transition-all"
             />
             <button
               onClick={handleSendWhatsApp}
-              className="px-6 py-3 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-display font-bold text-xs tracking-wider uppercase transition-all shadow-md flex items-center justify-center gap-2 shrink-0"
+              className="px-7 py-3.5 rounded-full bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-display font-bold text-xs tracking-wider uppercase transition-all shadow-md flex items-center justify-center gap-2 shrink-0"
             >
               <span>SEND WHATSAPP</span>
               <Send className="w-3.5 h-3.5" />

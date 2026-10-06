@@ -9,12 +9,12 @@ export default {
     extend: {
       colors: {
         canvas: {
-          DEFAULT: '#07090e',
-          pure: '#040508',
-          surface: '#0b0e17',
-          subtle: '#101522',
-          border: 'rgba(255, 255, 255, 0.07)',
-          borderStrong: 'rgba(255, 255, 255, 0.15)',
+          DEFAULT: '#07080c',
+          pure: '#040507',
+          surface: '#0d0f17',
+          subtle: '#121622',
+          border: 'rgba(255, 255, 255, 0.08)',
+          borderStrong: 'rgba(255, 255, 255, 0.18)',
         },
         brand: {
           cyan: '#38bdf8',
@@ -25,13 +25,24 @@ export default {
         }
       },
       fontFamily: {
-        display: ['Outfit', '-apple-system', 'sans-serif'],
-        sans: ['Space Grotesk', '-apple-system', 'sans-serif'],
+        sans: ['Plus Jakarta Sans', 'Space Grotesk', '-apple-system', 'sans-serif'],
+        display: ['Plus Jakarta Sans', 'Outfit', '-apple-system', 'sans-serif'],
         mono: ['JetBrains Mono', 'monospace'],
       },
-      backgroundImage: {
-        'noise-pattern': "radial-gradient(circle at 50% 50%, rgba(255,255,255,0.02) 1px, transparent 1px)",
+      keyframes: {
+        'navbar-border-spin': {
+          '0%': { transform: 'translate(-50%, -50%) rotate(0deg)' },
+          '100%': { transform: 'translate(-50%, -50%) rotate(360deg)' },
+        },
+        'pulse-subtle': {
+          '0%, 100%': { opacity: '0.9', transform: 'scale(1)' },
+          '50%': { opacity: '1', transform: 'scale(1.02)' },
+        }
       },
+      animation: {
+        'navbar-border-spin': 'navbar-border-spin 8s linear infinite',
+        'pulse-subtle': 'pulse-subtle 4s ease-in-out infinite',
+      }
     },
   },
   plugins: [],
