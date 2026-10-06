@@ -1,169 +1,127 @@
-import { useRef } from 'react';
+import React, { useRef } from 'react';
 import { motion, useInView } from 'framer-motion';
+import { Compass, GitMerge, Wrench, ShieldCheck, ArrowRight } from 'lucide-react';
 
 const steps = [
   {
     number: '01',
-    title: 'UNDERSTAND',
-    description: 'Define the problem clearly before writing a single line of code.',
+    title: 'UNDERSTAND & SCOPE',
+    description: 'Deconstruct requirements and constraints before writing a single line of code. Clarity first.',
+    icon: Compass,
   },
   {
     number: '02',
-    title: 'ARCHITECT',
-    description: 'Plan the system structure: components, data flow, dependencies.',
+    title: 'ARCHITECT & DECOUPLE',
+    description: 'Design decoupled client-server data flows, REST endpoints, and modular database schemas.',
+    icon: GitMerge,
   },
   {
     number: '03',
-    title: 'BUILD',
-    description: 'Write clean, modular code. Test early. Iterate fast.',
+    title: 'BUILD & BENCHMARK',
+    description: 'Develop structured components with clean types, recursion logic, and real-time execution feedback.',
+    icon: Wrench,
   },
   {
     number: '04',
-    title: 'REFINE',
-    description: 'Optimize, clean up, and improve until the solution is complete.',
+    title: 'REFINE & DEPLOY',
+    description: 'Optimize time complexity, polish responsive UX, and ship production-ready cloud builds on Render.',
+    icon: ShieldCheck,
   },
 ];
 
-const fadeUp = {
-  hidden: { opacity: 0, y: 40 },
-  visible: (i) => ({
-    opacity: 1, y: 0,
-    transition: { delay: i * 0.12, duration: 0.7, ease: [0.22, 1, 0.36, 1] },
-  }),
-};
-
 export default function EngineeringApproach() {
   const ref = useRef(null);
-  const lineRef = useRef(null);
   const inView = useInView(ref, { once: true, margin: '-100px' });
 
   return (
-    <section id="approach" className="relative overflow-hidden bg-[#07080c]">
-      <div className="w-full h-px bg-gradient-to-r from-transparent via-white/8 to-transparent" />
+    <section id="approach" className="relative bg-[#0a0a0a] py-32 px-6 sm:px-10 lg:px-16 overflow-hidden">
+      
+      {/* Background glow */}
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[400px] bg-orange-500/[0.02] rounded-full blur-3xl pointer-events-none" />
 
-      {/* Ghost number */}
-      <div
-        className="absolute top-0 left-0 select-none pointer-events-none font-black"
-        style={{ fontSize: 'clamp(140px, 20vw, 280px)', color: 'rgba(255,255,255,0.022)', lineHeight: 1 }}
-        aria-hidden
-      >
-        09
-      </div>
+      <div ref={ref} className="relative z-10 max-w-7xl mx-auto flex flex-col items-center">
 
-      <div ref={ref} className="relative z-10 max-w-[1400px] mx-auto px-6 sm:px-10 lg:px-16 xl:px-20 py-32">
-
-        {/* Section header */}
+        {/* Pill Badge */}
         <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          animate={inView ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 0.7 }}
-          className="mb-20"
+          initial={{ opacity: 0, y: 15 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.6 }}
+          className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[#161616] border border-orange-500/30 text-orange-400 text-xs font-mono uppercase tracking-widest mb-6 shadow-[0_0_15px_rgba(249,115,22,0.15)]"
         >
-          <div className="flex items-center gap-3 mb-6">
-            <span className="font-mono text-[11px] tracking-[0.22em] text-white/30 uppercase">09 / Approach</span>
-            <div className="flex-1 h-px bg-white/8 max-w-[60px]" />
-          </div>
-          <div
-            className="font-black leading-[0.9] tracking-tight"
-            style={{ fontSize: 'clamp(44px, 7vw, 88px)' }}
-          >
-            <span className="text-white">HOW I </span>
-            <span style={{ WebkitTextStroke: '1.5px rgba(255,255,255,0.7)', WebkitTextFillColor: 'transparent' }}>
-              BUILD
-            </span>
-          </div>
+          <span className="w-4 h-4 rounded-full bg-orange-500/20 flex items-center justify-center text-[10px] text-orange-400 font-bold">
+            ⚙️
+          </span>
+          <span>ENGINEERING APPROACH</span>
         </motion.div>
 
-        {/* Horizontal process — desktop */}
-        <div className="relative hidden lg:block">
-          {/* Connecting animated line */}
-          <div className="absolute top-[2.5rem] left-0 right-0 h-px" style={{ background: 'rgba(255,255,255,0.06)' }} />
-          <motion.div
-            className="absolute top-[2.5rem] left-0 h-px"
-            style={{ background: 'linear-gradient(90deg, rgba(56,189,248,0.6), rgba(56,189,248,0.1))' }}
-            initial={{ width: 0 }}
-            animate={inView ? { width: '100%' } : { width: 0 }}
-            transition={{ delay: 0.4, duration: 1.1, ease: [0.22, 1, 0.36, 1] }}
-          />
+        {/* Heading */}
+        <motion.h2
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.7, delay: 0.1 }}
+          className="font-extrabold tracking-tight text-center leading-[1.05] text-white max-w-3xl mb-16"
+          style={{ fontSize: 'clamp(36px, 5.5vw, 68px)' }}
+        >
+          How I engineer &amp; deliver software solutions.
+        </motion.h2>
 
-          <div className="grid grid-cols-4 gap-8 pt-20">
-            {steps.map((step, i) => (
+        {/* 4 Process Cards Grid */}
+        <div className="w-full grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          {steps.map((step, idx) => {
+            const Icon = step.icon;
+            return (
               <motion.div
                 key={step.number}
-                custom={i}
-                variants={fadeUp}
-                initial="hidden"
-                animate={inView ? 'visible' : 'hidden'}
-                className="space-y-4"
+                initial={{ opacity: 0, y: 25 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.6, delay: idx * 0.1 }}
+                className="rounded-3xl bg-[#121214] border border-white/10 p-7 shadow-2xl flex flex-col justify-between hover:border-orange-500/40 transition-all duration-300 group"
               >
-                {/* Step number with dot above (aligned with line) */}
-                <div
-                  className="absolute -top-[2rem] font-mono text-[10px] tracking-[0.22em] text-white/25 uppercase"
-                  style={{ marginTop: '-4.5rem' }}
-                />
-                <div
-                  className="font-black leading-none tracking-tight"
-                  style={{
-                    fontSize: 'clamp(48px, 6vw, 80px)',
-                    WebkitTextStroke: '1px rgba(255,255,255,0.18)',
-                    WebkitTextFillColor: 'transparent',
-                  }}
-                >
-                  {step.number}
+                <div>
+                  <div className="flex items-center justify-between mb-6">
+                    <span className="text-xs font-mono font-bold text-orange-400 bg-orange-500/10 border border-orange-500/20 px-3 py-1 rounded-full">
+                      STEP {step.number}
+                    </span>
+                    <Icon className="w-5 h-5 text-neutral-400 group-hover:text-orange-400 transition-colors" />
+                  </div>
+
+                  <h3 className="text-lg font-bold text-white tracking-tight mb-2 group-hover:text-orange-300 transition-colors">
+                    {step.title}
+                  </h3>
+
+                  <p className="text-xs sm:text-sm text-neutral-400 font-light leading-relaxed">
+                    {step.description}
+                  </p>
                 </div>
-                <h3 className="font-bold text-white text-lg tracking-tight">{step.title}</h3>
-                <p className="text-white/40 font-light text-sm leading-relaxed">{step.description}</p>
+
+                <div className="pt-6 border-t border-white/10 mt-6 flex items-center justify-between text-[11px] font-mono text-neutral-400">
+                  <span>DISCIPLINE</span>
+                  <span className="text-white group-hover:text-orange-400 transition-colors">→</span>
+                </div>
               </motion.div>
-            ))}
-          </div>
+            );
+          })}
         </div>
 
-        {/* Vertical process — mobile */}
-        <div className="lg:hidden space-y-10 relative border-l border-white/[0.06] pl-8">
-          {steps.map((step, i) => (
-            <motion.div
-              key={step.number}
-              custom={i}
-              variants={fadeUp}
-              initial="hidden"
-              animate={inView ? 'visible' : 'hidden'}
-              className="relative space-y-2"
-            >
-              {/* Dot */}
-              <div className="absolute -left-[2.35rem] top-1.5 w-3 h-3 rounded-full border border-white/20"
-                style={{ background: '#07080c' }} />
-
-              <div
-                className="font-black"
-                style={{
-                  fontSize: 'clamp(36px, 8vw, 52px)',
-                  WebkitTextStroke: '1px rgba(255,255,255,0.18)',
-                  WebkitTextFillColor: 'transparent',
-                  lineHeight: 1,
-                }}
-              >
-                {step.number}
-              </div>
-              <h3 className="font-bold text-white text-base tracking-tight">{step.title}</h3>
-              <p className="text-white/40 font-light text-sm leading-relaxed">{step.description}</p>
-            </motion.div>
-          ))}
-        </div>
-
-        {/* Philosophy quote */}
+        {/* Engineering Philosophy Quote */}
         <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          animate={inView ? { opacity: 1, y: 0 } : {}}
-          transition={{ delay: 0.9, duration: 0.8 }}
-          className="mt-24 pt-12 border-t border-white/[0.06] max-w-2xl"
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.7, delay: 0.4 }}
+          className="mt-16 text-center max-w-2xl px-6 py-4 rounded-2xl bg-white/[0.02] border border-white/5"
         >
-          <p className="font-light text-white/45 italic leading-relaxed" style={{ fontSize: 'clamp(15px, 1.5vw, 18px)' }}>
-            "The goal is not to write more code. The goal is to solve the problem correctly."
+          <p className="font-light text-neutral-300 italic text-sm sm:text-base leading-relaxed">
+            "The goal is not simply to write more code. The goal is to solve the problem correctly with clean architecture."
           </p>
-          <p className="font-mono text-[10px] tracking-[0.22em] text-white/20 uppercase mt-3">
-            — Engineering Philosophy
-          </p>
+          <span className="text-[10px] font-mono text-neutral-400 uppercase tracking-widest mt-2 block">
+            — Engineering Principle
+          </span>
         </motion.div>
+
       </div>
     </section>
   );

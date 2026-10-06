@@ -4,7 +4,7 @@ export const portfolioData = {
     title: "Full Stack Developer",
     subtitle: "Computer Science Student & Software Engineer",
     summary:
-      "Computer Science student and Full Stack Developer focused on building practical web applications, AI-powered solutions, and algorithmic systems. Experienced in MERN stack architecture, Java & DSA, and decoupled cloud deployments.",
+      "Computer Science student and Full Stack Developer focused on building modern web applications, AI-powered solutions, and algorithmic systems with clean architecture and problem solving.",
     email: "aryandadwal709@gmail.com",
     phone: "+91 8626963353",
     location: "Punjab / Himachal Pradesh, India",
@@ -13,7 +13,8 @@ export const portfolioData = {
     cgpa: "7.07",
     status: "Available for Internships & Full-time Roles",
     profileImage: "/aryan-profile.jpg",
-    resumePdf: "/Aryan_Dadwal_Professional_Resume.pdf",
+    // Primary single source of truth for resume
+    resumePdf: "/resume/Aryan-Dadwal-Resume.pdf",
     cvPdf: "/Aryan_Dadwal_CV.pdf",
     whatsAppUrl: "https://wa.me/918626963353?text=Hi%20Aryan%2C%20I%20came%20across%20your%20portfolio%20and%20would%20like%20to%20connect%20with%20you."
   },
@@ -54,23 +55,52 @@ export const portfolioData = {
     ],
     csFundamentals: [
       { name: "Data Structures & Algorithms", category: "CS Fundamentals", icon: "Brain" },
-      { name: "Recursion & Backtracking", category: "CS Fundamentals", icon: "Repeat" },
+      { name: "Recursion", category: "CS Fundamentals", icon: "Repeat" },
       { name: "DFS (Depth First Search)", category: "CS Fundamentals", icon: "GitFork" },
+      { name: "Backtracking", category: "CS Fundamentals", icon: "Repeat" },
       { name: "Object-Oriented Programming (OOP)", category: "CS Fundamentals", icon: "Boxes" },
       { name: "DBMS & SQL", category: "CS Fundamentals", icon: "TableProperties" },
       { name: "Multithreading", category: "CS Fundamentals", icon: "Workflow" }
     ],
     softSkills: [
-      { name: "Problem-Solving", category: "Professional Strengths", icon: "CheckCircle2" },
-      { name: "Time Management", category: "Professional Strengths", icon: "Clock" },
-      { name: "Adaptability", category: "Professional Strengths", icon: "Compass" }
+      { name: "Time Management", category: "Soft Skills", icon: "Clock" },
+      { name: "Adaptability", category: "Soft Skills", icon: "Compass" },
+      { name: "Problem-Solving", category: "Soft Skills", icon: "CheckCircle2" }
     ]
   },
 
   projects: [
     {
-      id: "career-guidance-system",
+      id: "maze-solver",
       number: "01",
+      title: "Maze Solver",
+      date: "Jul 2026",
+      tagline: "Desktop Java maze generator & pathfinding visualizer using DFS & recursive backtracking.",
+      summary:
+        "Created a Java desktop maze solver using DFS and recursive backtracking, tested on a 15×15 maze grid. Implemented maze generation, wall editing, pathfinding animation, and live performance tracking.",
+      tags: ["Java", "Swing", "AWT", "DFS", "Backtracking", "Java2D"],
+      github: "https://github.com/Aryan204227/Maze-Solver",
+      live: null,
+      isFeatured: true,
+      features: [
+        "Tested on a 15×15 maze grid with real-time pathfinding visualization",
+        "Implemented maze generation, custom wall editing, and start/end points",
+        "Interactive live statistics including visited nodes and recursion depth",
+        "Java2D & Swing/AWT graphics engine with recursive state exploration",
+        "Benchmarked performance: 172 visited nodes, 79 max recursion depth, 17.259s solving time, 29-step path"
+      ],
+      architecture: "Java Desktop GUI (Java2D / Swing event-dispatching loop with recursive algorithm engine)",
+      metrics: [
+        { label: "Benchmark Grid", value: "15×15 Grid" },
+        { label: "Visited Nodes", value: "172 Nodes" },
+        { label: "Recursion Depth", value: "79 Levels" },
+        { label: "Solving Time", value: "17.259s" },
+        { label: "Optimal Path", value: "29 Steps" }
+      ]
+    },
+    {
+      id: "career-guidance-system",
+      number: "02",
       title: "Career Guidance System",
       date: "Apr 2026",
       tagline: "AI-driven career counselling & aptitude-analysis platform built on the MERN stack.",
@@ -82,10 +112,10 @@ export const portfolioData = {
       isFeatured: true,
       features: [
         "12 structured aptitude assessment questions spanning 4 key evaluation categories",
-        "Weighted-sum matching algorithm calculating tailored fit scores for 22 distinct career trajectories",
-        "Decoupled frontend & backend services with clean separation of concerns and RESTful endpoints",
-        "Persistent user session & test scoring integration using MongoDB",
-        "Production-deployed on Render with responsive, client-side UX"
+        "Weighted-sum matching algorithm calculating tailored fit scores for 22 distinct career options",
+        "Engineered independent frontend and backend services for a modular full-stack workflow with clean separation of concerns",
+        "Persistent session & test scoring integration using MongoDB",
+        "Production-deployed on Render cloud with responsive single-page client UX"
       ],
       architecture: "Modular MERN Stack (React Single Page App client + Express/Node.js API + MongoDB Database)",
       metrics: [
@@ -93,34 +123,6 @@ export const portfolioData = {
         { label: "Assessment Categories", value: "4 Domains" },
         { label: "Career Options", value: "22 Paths" },
         { label: "Scoring Engine", value: "Weighted-Sum" }
-      ]
-    },
-    {
-      id: "maze-solver",
-      number: "02",
-      title: "Maze Solver",
-      date: "Jul 2026",
-      tagline: "Desktop Java maze generator & pathfinding visualizer using DFS & recursive backtracking.",
-      summary:
-        "Created a Java desktop maze solver using DFS and recursive backtracking, tested on a 15×15 maze grid. Features live pathfinding animations, dynamic wall toggling, and real-time execution statistics.",
-      tags: ["Java", "Swing", "AWT", "DFS", "Backtracking", "Java2D"],
-      github: "https://github.com/Aryan204227/Maze-Solver",
-      live: null,
-      isFeatured: false,
-      features: [
-        "Interactive maze grid supporting custom wall editing, start/end point selection, and grid reset",
-        "Pathfinding engine leveraging Depth First Search (DFS) and recursive state backtracking",
-        "Real-time visual animation of exploring search paths rendered with Java2D & Swing/AWT",
-        "Live diagnostic HUD displaying visited nodes, current recursion depth, and execution elapsed time",
-        "Benchmarked on a 15×15 maze grid with verifiable deterministic execution"
-      ],
-      architecture: "Java Desktop GUI (Java2D / Swing event-dispatching loop with recursive algorithm engine)",
-      metrics: [
-        { label: "Benchmark Grid", value: "15×15 Grid" },
-        { label: "Visited Nodes", value: "172 Nodes" },
-        { label: "Max Recursion Depth", value: "79 Levels" },
-        { label: "Solving Time", value: "17.259s" },
-        { label: "Optimal Path", value: "29 Steps" }
       ]
     },
     {
@@ -134,18 +136,18 @@ export const portfolioData = {
       tags: ["JavaScript", "Node.js", "Express.js", "AI Chatbot", "Sentiment Analysis", "Render"],
       github: "https://github.com/Aryan204227/stocksense-ai",
       live: "https://stocksense-ai-r24w.onrender.com/",
-      isFeatured: false,
+      isFeatured: true,
       features: [
         "Conversational AI interface delivering contextual sentiment analysis on market trends and stocks",
-        "Decoupled client-server modular architecture ensuring clean isolation and zero-dependency coupling",
+        "Decoupled client-server modular architecture ensuring clean isolation and independent service lifecycle",
         "Streamlined API endpoints designed for rapid query response and easy extensibility",
-        "End-to-end version control on GitHub with structured modular directory organization",
-        "Production cloud deployment on Render for seamless public accessibility"
+        "Managed codebase and version history end-to-end on GitHub, keeping the project organized for collaboration",
+        "Production cloud deployment on Render for public accessibility"
       ],
-      architecture: "Decoupled Client-Server (Independent Frontend UI + Node.js API processing service)",
+      architecture: "Decoupled Client-Server (Independent UI Client + Node.js API processing service)",
       metrics: [
-        { label: "Architecture", value: "Decoupled" },
-        { label: "Backend Core", value: "Node.js" },
+        { label: "Architecture", value: "Decoupled Client-Server" },
+        { label: "Backend Core", value: "Node.js & Express" },
         { label: "Deployment", value: "Render Cloud" },
         { label: "Version Control", value: "GitHub Managed" }
       ]
@@ -158,11 +160,11 @@ export const portfolioData = {
       organization: "Eduniketan Private Limited / TheEduBootCamp",
       duration: "Jun 2026 – Jul 2026",
       topics: [
-        "Arrays & Matrices",
-        "Recursion & Backtracking",
-        "Problem Solving Fundamentals",
-        "Coding Efficiency & Time/Space Optimization",
-        "Interview Readiness & Pattern Recognition"
+        "Arrays & Recursion",
+        "Backtracking Patterns",
+        "LeetCode Problem Solving",
+        "Coding Efficiency & Optimization",
+        "Interview Readiness"
       ],
       description:
         "Completed an intensive DSA boot camp in Java, solving structured problem sets on LeetCode to build strong problem-solving fundamentals. Practiced core data-structure and algorithm patterns including arrays, recursion, and backtracking under guided instruction and strengthened coding efficiency and interview readiness.",
@@ -208,56 +210,32 @@ export const portfolioData = {
       isCurrent: true,
       highlights: [
         "Core coursework in Data Structures, Algorithms, DBMS, OOP, and Web Technologies",
-        "Active member of developer and algorithmic problem-solving communities"
+        "Class of 2028 (Expected)"
       ]
     },
     {
       institution: "Tagore Model Sen Sec School",
       location: "Rehan, Himachal Pradesh",
       degree: "Intermediate (12th Grade)",
-      field: "Non-Medical / Science Stream",
+      field: "Percentage: 88%",
       period: "Apr 2022 – Jun 2024",
-      grade: "Percentage: 88%",
+      grade: "88%",
       isCurrent: false,
       highlights: [
-        "Academic excellence with 88% overall aggregate",
-        "Strong foundation in Mathematics, Physics, and analytical logic"
+        "Academic excellence with 88% overall aggregate"
       ]
     },
     {
       institution: "Tagore Model Sen Sec School",
       location: "Rehan, Himachal Pradesh",
       degree: "Matriculation (10th Grade)",
-      field: "Secondary School Examination",
+      field: "Percentage: 89%",
       period: "Apr 2021 – Jun 2022",
-      grade: "Percentage: 89%",
+      grade: "89%",
       isCurrent: false,
       highlights: [
-        "Graduated with high distinction achieving 89% aggregate score"
+        "Graduated with distinction achieving 89% aggregate score"
       ]
-    }
-  ],
-
-  highlights: [
-    {
-      title: "Full Stack MERN Development",
-      description: "Building production-ready web apps with React, Node.js, Express, and MongoDB with clean client-server decoupling.",
-      icon: "Layers"
-    },
-    {
-      title: "Java & Algorithmic Problem Solving",
-      description: "Solid grasp of Data Structures, recursion, backtracking, and DFS with structured LeetCode problem-solving practice.",
-      icon: "Binary"
-    },
-    {
-      title: "Decoupled Cloud Architecture",
-      description: "Experience deploying independent frontend and backend cloud services on Render with modular maintainability.",
-      icon: "Cloud"
-    },
-    {
-      title: "Clean Code & Version Control",
-      description: "Structured Git & GitHub workflow with disciplined commit history, modular directory structures, and clear separation of concerns.",
-      icon: "GitBranch"
     }
   ]
 };

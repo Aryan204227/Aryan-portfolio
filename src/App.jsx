@@ -1,6 +1,9 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import IntroLoader from './components/IntroLoader';
 import CustomCursor from './components/CustomCursor';
 import ScrollProgress from './components/ScrollProgress';
+import CommandPalette from './components/CommandPalette';
+import TerminalDrawer from './components/TerminalDrawer';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
 import WhatsAppFloat from './components/WhatsAppFloat';
@@ -18,44 +21,77 @@ import EngineeringApproach from './sections/EngineeringApproach';
 import Contact from './sections/Contact';
 
 export default function App() {
+  const [loading, setLoading] = useState(true);
   const [activeProjectModal, setActiveProjectModal] = useState(null);
+  const [commandPaletteOpen, setCommandPaletteOpen] = useState(false);
+  const [terminalOpen, setTerminalOpen] = useState(false);
+
+  // Global Ctrl+K / Cmd+K Command Palette Shortcut
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'k') {
+        e.preventDefault();
+        setCommandPaletteOpen((prev) => !prev);
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, []);
 
   return (
-    <div
-      className="min-h-screen flex flex-col font-sans relative overflow-x-hidden"
-      style={{ background: '#070809', color: '#f0f1f3' }}
-    >
-      {/* Premium custom cursor (desktop only) */}
-      <CustomCursor />
+    <>
+      {/* 1.2s Cinematic Intro Screen */}
+      {loading && <IntroLoader onComplete={() => setLoading(false)} />}
 
-      {/* Reading progress bar */}
-      <ScrollProgress />
+      <div
+        className="min-h-screen flex flex-col font-sans relative overflow-x-hidden bg-[#0a0a0a] text-white"
+      >
+        {/* Premium custom cursor (desktop only) */}
+        <CustomCursor />
 
-      {/* Floating navigation */}
-      <Navbar />
+        {/* Reading progress bar */}
+        <ScrollProgress />
 
-      {/* Main experience */}
-      <main className="flex-grow">
-        <Hero />
-        <About />
-        <Expertise />
-        <TechArsenal />
-        <Projects onSelectProject={setActiveProjectModal} />
-        <Training />
-        <Certificates />
-        <Education />
-        <EngineeringApproach />
-        <Contact />
-      </main>
+        {/* Global Developer Command Palette (Ctrl+K) */}
+        <CommandPalette
+          isOpen={commandPaletteOpen}
+          onClose={() => setCommandPaletteOpen(false)}
+          onOpenTerminal={() => setTerminalOpen(true)}
+        />
 
-      <Footer />
-      <WhatsAppFloat />
+        {/* Interactive Developer CLI Terminal Drawer */}
+        <TerminalDrawer
+          isOpen={terminalOpen}
+          onClose={() => setTerminalOpen(false)}
+        />
 
-      <ProjectModal
-        project={activeProjectModal}
-        isOpen={Boolean(activeProjectModal)}
-        onClose={() => setActiveProjectModal(null)}
-      />
-    </div>
+        {/* Floating navigation */}
+        <Navbar />
+
+        {/* Main experience */}
+        <main className="flex-grow">
+          <Hero />
+          <About />
+          <Expertise />
+          <TechArsenal />
+          <Projects onSelectProject={setActiveProjectModal} />
+          <Training />
+          <Certificates />
+          <Education />
+          <EngineeringApproach />
+          <Contact />
+        </main>
+
+        <Footer />
+        <WhatsAppFloat />
+
+        {/* Detailed Case Study Modal */}
+        <ProjectModal
+          project={activeProjectModal}
+          isOpen={Boolean(activeProjectModal)}
+          onClose={() => setActiveProjectModal(null)}
+        />
+      </div>
+    </>
   );
 }
