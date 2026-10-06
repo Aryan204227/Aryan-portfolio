@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { AnimatePresence, motion } from 'framer-motion';
 import IntroLoader from './components/IntroLoader';
 import CustomCursor from './components/CustomCursor';
 import ScrollProgress from './components/ScrollProgress';
@@ -8,6 +9,8 @@ import Navbar from './components/Navbar';
 import Footer from './components/Footer';
 import WhatsAppFloat from './components/WhatsAppFloat';
 import ProjectModal from './components/ProjectModal';
+import InteractiveBackground from './components/InteractiveBackground';
+import useSmoothScroll from './hooks/useSmoothScroll';
 
 import Hero from './sections/Hero';
 import About from './sections/About';
@@ -26,6 +29,9 @@ export default function App() {
   const [commandPaletteOpen, setCommandPaletteOpen] = useState(false);
   const [terminalOpen, setTerminalOpen] = useState(false);
 
+  // Lenis smooth inertial scroll
+  useSmoothScroll();
+
   // Global Ctrl+K / Cmd+K Command Palette Shortcut
   useEffect(() => {
     const handleKeyDown = (e) => {
@@ -40,11 +46,20 @@ export default function App() {
 
   return (
     <>
-      {/* 1.2s Cinematic Intro Screen */}
-      {loading && <IntroLoader onComplete={() => setLoading(false)} />}
+      {/* Cinematic intro screen */}
+      <AnimatePresence>
+        {loading && <IntroLoader onComplete={() => setLoading(false)} />}
+      </AnimatePresence>
 
-      <div
+      {/* Interactive particle background — fixed, behind everything */}
+      <InteractiveBackground />
+
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: loading ? 0 : 1 }}
+        transition={{ duration: 0.6, ease: 'easeOut' }}
         className="min-h-screen flex flex-col font-sans relative overflow-x-hidden bg-[#0a0a0a] text-white"
+        style={{ zIndex: 2, position: 'relative' }}
       >
         {/* Premium custom cursor (desktop only) */}
         <CustomCursor />
@@ -91,7 +106,7 @@ export default function App() {
           isOpen={Boolean(activeProjectModal)}
           onClose={() => setActiveProjectModal(null)}
         />
-      </div>
+      </motion.div>
     </>
   );
 }

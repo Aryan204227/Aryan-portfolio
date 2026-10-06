@@ -1,6 +1,6 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { Mail, MessageCircle, Github, Linkedin, ArrowRight, Download, Send } from 'lucide-react';
+import { Mail, MessageCircle, Github, Linkedin, ArrowRight, Download } from 'lucide-react';
 import { portfolioData } from '../data/portfolioData';
 
 const { personalInfo, socialLinks } = portfolioData;
@@ -25,7 +25,7 @@ export default function Contact() {
         <motion.div
           initial={{ opacity: 0, y: 15 }}
           whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
+          viewport={{ once: true, margin: '-60px' }}
           transition={{ duration: 0.6 }}
           className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[#161616] border border-orange-500/30 text-orange-400 text-xs font-mono uppercase tracking-widest mb-8 shadow-[0_0_15px_rgba(249,115,22,0.15)]"
         >
@@ -35,10 +35,10 @@ export default function Contact() {
 
         {/* ── Massive Heading (Reference Style) ── */}
         <motion.h2
-          initial={{ opacity: 0, y: 25 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.8, delay: 0.1 }}
+          initial={{ opacity: 0, y: 25, filter: 'blur(8px)' }}
+          whileInView={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
+          viewport={{ once: true, margin: '-60px' }}
+          transition={{ duration: 0.8, delay: 0.1, ease: [0.16, 1, 0.3, 1] }}
           className="font-extrabold tracking-tight text-white leading-[0.92] mb-6 font-display"
           style={{ fontSize: 'clamp(44px, 8.5vw, 108px)' }}
         >
@@ -50,7 +50,7 @@ export default function Contact() {
         <motion.p
           initial={{ opacity: 0, y: 15 }}
           whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
+          viewport={{ once: true, margin: '-60px' }}
           transition={{ duration: 0.7, delay: 0.2 }}
           className="text-neutral-400 text-base sm:text-lg max-w-xl mb-12 font-light leading-relaxed"
         >
@@ -58,75 +58,89 @@ export default function Contact() {
           I am actively available and ready to deliver impactful code.
         </motion.p>
 
-        {/* ── Action Buttons ── */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.7, delay: 0.3 }}
-          className="flex flex-wrap items-center justify-center gap-4 mb-16"
-        >
+        {/* ── Action Buttons with staggered micro-interactions ── */}
+        <div className="flex flex-wrap items-center justify-center gap-4 mb-16">
           {/* Email Me Button */}
-          <a
+          <motion.a
             href={socialLinks.email}
-            className="inline-flex items-center gap-2.5 px-8 py-4 rounded-full btn-orange text-sm font-bold uppercase tracking-wider shadow-[0_4px_24px_rgba(249,115,22,0.35)] hover:shadow-[0_4px_36px_rgba(249,115,22,0.55)] transition-all"
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6, delay: 0.3 }}
+            whileHover={{ scale: 1.03, y: -2 }}
+            whileTap={{ scale: 0.97 }}
+            className="group inline-flex items-center gap-2.5 px-8 py-4 rounded-full btn-orange text-sm font-bold uppercase tracking-wider shadow-[0_4px_24px_rgba(249,115,22,0.35)] hover:shadow-[0_4px_36px_rgba(249,115,22,0.55)] transition-shadow duration-300"
           >
             <Mail className="w-4 h-4" />
             <span>EMAIL ME DIRECTLY</span>
-            <ArrowRight className="w-4 h-4" />
-          </a>
+            <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+          </motion.a>
 
           {/* WhatsApp Direct Button */}
-          <a
+          <motion.a
             href={personalInfo.whatsAppUrl}
             target="_blank"
             rel="noopener noreferrer"
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6, delay: 0.4 }}
+            whileHover={{ scale: 1.03, y: -2 }}
+            whileTap={{ scale: 0.97 }}
             className="inline-flex items-center gap-2 px-7 py-4 rounded-full bg-[#161619] hover:bg-[#202025] border border-emerald-500/40 hover:border-emerald-400 text-emerald-400 text-sm font-semibold tracking-wider transition-all shadow-xl"
           >
             <MessageCircle className="w-4 h-4 text-emerald-400" />
             <span>WHATSAPP (+91 8626963353)</span>
-          </a>
+          </motion.a>
 
           {/* Resume Download Button */}
-          <a
+          <motion.a
             href={personalInfo.resumePdf}
-            download="Aryan_Dadwal_Professional_Resume.pdf"
+            download="Aryan_Dadwal_Resume.pdf"
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6, delay: 0.5 }}
+            whileHover={{ scale: 1.03, y: -2 }}
+            whileTap={{ scale: 0.97 }}
             className="inline-flex items-center gap-2 px-7 py-4 rounded-full bg-[#161619] hover:bg-[#202025] border border-white/10 hover:border-white/25 text-white text-sm font-semibold tracking-wider transition-all shadow-xl"
             title="Download Aryan Dadwal Official Resume (PDF)"
           >
             <Download className="w-4 h-4 text-orange-400" />
             <span>DOWNLOAD RESUME</span>
-          </a>
-        </motion.div>
+          </motion.a>
+        </div>
 
         {/* ── Social Strip ── */}
         <motion.div
-          initial={{ opacity: 0 }}
-          whileInView={{ opacity: 1 }}
+          initial={{ opacity: 0, y: 15 }}
+          whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          transition={{ duration: 0.8, delay: 0.4 }}
-          className="flex items-center gap-8 text-neutral-400"
+          transition={{ duration: 0.8, delay: 0.6 }}
+          className="flex flex-wrap justify-center items-center gap-6 sm:gap-8 text-neutral-400"
         >
-          <a
+          <motion.a
             href={socialLinks.github}
             target="_blank"
             rel="noopener noreferrer"
-            className="flex items-center gap-2 hover:text-white transition-colors text-xs font-mono tracking-wider"
+            whileHover={{ y: -2, color: '#ffffff' }}
+            className="flex items-center gap-2 transition-colors text-xs font-mono tracking-wider"
           >
             <Github className="w-4 h-4" />
             <span>GITHUB</span>
-          </a>
-          <span className="text-neutral-700">•</span>
-          <a
+          </motion.a>
+          <span className="text-neutral-700 hidden sm:inline">•</span>
+          <motion.a
             href={socialLinks.linkedin}
             target="_blank"
             rel="noopener noreferrer"
-            className="flex items-center gap-2 hover:text-white transition-colors text-xs font-mono tracking-wider"
+            whileHover={{ y: -2, color: '#ffffff' }}
+            className="flex items-center gap-2 transition-colors text-xs font-mono tracking-wider"
           >
             <Linkedin className="w-4 h-4" />
             <span>LINKEDIN</span>
-          </a>
-          <span className="text-neutral-700">•</span>
+          </motion.a>
+          <span className="text-neutral-700 hidden sm:inline">•</span>
           <span className="text-xs font-mono text-neutral-500">
             PUNJAB / HIMACHAL PRADESH, INDIA
           </span>
