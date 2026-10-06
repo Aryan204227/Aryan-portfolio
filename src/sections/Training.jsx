@@ -1,133 +1,109 @@
-import { useRef } from 'react';
-import { motion, useInView } from 'framer-motion';
-import { ExternalLink } from 'lucide-react';
+import React from 'react';
+import { motion } from 'framer-motion';
+import { Award, ExternalLink, Calendar, CheckCircle2 } from 'lucide-react';
 import { portfolioData } from '../data/portfolioData';
 
 const { training } = portfolioData;
-const t = training[0];
-
-const fadeUp = {
-  hidden: { opacity: 0, y: 40 },
-  visible: { opacity: 1, y: 0, transition: { duration: 0.75, ease: [0.22, 1, 0.36, 1] } },
-};
-
-const stagger = {
-  hidden: {},
-  visible: { transition: { staggerChildren: 0.1 } },
-};
+const bootCamp = training[0];
 
 export default function Training() {
-  const ref = useRef(null);
-  const inView = useInView(ref, { once: true, margin: '-100px' });
-
   return (
-    <section id="training" className="relative overflow-hidden" style={{ background: 'linear-gradient(180deg, #07080c 0%, #090b14 100%)' }}>
-      <div className="w-full h-px bg-gradient-to-r from-transparent via-white/8 to-transparent" />
+    <section id="training" className="relative bg-[#0a0a0a] py-32 px-6 sm:px-10 lg:px-16 overflow-hidden">
+      
+      {/* Background glow */}
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[350px] bg-orange-500/[0.02] rounded-full blur-3xl pointer-events-none" />
 
-      {/* Ghost number */}
-      <div
-        className="absolute top-0 right-0 select-none pointer-events-none font-black"
-        style={{ fontSize: 'clamp(140px, 20vw, 280px)', color: 'rgba(255,255,255,0.022)', lineHeight: 1 }}
-        aria-hidden
-      >
-        06
-      </div>
+      <div className="relative z-10 max-w-7xl mx-auto flex flex-col items-center">
 
-      <motion.div
-        ref={ref}
-        variants={stagger}
-        initial="hidden"
-        animate={inView ? 'visible' : 'hidden'}
-        className="relative z-10 max-w-[1400px] mx-auto px-6 sm:px-10 lg:px-16 xl:px-20 py-32"
-      >
-        {/* Section header */}
-        <motion.div variants={fadeUp} className="mb-20">
-          <div className="flex items-center gap-3 mb-6">
-            <span className="font-mono text-[11px] tracking-[0.22em] text-white/30 uppercase">06 / Training</span>
-            <div className="flex-1 h-px bg-white/8 max-w-[60px]" />
-          </div>
-          <div
-            className="font-black leading-[0.9] tracking-tight"
-            style={{ fontSize: 'clamp(44px, 7vw, 88px)' }}
-          >
-            <span className="text-white">TRAINING &</span>
-            <br />
-            <span style={{ WebkitTextStroke: '1.5px rgba(255,255,255,0.7)', WebkitTextFillColor: 'transparent' }}>
-              JOURNEY
-            </span>
-          </div>
+        {/* Pill Badge */}
+        <motion.div
+          initial={{ opacity: 0, y: 15 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.6 }}
+          className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[#161616] border border-orange-500/30 text-orange-400 text-xs font-mono uppercase tracking-widest mb-6 shadow-[0_0_15px_rgba(249,115,22,0.15)]"
+        >
+          <span className="w-4 h-4 rounded-full bg-orange-500/20 flex items-center justify-center text-[10px] text-orange-400 font-bold">
+            🎓
+          </span>
+          <span>SPECIALIZED TRAINING</span>
         </motion.div>
 
-        {/* Training card — editorial style */}
-        <motion.div variants={fadeUp}>
-          <div
-            className="relative rounded-3xl overflow-hidden"
-            style={{ background: 'rgba(255,255,255,0.025)', border: '1px solid rgba(255,255,255,0.08)' }}
-          >
-            {/* Subtle glow */}
-            <div
-              className="absolute top-0 left-0 w-full h-1 pointer-events-none"
-              style={{ background: 'linear-gradient(90deg, transparent, rgba(56,189,248,0.4), transparent)' }}
-            />
+        {/* Heading */}
+        <motion.h2
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.7, delay: 0.1 }}
+          className="font-extrabold tracking-tight text-center leading-[1.05] text-white max-w-3xl mb-16"
+          style={{ fontSize: 'clamp(36px, 5.5vw, 68px)' }}
+        >
+          Intensive software engineering training.
+        </motion.h2>
 
-            <div className="grid grid-cols-1 lg:grid-cols-12 gap-0">
-              {/* Left: headline */}
-              <div className="lg:col-span-4 p-8 sm:p-10 border-b lg:border-b-0 lg:border-r border-white/[0.06] flex flex-col justify-between gap-8">
-                <div className="space-y-4">
-                  <span className="font-mono text-[10px] tracking-[0.22em] text-cyan-400/60 uppercase block">
-                    INTENSIVE BOOT CAMP
-                  </span>
-                  <h3 className="font-black text-white leading-tight text-xl sm:text-2xl">
-                    Job Ready DSA Boot Camp<br />Using Java
-                  </h3>
-                  <p className="font-light text-white/50 text-sm leading-relaxed">
-                    {t.organization}
-                  </p>
-                </div>
+        {/* Featured Training Card (Bento Style) */}
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.7 }}
+          className="w-full max-w-4xl rounded-3xl bg-[#121214] border border-white/10 p-8 sm:p-10 shadow-2xl relative overflow-hidden group hover:border-orange-500/40 transition-all duration-300"
+        >
+          <div className="flex flex-col md:flex-row md:items-start justify-between gap-6 mb-6">
+            <div className="space-y-2">
+              <span className="text-[10px] font-mono tracking-widest text-orange-400 uppercase font-semibold block">
+                COMPREHENSIVE BOOT CAMP
+              </span>
+              <h3 className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">
+                {bootCamp.title}
+              </h3>
+              <p className="text-sm font-mono text-neutral-400">
+                {bootCamp.organization}
+              </p>
+            </div>
 
-                <div className="space-y-3">
-                  <div className="flex items-center gap-2 text-[10px] font-mono">
-                    <div className="w-1.5 h-1.5 rounded-full bg-cyan-400" />
-                    <span className="text-white/40 uppercase tracking-widest">{t.duration}</span>
-                  </div>
-                  <a
-                    href={t.certificateUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full text-xs font-mono tracking-widest text-white border border-white/14 hover:border-white/35 hover:bg-white/5 transition-all uppercase"
-                  >
-                    <ExternalLink className="w-3.5 h-3.5" />
-                    <span>VIEW CERTIFICATE</span>
-                  </a>
-                </div>
-              </div>
+            <div className="flex flex-col items-start md:items-end gap-3 shrink-0">
+              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/[0.05] border border-white/10 text-xs font-mono text-neutral-300">
+                <Calendar className="w-3.5 h-3.5 text-orange-400" />
+                <span>{bootCamp.duration}</span>
+              </span>
 
-              {/* Right: description + topics */}
-              <div className="lg:col-span-8 p-8 sm:p-10 space-y-8">
-                <p className="text-white/55 font-light text-sm sm:text-base leading-relaxed">
-                  {t.description}
-                </p>
+              <a
+                href={bootCamp.certificateUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-2 px-4 py-2 rounded-full btn-orange text-xs font-bold uppercase tracking-wider shadow-lg"
+              >
+                <span>View Certificate</span>
+                <ExternalLink className="w-3.5 h-3.5" />
+              </a>
+            </div>
+          </div>
 
-                <div>
-                  <span className="font-mono text-[10px] tracking-[0.22em] text-white/25 uppercase block mb-4">
-                    TOPICS COVERED
-                  </span>
-                  <div className="flex flex-wrap gap-2">
-                    {t.topics.map((topic) => (
-                      <span
-                        key={topic}
-                        className="px-3 py-1.5 rounded-full font-mono text-[11px] text-white/50 border border-white/8 tracking-wide"
-                      >
-                        {topic}
-                      </span>
-                    ))}
-                  </div>
-                </div>
-              </div>
+          <p className="text-neutral-400 text-sm sm:text-base font-light leading-relaxed mb-8">
+            {bootCamp.description}
+          </p>
+
+          {/* Topics Covered */}
+          <div className="border-t border-white/10 pt-6">
+            <span className="text-[10px] font-mono tracking-widest text-neutral-400 uppercase block mb-3">
+              CURRICULUM MODULES
+            </span>
+            <div className="flex flex-wrap gap-2">
+              {bootCamp.topics.map((topic) => (
+                <span
+                  key={topic}
+                  className="px-3 py-1.5 rounded-xl bg-white/[0.04] border border-white/5 text-neutral-300 text-xs font-mono flex items-center gap-1.5"
+                >
+                  <CheckCircle2 className="w-3 h-3 text-orange-400" />
+                  <span>{topic}</span>
+                </span>
+              ))}
             </div>
           </div>
         </motion.div>
-      </motion.div>
+
+      </div>
     </section>
   );
 }

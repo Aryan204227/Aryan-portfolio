@@ -1,106 +1,94 @@
-import { useRef, useState } from 'react';
-import { motion, useInView } from 'framer-motion';
-import { ExternalLink } from 'lucide-react';
+import React from 'react';
+import { motion } from 'framer-motion';
+import { Award, ExternalLink, ShieldCheck } from 'lucide-react';
 import { portfolioData } from '../data/portfolioData';
 
 const { certificates } = portfolioData;
 
 export default function Certificates() {
-  const ref = useRef(null);
-  const inView = useInView(ref, { once: true, margin: '-100px' });
-  const [hoveredRow, setHoveredRow] = useState(null);
-
   return (
-    <section id="certificates" className="relative bg-[#07080c]">
-      <div className="w-full h-px" style={{ background: 'linear-gradient(to right, transparent, rgba(255,255,255,0.07), transparent)' }} />
+    <section id="certificates" className="relative bg-[#0a0a0a] py-32 px-6 sm:px-10 lg:px-16 overflow-hidden">
+      
+      {/* Background glow */}
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[400px] bg-orange-500/[0.02] rounded-full blur-3xl pointer-events-none" />
 
-      {/* Ghost number */}
-      <div
-        className="absolute top-0 left-0 select-none pointer-events-none font-black leading-none"
-        style={{ fontSize: 'clamp(140px, 22vw, 300px)', color: 'rgba(255,255,255,0.02)' }}
-        aria-hidden
-      >
-        07
-      </div>
+      <div className="relative z-10 max-w-7xl mx-auto flex flex-col items-center">
 
-      <div ref={ref} className="relative z-10 max-w-[1440px] mx-auto px-6 sm:px-10 lg:px-16 xl:px-20 py-32">
-
-        {/* Header */}
+        {/* Pill Badge */}
         <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          animate={inView ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 0.7 }}
-          className="mb-20"
+          initial={{ opacity: 0, y: 15 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.6 }}
+          className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[#161616] border border-orange-500/30 text-orange-400 text-xs font-mono uppercase tracking-widest mb-6 shadow-[0_0_15px_rgba(249,115,22,0.15)]"
         >
-          <span className="font-mono text-[11px] tracking-[0.22em] text-white/25 uppercase block mb-5">
-            07 / Credentials
+          <span className="w-4 h-4 rounded-full bg-orange-500/20 flex items-center justify-center text-[10px] text-orange-400 font-bold">
+            📜
           </span>
-          <div style={{ fontSize: 'clamp(44px, 7vw, 92px)' }} className="font-black tracking-tight leading-[0.9]">
-            <span className="text-white">CERTIFICATES &</span><br />
-            <span style={{ WebkitTextStroke: '1.5px rgba(255,255,255,0.65)', WebkitTextFillColor: 'transparent' }}>
-              CREDENTIALS
-            </span>
-          </div>
+          <span>CREDENTIALS</span>
         </motion.div>
 
-        {/* Archive rows */}
-        <div className="border-t border-white/[0.07]">
-          {certificates.map((cert, i) => (
-            <motion.a
+        {/* Heading */}
+        <motion.h2
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.7, delay: 0.1 }}
+          className="font-extrabold tracking-tight text-center leading-[1.05] text-white max-w-3xl mb-16"
+          style={{ fontSize: 'clamp(36px, 5.5vw, 68px)' }}
+        >
+          Verified industry certifications &amp; milestones.
+        </motion.h2>
+
+        {/* 3 Certificates Cards Grid */}
+        <div className="w-full grid grid-cols-1 md:grid-cols-3 gap-6 sm:gap-8">
+          {certificates.map((cert, idx) => (
+            <motion.div
               key={cert.id}
-              href={cert.url}
-              target="_blank"
-              rel="noopener noreferrer"
-              initial={{ opacity: 0, y: 20 }}
-              animate={inView ? { opacity: 1, y: 0 } : {}}
-              transition={{ delay: i * 0.1 + 0.2, duration: 0.65 }}
-              className="group block border-b border-white/[0.07] cursor-pointer"
-              style={{
-                background: hoveredRow === i ? 'rgba(255,255,255,0.02)' : 'transparent',
-                transition: 'background 0.3s ease',
-              }}
-              onMouseEnter={() => setHoveredRow(i)}
-              onMouseLeave={() => setHoveredRow(null)}
-              data-cursor="VIEW"
+              initial={{ opacity: 0, y: 25 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.6, delay: idx * 0.1 }}
+              className="rounded-3xl bg-[#121214] border border-white/10 p-7 shadow-2xl flex flex-col justify-between hover:border-orange-500/40 transition-all duration-300 group relative overflow-hidden"
             >
-              <div className="flex items-center justify-between gap-6 py-7 sm:py-8">
-                {/* Left: number + title + issuer */}
-                <div className="flex items-center gap-6 sm:gap-10 min-w-0">
-                  <span className="font-mono text-[11px] tracking-[0.18em] text-white/20 shrink-0">
-                    {String(i + 1).padStart(2, '0')}
+              <div>
+                <div className="flex items-center justify-between mb-4">
+                  <span className="text-[10px] font-mono tracking-widest text-orange-400 uppercase font-semibold">
+                    CREDENTIAL 0{idx + 1}
                   </span>
-                  <div className="min-w-0">
-                    <div
-                      className="font-bold text-white leading-tight truncate transition-all duration-300"
-                      style={{ fontSize: hoveredRow === i ? 'clamp(17px, 2vw, 24px)' : 'clamp(15px, 1.8vw, 21px)' }}
-                    >
-                      {cert.title}
-                    </div>
-                    <div className="font-mono text-[11px] text-white/30 mt-1 tracking-wide">
-                      {cert.organization}
-                    </div>
-                  </div>
+                  <ShieldCheck className="w-4 h-4 text-emerald-400" />
                 </div>
 
-                {/* Right: date + view link */}
-                <div className="flex items-center gap-6 shrink-0">
-                  {cert.date && (
-                    <span className="font-mono text-[11px] text-white/25 hidden sm:block tracking-wider">
-                      {cert.date}
-                    </span>
-                  )}
-                  <div
-                    className="flex items-center gap-1.5 font-mono text-[11px] uppercase tracking-widest transition-colors duration-300"
-                    style={{ color: hoveredRow === i ? 'rgba(255,255,255,0.7)' : 'rgba(255,255,255,0.2)' }}
-                  >
-                    <span>VIEW</span>
-                    <ExternalLink className="w-3 h-3" />
-                  </div>
-                </div>
+                <h3 className="text-xl font-bold text-white tracking-tight mb-2 group-hover:text-orange-300 transition-colors">
+                  {cert.title}
+                </h3>
+
+                <p className="text-xs font-mono text-neutral-400 mb-1">
+                  {cert.organization}
+                </p>
+
+                {cert.date && (
+                  <span className="text-[10px] font-mono text-neutral-500 block">
+                    {cert.date}
+                  </span>
+                )}
               </div>
-            </motion.a>
+
+              <div className="pt-6 border-t border-white/10 mt-6">
+                <a
+                  href={cert.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="w-full flex items-center justify-center gap-2 py-2.5 rounded-full bg-white/[0.05] hover:bg-orange-500/20 text-neutral-300 hover:text-orange-400 border border-white/10 hover:border-orange-500/30 text-xs font-mono uppercase tracking-wider transition-all"
+                >
+                  <span>Verify Credential</span>
+                  <ExternalLink className="w-3.5 h-3.5" />
+                </a>
+              </div>
+            </motion.div>
           ))}
         </div>
+
       </div>
     </section>
   );

@@ -1,331 +1,202 @@
-import { useEffect, useRef, useState } from 'react';
-import { motion, useScroll, useTransform } from 'framer-motion';
-import { Download, Github, Linkedin, Mail, MessageCircle } from 'lucide-react';
+import React, { useState } from 'react';
+import { motion } from 'framer-motion';
+import { ArrowRight, Terminal as TerminalIcon, MessageCircle } from 'lucide-react';
 import { portfolioData } from '../data/portfolioData';
+import TerminalDrawer from '../components/TerminalDrawer';
 
 const { personalInfo, socialLinks } = portfolioData;
 
-/* Per-character reveal */
-function AnimatedWord({ word, outlined = false, startDelay = 0 }) {
-  return (
-    <span
-      className="inline-flex overflow-hidden leading-none"
-      style={{ perspective: '1000px', verticalAlign: 'bottom' }}
-    >
-      {word.split('').map((char, i) => (
-        <motion.span
-          key={i}
-          initial={{ opacity: 0, y: '100%', rotateX: 45 }}
-          animate={{ opacity: 1, y: '0%', rotateX: 0 }}
-          transition={{
-            delay: startDelay + i * 0.045,
-            duration: 0.7,
-            ease: [0.22, 1, 0.36, 1],
-          }}
-          style={
-            outlined
-              ? {
-                  WebkitTextStroke: '1.5px rgba(255,255,255,0.78)',
-                  WebkitTextFillColor: 'transparent',
-                  display: 'inline-block',
-                }
-              : { display: 'inline-block' }
-          }
-        >
-          {char}
-        </motion.span>
-      ))}
-    </span>
-  );
-}
-
 export default function Hero() {
-  const [cursorLight, setCursorLight] = useState({ x: -9999, y: -9999 });
-  const sectionRef = useRef(null);
-  const { scrollY } = useScroll();
-  const portraitY = useTransform(scrollY, [0, 700], [0, -80]);
-  const titleY = useTransform(scrollY, [0, 700], [0, -30]);
-  const bgY = useTransform(scrollY, [0, 700], [0, 40]);
-
-  useEffect(() => {
-    const onMove = (e) => {
-      const section = sectionRef.current;
-      if (!section) return;
-      const rect = section.getBoundingClientRect();
-      setCursorLight({ x: e.clientX - rect.left, y: e.clientY - rect.top });
-    };
-    window.addEventListener('mousemove', onMove, { passive: true });
-    return () => window.removeEventListener('mousemove', onMove);
-  }, []);
+  const [terminalOpen, setTerminalOpen] = useState(false);
 
   return (
     <section
       id="home"
-      ref={sectionRef}
-      className="relative min-h-screen overflow-hidden bg-[#070809] select-none"
+      className="relative min-h-screen flex flex-col justify-between items-center bg-[#0a0a0a] overflow-hidden select-none px-6 pt-32 pb-16"
     >
-      {/* Cursor ambient light — stays within section */}
-      <div
-        className="absolute pointer-events-none z-0"
-        style={{
-          width: 900,
-          height: 900,
-          borderRadius: '50%',
-          background: 'radial-gradient(circle, rgba(56,189,248,0.045) 0%, transparent 65%)',
-          transform: `translate(${cursorLight.x - 450}px, ${cursorLight.y - 450}px)`,
-          transition: 'transform 0.5s ease',
-          top: 0,
-          left: 0,
-        }}
-      />
+      {/* ── Subtle Starfield Background Dots ── */}
+      <div className="absolute inset-0 pointer-events-none opacity-40">
+        <div className="absolute top-1/4 left-1/6 w-1 h-1 bg-white rounded-full animate-pulse" />
+        <div className="absolute top-1/3 right-1/4 w-1 h-1 bg-white rounded-full" />
+        <div className="absolute top-2/3 left-1/3 w-1.5 h-1.5 bg-orange-400/40 rounded-full animate-ping" />
+        <div className="absolute top-1/5 right-1/8 w-1 h-1 bg-white/60 rounded-full" />
+        <div className="absolute bottom-1/3 right-1/5 w-1 h-1 bg-white/40 rounded-full" />
+        <div className="absolute top-1/2 left-1/12 w-1 h-1 bg-white/30 rounded-full" />
+      </div>
 
-      {/* Static top ambient */}
-      <div
-        className="absolute inset-x-0 top-0 pointer-events-none z-0"
-        style={{
-          height: 500,
-          background: 'radial-gradient(ellipse 70% 50% at 50% -5%, rgba(56,189,248,0.065) 0%, transparent 70%)',
-        }}
-      />
+      {/* ── Fixed Right-Edge Badge ("AVAILABLE FOR OPPORTUNITY") as in reference ── */}
+      <div className="fixed right-3 sm:right-5 top-1/2 -translate-y-1/2 z-40 hidden sm:flex items-center">
+        <div className="side-label flex items-center gap-2 py-3 px-1.5 rounded-full border border-white/10 bg-[#121212]/80 backdrop-blur-md shadow-xl text-[10px] text-neutral-400">
+          <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+          <span>AVAILABLE FOR OPPORTUNITY</span>
+        </div>
+      </div>
 
-      {/* ── BACKGROUND GHOST TYPOGRAPHY ── */}
-      <motion.div
-        style={{ y: bgY }}
-        className="absolute inset-0 flex items-center justify-end pr-4 pointer-events-none z-0 overflow-hidden"
-      >
-        <div
-          className="font-black tracking-tighter leading-none select-none"
-          style={{
-            fontSize: 'clamp(200px, 30vw, 420px)',
-            color: 'rgba(255,255,255,0.018)',
-            letterSpacing: '-0.04em',
-            userSelect: 'none',
-          }}
-          aria-hidden
+      {/* ── Top Section Text: Left Tagline ── */}
+      <div className="w-full max-w-7xl flex flex-col sm:flex-row justify-between items-start pt-6 z-10 pointer-events-none">
+        <motion.div
+          initial={{ opacity: 0, y: -15 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8, delay: 0.2 }}
+          className="text-[11px] sm:text-xs font-mono tracking-widest text-neutral-400 uppercase leading-relaxed max-w-xs pointer-events-auto"
         >
-          AD
-        </div>
-      </motion.div>
-
-      {/* ── MAIN GRID ── */}
-      <div className="relative z-10 min-h-screen grid grid-cols-1 lg:grid-cols-[1fr_420px] xl:grid-cols-[1fr_480px] items-stretch">
-
-        {/* LEFT: typography + content */}
-        <div className="flex flex-col justify-between px-6 sm:px-10 lg:px-14 xl:px-20 pt-28 pb-10">
-
-          {/* Top eyebrow */}
-          <motion.div
-            initial={{ opacity: 0, x: -20 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ delay: 0.1, duration: 0.6 }}
-            className="flex items-center gap-3 self-start"
-          >
-            <div className="w-1.5 h-1.5 rounded-full bg-emerald-400" style={{ animation: 'pulse 2s infinite' }} />
-            <span className="font-mono text-[11px] tracking-[0.22em] text-slate-500 uppercase">
-              Available for Opportunities
-            </span>
-          </motion.div>
-
-          {/* Center: big name */}
-          <motion.div style={{ y: titleY }} className="flex-1 flex flex-col justify-center py-8">
-            {/* Name */}
-            <div
-              className="font-black leading-[0.85] tracking-tight"
-              style={{ fontSize: 'clamp(72px, 12vw, 156px)' }}
-            >
-              <div className="overflow-hidden block">
-                <AnimatedWord word="ARYAN" startDelay={0.2} />
-              </div>
-              <div className="overflow-hidden block">
-                <AnimatedWord word="DADWAL" outlined startDelay={0.4} />
-              </div>
-            </div>
-
-            {/* Role separator */}
-            <motion.div
-              initial={{ opacity: 0, scaleX: 0 }}
-              animate={{ opacity: 1, scaleX: 1 }}
-              transition={{ delay: 1.0, duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
-              style={{ originX: 0 }}
-              className="w-full max-w-sm h-px bg-white/10 mt-7 mb-5"
-            />
-
-            {/* Role + desc */}
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 1.05, duration: 0.7 }}
-              className="space-y-3"
-            >
-              <div className="flex items-center gap-3">
-                <span className="font-mono text-[12px] tracking-[0.25em] text-white/50 uppercase">
-                  Full Stack Developer
-                </span>
-              </div>
-              <p
-                className="text-slate-400 font-light leading-[1.7] max-w-md"
-                style={{ fontSize: 'clamp(13px, 1.3vw, 16px)' }}
-              >
-                CS student building practical full-stack apps, AI-powered solutions
-                &amp; algorithmic systems with Java and the MERN stack.
-              </p>
-            </motion.div>
-
-            {/* CTAs */}
-            <motion.div
-              initial={{ opacity: 0, y: 18 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 1.25, duration: 0.7 }}
-              className="flex flex-wrap items-center gap-4 mt-8"
-            >
-              <a
-                href="#work"
-                data-cursor="VIEW"
-                onClick={(e) => {
-                  e.preventDefault();
-                  document.getElementById('work')?.scrollIntoView({ behavior: 'smooth' });
-                }}
-                className="group inline-flex items-center gap-2.5 px-8 py-3.5 rounded-full bg-white text-[#07080c] font-bold text-xs tracking-[0.14em] uppercase hover:bg-white/90 transition-colors shadow-lg"
-              >
-                View Work
-                <span className="group-hover:translate-x-1 transition-transform duration-300 inline-block">→</span>
-              </a>
-              <a
-                href={personalInfo.resumePdf}
-                download="Aryan_Dadwal_Professional_Resume.pdf"
-                data-cursor="PDF"
-                className="inline-flex items-center gap-2 px-7 py-3.5 rounded-full border border-white/15 text-white text-xs tracking-[0.14em] uppercase font-medium hover:border-white/40 hover:bg-white/[0.04] transition-all"
-              >
-                <Download className="w-3.5 h-3.5 opacity-60" />
-                Resume
-              </a>
-            </motion.div>
-          </motion.div>
-
-          {/* Bottom: metadata strip + socials */}
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 1.6, duration: 0.9 }}
-            className="space-y-5"
-          >
-            {/* Metadata */}
-            <div className="flex flex-wrap items-center gap-0">
-              {['B.TECH CSE', 'LPU', 'CGPA 7.07', 'JAVA · MERN'].map((item, i, arr) => (
-                <span key={item} className="flex items-center">
-                  <span className="font-mono text-[10px] tracking-[0.18em] text-slate-600 uppercase px-4 first:pl-0">
-                    {item}
-                  </span>
-                  {i < arr.length - 1 && <span className="w-px h-2.5 bg-white/12" />}
-                </span>
-              ))}
-            </div>
-
-            {/* Social links */}
-            <div className="flex items-center gap-6">
-              {[
-                { href: socialLinks.github, Icon: Github, label: 'GitHub' },
-                { href: socialLinks.linkedin, Icon: Linkedin, label: 'LinkedIn' },
-                { href: personalInfo.whatsAppUrl, Icon: MessageCircle, label: 'WhatsApp' },
-                { href: socialLinks.email, Icon: Mail, label: 'Email' },
-              ].map(({ href, Icon, label }) => (
-                <a
-                  key={label}
-                  href={href}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  aria-label={label}
-                  data-cursor={label.toUpperCase()}
-                  className="text-slate-600 hover:text-white/80 transition-colors duration-200 flex items-center gap-1.5"
-                >
-                  <Icon className="w-4 h-4" />
-                  <span className="font-mono text-[10px] tracking-wider hidden sm:inline text-slate-500 hover:text-white/70 transition-colors">
-                    {label}
-                  </span>
-                </a>
-              ))}
-            </div>
-          </motion.div>
-        </div>
-
-        {/* RIGHT: editorial portrait */}
-        <div className="relative hidden lg:flex items-end overflow-hidden">
-          {/* Portrait */}
-          <motion.div
-            style={{ y: portraitY }}
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.3, duration: 1.1 }}
-            className="relative w-full h-full"
-          >
-            <img
-              src={personalInfo.profileImage}
-              alt="Aryan Dadwal"
-              className="w-full h-full object-cover object-top"
-              style={{ minHeight: '100vh', maxHeight: '100vh' }}
-              loading="eager"
-            />
-
-            {/* Left edge gradient — blends into background */}
-            <div
-              className="absolute inset-y-0 left-0 w-24 pointer-events-none"
-              style={{ background: 'linear-gradient(to right, #070809 0%, transparent 100%)' }}
-            />
-
-            {/* Bottom gradient fade */}
-            <div
-              className="absolute bottom-0 left-0 right-0 h-40 pointer-events-none"
-              style={{ background: 'linear-gradient(to top, #070809 0%, transparent 100%)' }}
-            />
-
-            {/* Subtle vignette right edge */}
-            <div
-              className="absolute inset-y-0 right-0 w-8 pointer-events-none"
-              style={{ background: 'linear-gradient(to left, rgba(7,8,9,0.6) 0%, transparent 100%)' }}
-            />
-
-            {/* Floating metadata labels on portrait */}
-            <div className="absolute top-28 left-0 -translate-x-0 space-y-1.5 pl-4">
-              <div
-                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[9px] font-mono tracking-widest uppercase"
-                style={{ background: 'rgba(7,8,9,0.75)', border: '1px solid rgba(255,255,255,0.08)', color: 'rgba(255,255,255,0.5)' }}
-              >
-                <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 inline-block" style={{ animation: 'pulse 2s infinite' }} />
-                Open to Work
-              </div>
-            </div>
-
-            {/* Bottom-left corner tech stamp */}
-            <div
-              className="absolute bottom-8 left-4 space-y-0.5"
-            >
-              <div className="font-mono text-[9px] tracking-[0.2em] text-white/25 uppercase">FULL STACK DEV</div>
-              <div className="font-mono text-[9px] tracking-[0.2em] text-white/15 uppercase">LPU · B.TECH CSE</div>
-            </div>
-          </motion.div>
-        </div>
+          <span className="text-white font-semibold">ARYAN DADWAL</span> •<br />
+          ARCHITECTING MODERN,<br />
+          SCALABLE WEB PLATFORMS WITH<br />
+          PREMIUM LOGIC.
+        </motion.div>
       </div>
 
-      {/* Mobile portrait strip */}
-      <div className="lg:hidden relative mt-8 mx-6 sm:mx-10 rounded-2xl overflow-hidden" style={{ maxHeight: 340 }}>
-        <img
-          src={personalInfo.profileImage}
-          alt="Aryan Dadwal"
-          className="w-full object-cover object-top"
-          style={{ height: 340 }}
-          loading="eager"
-        />
+      {/* ── Center Massive Typography & Floating Watermark Icons (Reference Layout) ── */}
+      <div className="relative my-auto flex flex-col items-center justify-center text-center z-10 w-full max-w-6xl py-8">
+        
+        {/* Floating LinkedIn Watermark on Left */}
+        <motion.a
+          href={socialLinks.linkedin}
+          target="_blank"
+          rel="noopener noreferrer"
+          initial={{ opacity: 0, scale: 0.8 }}
+          animate={{ opacity: 0.35, scale: 1 }}
+          whileHover={{ opacity: 0.95, scale: 1.15 }}
+          transition={{ duration: 0.6 }}
+          className="absolute -left-2 sm:left-4 lg:left-12 top-1/3 -translate-y-1/2 text-neutral-400 hover:text-white transition-all cursor-pointer z-20"
+          title="Aryan Dadwal on LinkedIn"
+          aria-label="LinkedIn"
+        >
+          <svg className="w-12 h-12 sm:w-16 sm:h-16" fill="currentColor" viewBox="0 0 24 24">
+            <path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/>
+          </svg>
+        </motion.a>
+
+        {/* Floating GitHub Watermark on Top-Right */}
+        <motion.a
+          href={socialLinks.github}
+          target="_blank"
+          rel="noopener noreferrer"
+          initial={{ opacity: 0, scale: 0.8 }}
+          animate={{ opacity: 0.35, scale: 1 }}
+          whileHover={{ opacity: 0.95, scale: 1.15 }}
+          transition={{ duration: 0.6 }}
+          className="absolute -right-2 sm:right-8 lg:right-16 top-1/6 text-neutral-400 hover:text-white transition-all cursor-pointer z-20"
+          title="Aryan Dadwal on GitHub"
+          aria-label="GitHub"
+        >
+          <svg className="w-12 h-12 sm:w-16 sm:h-16" fill="currentColor" viewBox="0 0 24 24">
+            <path fillRule="evenodd" clipRule="evenodd" d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.53 1.032 1.53 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"/>
+          </svg>
+        </motion.a>
+
+        {/* Floating WhatsApp / Contact Watermark on Lower-Right */}
+        <motion.a
+          href={personalInfo.whatsAppUrl}
+          target="_blank"
+          rel="noopener noreferrer"
+          initial={{ opacity: 0, scale: 0.8 }}
+          animate={{ opacity: 0.35, scale: 1 }}
+          whileHover={{ opacity: 0.95, scale: 1.15 }}
+          transition={{ duration: 0.6 }}
+          className="absolute -right-2 sm:right-6 lg:right-12 bottom-1/4 text-neutral-400 hover:text-emerald-400 transition-all cursor-pointer z-20"
+          title="Direct WhatsApp"
+          aria-label="WhatsApp"
+        >
+          <MessageCircle className="w-10 h-10 sm:w-14 sm:h-14 stroke-[1.5]" />
+        </motion.a>
+
+        {/* Giant Centered Headline matching reference: "AI & WEB / SOFTWARE / DEVELOPER" -> "FULL STACK & / SOFTWARE / DEVELOPER" */}
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1] }}
+          className="font-extrabold tracking-tight font-display text-white"
+        >
+          <div
+            className="leading-[0.88] block text-white drop-shadow-[0_4px_30px_rgba(255,255,255,0.06)]"
+            style={{ fontSize: 'clamp(52px, 11vw, 138px)' }}
+          >
+            FULL STACK &amp;
+          </div>
+          <div
+            className="leading-[0.88] block text-white mt-1 drop-shadow-[0_4px_30px_rgba(255,255,255,0.06)]"
+            style={{ fontSize: 'clamp(52px, 11vw, 138px)' }}
+          >
+            SOFTWARE
+          </div>
+          <div
+            className="leading-[0.88] block text-white mt-1 drop-shadow-[0_4px_30px_rgba(255,255,255,0.06)]"
+            style={{ fontSize: 'clamp(52px, 11vw, 138px)' }}
+          >
+            DEVELOPER
+          </div>
+        </motion.div>
+
+        {/* Center Pill Button: "View Resume →" with subtle orange glow border */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.7, delay: 0.4 }}
+          className="mt-8 z-20"
+        >
+          <a
+            href={personalInfo.resumePdf}
+            download="Aryan_Dadwal_Professional_Resume.pdf"
+            className="group inline-flex items-center gap-2.5 px-8 py-3.5 rounded-full bg-[#141416] text-white text-xs sm:text-sm font-semibold tracking-wide border border-orange-500/40 hover:border-orange-500 shadow-[0_0_24px_rgba(249,115,22,0.25)] hover:shadow-[0_0_36px_rgba(249,115,22,0.45)] transition-all duration-300"
+            title="Download Aryan Dadwal Official Resume (PDF)"
+          >
+            <span>View Resume</span>
+            <ArrowRight className="w-4 h-4 text-orange-400 group-hover:translate-x-1 transition-transform" />
+          </a>
+        </motion.div>
+      </div>
+
+      {/* ── Bottom Section Text: Right Tagline ── */}
+      <div className="w-full max-w-7xl flex justify-end items-end pb-4 z-10 pointer-events-none">
+        <motion.div
+          initial={{ opacity: 0, y: 15 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8, delay: 0.3 }}
+          className="text-[11px] sm:text-xs font-mono tracking-widest text-neutral-400 uppercase leading-relaxed text-right max-w-xs pointer-events-auto"
+        >
+          CRAFTING ULTRA-FAST REACT<br />
+          APPLICATIONS POWERED BY<br />
+          NODE.JS &amp; JAVA.
+        </motion.div>
+      </div>
+
+      {/* ── Glowing Planetary Horizon Arc at Bottom (Exact Match to Reference Screenshot) ── */}
+      <div className="absolute bottom-0 left-0 right-0 h-44 overflow-hidden pointer-events-none z-0">
+        {/* Curving bright arc line */}
         <div
-          className="absolute bottom-0 left-0 right-0 h-32 pointer-events-none"
-          style={{ background: 'linear-gradient(to top, #070809 0%, transparent 100%)' }}
+          className="absolute left-1/2 -translate-x-1/2 bottom-[-180px] w-[140%] max-w-[1500px] h-[280px] rounded-[100%] border-t border-orange-500/70"
+          style={{
+            boxShadow: '0 -8px 45px rgba(249,115,22,0.65), 0 -2px 10px rgba(255,255,255,0.5)',
+          }}
+        />
+        {/* Ambient rising bloom */}
+        <div
+          className="absolute left-1/2 -translate-x-1/2 bottom-[-50px] w-[100%] max-w-[1100px] h-[160px] rounded-full pointer-events-none"
+          style={{
+            background: 'radial-gradient(ellipse at 50% 100%, rgba(249,115,22,0.45) 0%, rgba(234,88,12,0.18) 50%, transparent 80%)',
+            filter: 'blur(16px)',
+          }}
         />
       </div>
 
-      {/* Bottom divider */}
-      <div
-        className="absolute bottom-0 left-0 right-0 h-px pointer-events-none"
-        style={{ background: 'linear-gradient(to right, transparent, rgba(255,255,255,0.07), transparent)' }}
-      />
+      {/* ── Bottom-Left Interactive CLI Terminal Button (`>_`) ── */}
+      <div className="fixed bottom-6 left-6 z-40">
+        <button
+          onClick={() => setTerminalOpen(true)}
+          className="group w-12 h-12 rounded-full bg-[#121214]/90 border border-white/10 hover:border-orange-500/50 shadow-2xl backdrop-blur-xl flex items-center justify-center text-neutral-300 hover:text-orange-400 hover:scale-105 active:scale-95 transition-all"
+          title="Open Developer CLI Terminal (>_)"
+          aria-label="Open Terminal"
+        >
+          <TerminalIcon className="w-5 h-5 text-neutral-300 group-hover:text-orange-400" />
+        </button>
+      </div>
+
+
+
+      {/* Interactive Developer Terminal Modal */}
+      <TerminalDrawer isOpen={terminalOpen} onClose={() => setTerminalOpen(false)} />
     </section>
   );
 }

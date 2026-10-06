@@ -2,140 +2,177 @@
 @tailwind components;
 @tailwind utilities;
 
-/* ═══════════════════════════════════════════
-   ROOT & BASE
-═══════════════════════════════════════════ */
+/* ═══════════════════════════════════════════════════
+   ROOT
+═══════════════════════════════════════════════════ */
 :root {
-  color-scheme: dark;
-  --bg: #070809;
-  --white: #f0f1f3;
-  --muted: #6b7280;
-  --accent: #38bdf8;
-  --border: rgba(255,255,255,0.07);
+  --bg:       #0a0a0a;
+  --surface:  #111111;
+  --surface2: #161616;
+  --border:   rgba(255,255,255,0.08);
+  --muted:    rgba(255,255,255,0.4);
+  --accent:   #f97316;
+  --accent2:  #ea580c;
+  --green:    #84cc16;
 }
 
-html {
-  scroll-behavior: smooth;
-  background: var(--bg);
-}
+html { scroll-behavior: smooth; background: var(--bg); }
 
 body {
-  margin: 0;
-  padding: 0;
+  margin: 0; padding: 0;
   background: var(--bg);
-  color: var(--white);
-  font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  color: #ffffff;
+  font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   overflow-x: hidden;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  /* Hide default cursor on desktop — replaced by custom cursor */
   cursor: none;
 }
 
-/* Restore pointer on touch devices */
 @media (pointer: coarse) {
   body { cursor: auto; }
 }
 
-/* ═══════════════════════════════════════════
+/* ═══════════════════════════════════════════════════
    SELECTION
-═══════════════════════════════════════════ */
-::selection {
-  background: rgba(56,189,248,0.15);
-  color: #e0f2fe;
-}
+═══════════════════════════════════════════════════ */
+::selection { background: rgba(249,115,22,0.22); color: #fed7aa; }
 
-/* ═══════════════════════════════════════════
-   GRAIN TEXTURE — proper animated film noise
-═══════════════════════════════════════════ */
+/* ═══════════════════════════════════════════════════
+   GRAIN — animated film texture
+═══════════════════════════════════════════════════ */
 body::before {
   content: '';
   position: fixed;
-  top: -100%;
-  left: -100%;
-  width: 300%;
-  height: 300%;
+  top: -100%; left: -100%;
+  width: 300%; height: 300%;
   pointer-events: none;
-  z-index: 997;
-  opacity: 0.032;
+  z-index: 9998;
+  opacity: 0.028;
   background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
-  background-size: 160px 160px;
-  animation: grain 7s steps(1) infinite;
+  background-size: 180px 180px;
+  animation: grain 8s steps(1) infinite;
 }
 
 @keyframes grain {
-  0%   { transform: translate(0, 0); }
-  14%  { transform: translate(-5%, -7%); }
-  28%  { transform: translate(-12%, 4%); }
-  42%  { transform: translate(6%, -18%); }
-  57%  { transform: translate(-4%, 22%); }
-  71%  { transform: translate(14%, 0%); }
-  85%  { transform: translate(0%, 14%); }
-  100% { transform: translate(0, 0); }
+  0%   { transform: translate(0,0); }
+  14%  { transform: translate(-4%,-8%); }
+  28%  { transform: translate(-12%,5%); }
+  42%  { transform: translate(6%,-16%); }
+  57%  { transform: translate(-3%,20%); }
+  71%  { transform: translate(13%,0); }
+  85%  { transform: translate(0,13%); }
+  100% { transform: translate(0,0); }
 }
 
-/* ═══════════════════════════════════════════
+/* ═══════════════════════════════════════════════════
    SCROLLBAR
-═══════════════════════════════════════════ */
+═══════════════════════════════════════════════════ */
 ::-webkit-scrollbar { width: 4px; }
-::-webkit-scrollbar-track { background: #070809; }
-::-webkit-scrollbar-thumb { background: #1a1f2e; border-radius: 2px; }
-::-webkit-scrollbar-thumb:hover { background: #252d40; }
+::-webkit-scrollbar-track { background: var(--bg); }
+::-webkit-scrollbar-thumb { background: #222; border-radius: 2px; }
+::-webkit-scrollbar-thumb:hover { background: #333; }
 
-/* ═══════════════════════════════════════════
-   TEXT STROKE UTILITIES
-═══════════════════════════════════════════ */
-.text-stroke {
-  -webkit-text-stroke: 1.5px rgba(255,255,255,0.75);
-  color: transparent;
-}
-.text-stroke-faint {
-  -webkit-text-stroke: 1px rgba(255,255,255,0.12);
-  color: transparent;
+/* ═══════════════════════════════════════════════════
+   CURSOR FIX
+═══════════════════════════════════════════════════ */
+a, button, [data-cursor], [role="button"] { cursor: none !important; }
+@media (pointer: coarse) {
+  a, button, [data-cursor], [role="button"] { cursor: auto !important; }
 }
 
-/* ═══════════════════════════════════════════
+/* ═══════════════════════════════════════════════════
    MARQUEE
-═══════════════════════════════════════════ */
-@keyframes marquee {
+═══════════════════════════════════════════════════ */
+@keyframes marquee-left {
   0%   { transform: translateX(0); }
   100% { transform: translateX(-50%); }
 }
 .animate-marquee {
-  animation: marquee 30s linear infinite;
-  display: flex;
-  width: max-content;
+  animation: marquee-left 25s linear infinite;
+  display: flex; width: max-content;
 }
 .animate-marquee:hover { animation-play-state: paused; }
 
-/* ═══════════════════════════════════════════
-   EXPERTISE / ARCHIVE ROWS
-═══════════════════════════════════════════ */
-.archive-row {
-  border-bottom: 1px solid rgba(255,255,255,0.06);
-  transition: background 0.35s ease, padding-left 0.4s cubic-bezier(0.22,1,0.36,1);
+/* ═══════════════════════════════════════════════════
+   ARC GLOW  (for hero)
+═══════════════════════════════════════════════════ */
+.arc-glow {
+  position: absolute;
+  bottom: -60px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 120%;
+  max-width: 900px;
+  height: 400px;
+  pointer-events: none;
+  background: radial-gradient(ellipse 80% 60% at 50% 100%,
+    rgba(249,115,22,0.55) 0%,
+    rgba(234,88,12,0.3) 30%,
+    rgba(249,115,22,0.05) 65%,
+    transparent 80%
+  );
+  border-radius: 50%;
+  filter: blur(8px);
 }
-.archive-row:first-of-type { border-top: 1px solid rgba(255,255,255,0.06); }
-.archive-row:hover { background: rgba(255,255,255,0.022); }
 
-/* ═══════════════════════════════════════════
-   LINKS must show pointer cursor override
-═══════════════════════════════════════════ */
-a, button, [data-cursor] {
-  cursor: none !important;
-}
-@media (pointer: coarse) {
-  a, button, [data-cursor] { cursor: auto !important; }
+/* ═══════════════════════════════════════════════════
+   PILL NAV  (reference-style)
+═══════════════════════════════════════════════════ */
+.pill-nav {
+  background: rgba(18,18,18,0.85);
+  border: 1px solid rgba(255,255,255,0.1);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-radius: 999px;
 }
 
-/* ═══════════════════════════════════════════
+/* ═══════════════════════════════════════════════════
+   CARD  (bento-style dark card)
+═══════════════════════════════════════════════════ */
+.card-dark {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+}
+
+/* ═══════════════════════════════════════════════════
+   ORANGE CTA BUTTON
+═══════════════════════════════════════════════════ */
+.btn-orange {
+  background: linear-gradient(135deg, #f97316, #ea580c);
+  color: #fff;
+  font-weight: 700;
+  border-radius: 999px;
+  transition: opacity 0.2s ease, transform 0.2s ease;
+}
+.btn-orange:hover { opacity: 0.88; transform: translateY(-1px); }
+
+/* ═══════════════════════════════════════════════════
+   VERTICAL SIDE LABEL  (reference right-edge label)
+═══════════════════════════════════════════════════ */
+.side-label {
+  writing-mode: vertical-rl;
+  text-orientation: mixed;
+  transform: rotate(180deg);
+  font-size: 10px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  font-family: 'JetBrains Mono', monospace;
+  color: rgba(255,255,255,0.35);
+  border: 1px solid rgba(255,255,255,0.1);
+  padding: 12px 6px;
+  border-radius: 6px;
+  background: rgba(255,255,255,0.03);
+}
+
+/* ═══════════════════════════════════════════════════
    REDUCED MOTION
-═══════════════════════════════════════════ */
+═══════════════════════════════════════════════════ */
 @media (prefers-reduced-motion: reduce) {
   *, ::before, ::after {
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
-    scroll-behavior: auto !important;
   }
 }

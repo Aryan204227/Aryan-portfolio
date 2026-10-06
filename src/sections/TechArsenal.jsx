@@ -1,134 +1,168 @@
-import { useRef } from 'react';
-import { motion, useInView } from 'framer-motion';
+import React, { useState } from 'react';
+import { motion } from 'framer-motion';
+import { 
+  Code2, 
+  FileCode, 
+  Coffee, 
+  Cpu, 
+  Binary, 
+  Terminal, 
+  Atom, 
+  Server, 
+  Network, 
+  Layout, 
+  Palette, 
+  Zap, 
+  Sparkles, 
+  Webhook, 
+  GitBranch, 
+  GitCommit, 
+  Cloud, 
+  Database, 
+  HardDrive, 
+  Brain, 
+  Repeat, 
+  GitFork, 
+  Boxes 
+} from 'lucide-react';
 
-const categories = [
-  {
-    label: 'LANGUAGES',
-    items: ['JavaScript', 'TypeScript', 'Java', 'C++', 'C', 'Python'],
-  },
-  {
-    label: 'FRONTEND',
-    items: ['React.js', 'HTML5', 'CSS3', 'Tailwind CSS', 'Vite'],
-  },
-  {
-    label: 'BACKEND',
-    items: ['Node.js', 'Express.js', 'REST APIs'],
-  },
-  {
-    label: 'DATABASE & TOOLS',
-    items: ['MongoDB', 'Git', 'GitHub', 'Render', 'DBMS'],
-  },
-  {
-    label: 'CS CORE',
-    items: ['Data Structures & Algorithms', 'OOP', 'Recursion & Backtracking', 'DFS', 'Multithreading'],
-  },
+const TECH_ITEMS = [
+  // Row 1: Core Web & Languages
+  { name: 'React.js', category: 'Frontend', color: '#38bdf8', icon: Atom },
+  { name: 'Node.js', category: 'Backend', color: '#22c55e', icon: Server },
+  { name: 'Express.js', category: 'Backend', color: '#ffffff', icon: Network },
+  { name: 'MongoDB', category: 'Database', color: '#10b981', icon: Database },
+  { name: 'JavaScript', category: 'Language', color: '#facc15', icon: Code2 },
+  { name: 'TypeScript', category: 'Language', color: '#60a5fa', icon: FileCode },
+  { name: 'Java', category: 'Language', color: '#ea580c', icon: Coffee },
+  { name: 'C++', category: 'Language', color: '#3b82f6', icon: Cpu },
+  { name: 'Python', category: 'Language', color: '#38bdf8', icon: Terminal },
+  { name: 'Tailwind CSS', category: 'Frontend', color: '#38bdf8', icon: Sparkles },
+  { name: 'Vite', category: 'Frontend', color: '#a855f7', icon: Zap },
+  { name: 'HTML5', category: 'Frontend', color: '#f97316', icon: Layout },
+
+  // Row 2: Tools, Systems & CS
+  { name: 'Git', category: 'Tools', color: '#f97316', icon: GitBranch },
+  { name: 'GitHub', category: 'Tools', color: '#ffffff', icon: GitCommit },
+  { name: 'Render Cloud', category: 'Tools', color: '#38bdf8', icon: Cloud },
+  { name: 'REST APIs', category: 'Backend', color: '#84cc16', icon: Webhook },
+  { name: 'DBMS & SQL', category: 'Database', color: '#3b82f6', icon: HardDrive },
+  { name: 'Data Structures', category: 'Core CS', color: '#c084fc', icon: Brain },
+  { name: 'DFS Algorithm', category: 'Core CS', color: '#f43f5e', icon: GitFork },
+  { name: 'Backtracking', category: 'Core CS', color: '#fb923c', icon: Repeat },
+  { name: 'OOP', category: 'Core CS', color: '#e879f9', icon: Boxes },
+  { name: 'C Language', category: 'Language', color: '#94a3b8', icon: Binary },
+  { name: 'CSS3', category: 'Frontend', color: '#60a5fa', icon: Palette },
 ];
-
-const allTech = [
-  'JavaScript', 'Java', 'React.js', 'Node.js', 'Express.js', 'MongoDB',
-  'TypeScript', 'C++', 'Python', 'Tailwind CSS', 'Git', 'GitHub',
-  'REST APIs', 'Vite', 'HTML5', 'CSS3', 'DSA', 'OOP', 'Render', 'DFS',
-];
-
-const fadeUp = {
-  hidden: { opacity: 0, y: 30 },
-  visible: (i) => ({
-    opacity: 1, y: 0,
-    transition: { delay: i * 0.07, duration: 0.65, ease: [0.22, 1, 0.36, 1] },
-  }),
-};
 
 export default function TechArsenal() {
-  const ref = useRef(null);
-  const inView = useInView(ref, { once: true, margin: '-100px' });
+  const [filter, setFilter] = useState('All');
 
-  const marqueeItems = [...allTech, ...allTech];
+  const categories = ['All', 'Frontend', 'Backend', 'Language', 'Database', 'Tools', 'Core CS'];
+
+  const filteredItems = filter === 'All' 
+    ? TECH_ITEMS 
+    : TECH_ITEMS.filter(item => item.category === filter);
 
   return (
-    <section id="stack" className="relative overflow-hidden bg-[#07080c]">
-      <div className="w-full h-px bg-gradient-to-r from-transparent via-white/8 to-transparent" />
+    <section id="stack" className="relative bg-[#0a0a0a] py-32 px-6 sm:px-10 lg:px-16 overflow-hidden">
+      
+      {/* Background glow */}
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[900px] h-[450px] bg-orange-500/[0.03] rounded-full blur-3xl pointer-events-none" />
 
-      {/* Ghost number */}
-      <div
-        className="absolute top-0 left-0 select-none pointer-events-none font-black"
-        style={{ fontSize: 'clamp(140px, 20vw, 280px)', color: 'rgba(255,255,255,0.022)', lineHeight: 1 }}
-        aria-hidden
-      >
-        04
-      </div>
-
-      <div ref={ref} className="relative z-10 max-w-[1400px] mx-auto px-6 sm:px-10 lg:px-16 xl:px-20 py-32">
-
-        {/* Section header */}
+      <div className="relative z-10 max-w-7xl mx-auto flex flex-col items-center">
+        
+        {/* Pill Badge */}
         <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          animate={inView ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 0.7 }}
-          className="mb-20"
+          initial={{ opacity: 0, y: 15 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.6 }}
+          className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[#161616] border border-orange-500/30 text-orange-400 text-xs font-mono uppercase tracking-widest mb-6 shadow-[0_0_15px_rgba(249,115,22,0.15)]"
         >
-          <div className="flex items-center gap-3 mb-6">
-            <span className="font-mono text-[11px] tracking-[0.22em] text-white/30 uppercase">04 / Tech Stack</span>
-            <div className="flex-1 h-px bg-white/8 max-w-[60px]" />
-          </div>
-          <div
-            className="font-black leading-[0.9] tracking-tight"
-            style={{ fontSize: 'clamp(44px, 7vw, 88px)' }}
-          >
-            <span className="text-white">TECHNICAL </span>
-            <span style={{ WebkitTextStroke: '1.5px rgba(255,255,255,0.7)', WebkitTextFillColor: 'transparent' }}>
-              ARSENAL
-            </span>
-          </div>
+          <span className="w-4 h-4 rounded-full bg-orange-500/20 flex items-center justify-center text-[10px] text-orange-400 font-bold">
+            ⚡
+          </span>
+          <span>TECH ARSENAL</span>
         </motion.div>
 
-        {/* Category groups */}
-        <div className="space-y-14">
-          {categories.map((cat, ci) => (
-            <motion.div
-              key={cat.label}
-              custom={ci}
-              variants={fadeUp}
-              initial="hidden"
-              animate={inView ? 'visible' : 'hidden'}
-            >
-              <div className="flex items-center gap-4 mb-5">
-                <span className="font-mono text-[10px] tracking-[0.24em] text-white/25 uppercase">
-                  {cat.label}
-                </span>
-                <div className="flex-1 h-px bg-white/[0.06]" />
-              </div>
-              <div className="flex flex-wrap gap-2.5">
-                {cat.items.map((item) => (
-                  <span
-                    key={item}
-                    className="group px-4 py-2 rounded-full font-mono text-xs text-white/55 border border-white/[0.08] cursor-default
-                      hover:text-white hover:border-white/25 hover:bg-white/[0.04] transition-all duration-200 tracking-wide"
-                  >
-                    {item}
-                  </span>
-                ))}
-              </div>
-            </motion.div>
-          ))}
-        </div>
-      </div>
+        {/* Heading */}
+        <motion.h2
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.7, delay: 0.1 }}
+          className="font-extrabold tracking-tight text-center leading-[1.05] text-white max-w-3xl mb-8"
+          style={{ fontSize: 'clamp(36px, 5.5vw, 68px)' }}
+        >
+          Technologies engineered for scale and speed.
+        </motion.h2>
 
-      {/* Infinite marquee strip */}
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={inView ? { opacity: 1 } : {}}
-        transition={{ delay: 0.5, duration: 0.8 }}
-        className="relative overflow-hidden border-t border-b border-white/[0.06] py-4"
-        style={{ background: 'rgba(255,255,255,0.015)' }}
-      >
-        <div className="animate-marquee select-none pointer-events-none">
-          {marqueeItems.map((item, i) => (
-            <span key={i} className="font-mono text-[11px] tracking-[0.2em] text-white/20 uppercase whitespace-nowrap">
-              {item}&nbsp;&nbsp;·&nbsp;&nbsp;
-            </span>
+        {/* Filter Pills */}
+        <div className="flex flex-wrap items-center justify-center gap-2 mb-16">
+          {categories.map((cat) => (
+            <button
+              key={cat}
+              onClick={() => setFilter(cat)}
+              className={`px-4 py-1.5 rounded-full text-xs font-mono tracking-wider transition-all duration-200 ${
+                filter === cat
+                  ? 'bg-white text-black font-bold shadow-lg'
+                  : 'bg-[#141416] text-neutral-400 hover:text-white border border-white/10 hover:border-white/20'
+              }`}
+            >
+              {cat}
+            </button>
           ))}
         </div>
-      </motion.div>
+
+        {/* ── Brand Icon Grid (Exact Match to Screenshot 4 Layout) ── */}
+        <div className="w-full grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-6 sm:gap-8 justify-items-center">
+          {filteredItems.map((item, idx) => {
+            const IconComp = item.icon;
+            return (
+              <motion.div
+                key={item.name}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.5, delay: idx * 0.03 }}
+                className="group flex flex-col items-center justify-center p-5 rounded-2xl bg-[#121214]/60 hover:bg-[#161619] border border-white/[0.06] hover:border-white/20 transition-all duration-300 w-full max-w-[170px] shadow-lg"
+              >
+                {/* Glowing Icon */}
+                <div
+                  className="w-12 h-12 rounded-2xl flex items-center justify-center mb-3 transition-transform duration-300 group-hover:scale-110"
+                  style={{
+                    backgroundColor: `${item.color}15`,
+                    color: item.color,
+                    boxShadow: `0 0 20px ${item.color}20`,
+                  }}
+                >
+                  <IconComp className="w-6 h-6 stroke-[1.75]" />
+                </div>
+
+                {/* Name */}
+                <span className="text-xs sm:text-sm font-semibold text-neutral-200 group-hover:text-white transition-colors text-center">
+                  {item.name}
+                </span>
+
+                {/* Category tag */}
+                <span className="text-[10px] font-mono text-neutral-400 mt-1 uppercase tracking-wider">
+                  {item.category}
+                </span>
+              </motion.div>
+            );
+          })}
+        </div>
+
+        {/* ── Bottom Pill: "PORTFOLIO" (Exact Match to Screenshot 4) ── */}
+        <div className="mt-20">
+          <div className="inline-flex items-center gap-2 px-5 py-2 rounded-full bg-[#141416] border border-white/10 text-neutral-400 text-xs font-mono uppercase tracking-widest shadow-xl">
+            <span className="w-2 h-2 rounded-full bg-red-500 animate-pulse" />
+            <span>PORTFOLIO TECH ECOSYSTEM</span>
+          </div>
+        </div>
+
+      </div>
     </section>
   );
 }
