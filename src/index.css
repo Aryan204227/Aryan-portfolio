@@ -2,193 +2,135 @@
 @tailwind components;
 @tailwind utilities;
 
+/* ═══════════════════════════════════════════
+   ROOT & BASE
+═══════════════════════════════════════════ */
 :root {
   color-scheme: dark;
+  --bg: #070809;
+  --white: #f0f1f3;
+  --muted: #6b7280;
+  --accent: #38bdf8;
+  --border: rgba(255,255,255,0.07);
 }
 
 html {
   scroll-behavior: smooth;
-  background-color: #07080c;
+  background: var(--bg);
 }
 
 body {
   margin: 0;
   padding: 0;
-  background-color: #07080c;
-  color: #e8eaf0;
+  background: var(--bg);
+  color: var(--white);
   font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   overflow-x: hidden;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  /* Hide default cursor on desktop — replaced by custom cursor */
+  cursor: none;
 }
 
-/* ============================
-   GRAIN OVERLAY — Fine Film Noise
-   ============================ */
-.grain-overlay {
-  position: fixed;
-  top: -50%;
-  left: -50%;
-  width: 200vw;
-  height: 200vh;
-  opacity: 0.028;
-  pointer-events: none;
-  z-index: 998;
-  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
-  background-repeat: repeat;
-  background-size: 128px 128px;
-  animation: grain-shift 8s steps(1) infinite;
+/* Restore pointer on touch devices */
+@media (pointer: coarse) {
+  body { cursor: auto; }
 }
 
-@keyframes grain-shift {
-  0% { transform: translate(0, 0); }
-  10% { transform: translate(-5%, -10%); }
-  20% { transform: translate(-15%, 5%); }
-  30% { transform: translate(7%, -20%); }
-  40% { transform: translate(-5%, 25%); }
-  50% { transform: translate(-15%, 10%); }
-  60% { transform: translate(15%, 0%); }
-  70% { transform: translate(0%, 15%); }
-  80% { transform: translate(3%, 35%); }
-  90% { transform: translate(-10%, 10%); }
-  100% { transform: translate(0, 0); }
-}
-
-/* ============================
-   CUSTOM SCROLLBAR
-   ============================ */
-::-webkit-scrollbar { width: 4px; }
-::-webkit-scrollbar-track { background: #07080c; }
-::-webkit-scrollbar-thumb { background: #1c2033; border-radius: 2px; }
-::-webkit-scrollbar-thumb:hover { background: #2c3350; }
-
-/* ============================
-   TEXT STROKE — Outlined headline
-   ============================ */
-.text-stroke {
-  -webkit-text-stroke: 1px rgba(255, 255, 255, 0.75);
-  color: transparent;
-}
-
-.text-stroke-heavy {
-  -webkit-text-stroke: 2px rgba(255, 255, 255, 0.8);
-  color: transparent;
-}
-
-.text-stroke-faint {
-  -webkit-text-stroke: 1px rgba(255, 255, 255, 0.12);
-  color: transparent;
-}
-
-/* ============================
-   SELECTION COLOR
-   ============================ */
+/* ═══════════════════════════════════════════
+   SELECTION
+═══════════════════════════════════════════ */
 ::selection {
-  background: rgba(56, 189, 248, 0.18);
+  background: rgba(56,189,248,0.15);
   color: #e0f2fe;
 }
 
-/* ============================
-   MARQUEE ANIMATION
-   ============================ */
-@keyframes marquee {
-  0% { transform: translateX(0); }
-  100% { transform: translateX(-50%); }
+/* ═══════════════════════════════════════════
+   GRAIN TEXTURE — proper animated film noise
+═══════════════════════════════════════════ */
+body::before {
+  content: '';
+  position: fixed;
+  top: -100%;
+  left: -100%;
+  width: 300%;
+  height: 300%;
+  pointer-events: none;
+  z-index: 997;
+  opacity: 0.032;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-size: 160px 160px;
+  animation: grain 7s steps(1) infinite;
 }
 
+@keyframes grain {
+  0%   { transform: translate(0, 0); }
+  14%  { transform: translate(-5%, -7%); }
+  28%  { transform: translate(-12%, 4%); }
+  42%  { transform: translate(6%, -18%); }
+  57%  { transform: translate(-4%, 22%); }
+  71%  { transform: translate(14%, 0%); }
+  85%  { transform: translate(0%, 14%); }
+  100% { transform: translate(0, 0); }
+}
+
+/* ═══════════════════════════════════════════
+   SCROLLBAR
+═══════════════════════════════════════════ */
+::-webkit-scrollbar { width: 4px; }
+::-webkit-scrollbar-track { background: #070809; }
+::-webkit-scrollbar-thumb { background: #1a1f2e; border-radius: 2px; }
+::-webkit-scrollbar-thumb:hover { background: #252d40; }
+
+/* ═══════════════════════════════════════════
+   TEXT STROKE UTILITIES
+═══════════════════════════════════════════ */
+.text-stroke {
+  -webkit-text-stroke: 1.5px rgba(255,255,255,0.75);
+  color: transparent;
+}
+.text-stroke-faint {
+  -webkit-text-stroke: 1px rgba(255,255,255,0.12);
+  color: transparent;
+}
+
+/* ═══════════════════════════════════════════
+   MARQUEE
+═══════════════════════════════════════════ */
+@keyframes marquee {
+  0%   { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
 .animate-marquee {
-  animation: marquee 28s linear infinite;
+  animation: marquee 30s linear infinite;
   display: flex;
   width: max-content;
 }
+.animate-marquee:hover { animation-play-state: paused; }
 
-.animate-marquee:hover {
-  animation-play-state: paused;
+/* ═══════════════════════════════════════════
+   EXPERTISE / ARCHIVE ROWS
+═══════════════════════════════════════════ */
+.archive-row {
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+  transition: background 0.35s ease, padding-left 0.4s cubic-bezier(0.22,1,0.36,1);
+}
+.archive-row:first-of-type { border-top: 1px solid rgba(255,255,255,0.06); }
+.archive-row:hover { background: rgba(255,255,255,0.022); }
+
+/* ═══════════════════════════════════════════
+   LINKS must show pointer cursor override
+═══════════════════════════════════════════ */
+a, button, [data-cursor] {
+  cursor: none !important;
+}
+@media (pointer: coarse) {
+  a, button, [data-cursor] { cursor: auto !important; }
 }
 
-/* ============================
-   EXPERTISE ROW HOVER
-   ============================ */
-.expertise-row {
-  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
-  transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
-  cursor: default;
-}
-
-.expertise-row:first-child {
-  border-top: 1px solid rgba(255, 255, 255, 0.06);
-}
-
-.expertise-row:hover {
-  background: rgba(255, 255, 255, 0.025);
-  padding-left: 16px;
-}
-
-/* ============================
-   GLOWING BUTTON
-   ============================ */
-.btn-glow {
-  position: relative;
-  background: rgba(12, 14, 22, 0.9);
-  border: 1px solid rgba(255, 255, 255, 0.14);
-  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-}
-
-.btn-glow:hover {
-  border-color: rgba(56, 189, 248, 0.45);
-  box-shadow: 0 0 28px -6px rgba(56, 189, 248, 0.28), inset 0 0 20px -10px rgba(56, 189, 248, 0.08);
-  transform: translateY(-2px);
-}
-
-/* ============================
-   SECTION TRANSITIONS
-   ============================ */
-.section-fade-top {
-  background: linear-gradient(to bottom, #0a0c14 0%, #07080c 100%);
-}
-
-/* ============================
-   MAGNETIC BUTTON
-   ============================ */
-.magnetic-btn {
-  transition: transform 0.3s cubic-bezier(0.23, 1, 0.32, 1);
-  display: inline-block;
-}
-
-/* ============================
-   PROCESS LINE
-   ============================ */
-.process-line {
-  height: 1px;
-  background: linear-gradient(to right, transparent, rgba(56, 189, 248, 0.5), transparent);
-}
-
-/* ============================
-   PROJECT FILTER BUTTON
-   ============================ */
-.filter-btn {
-  padding: 6px 18px;
-  border-radius: 999px;
-  font-size: 11px;
-  font-family: 'JetBrains Mono', monospace;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  border: 1px solid rgba(255,255,255,0.08);
-  color: rgba(255,255,255,0.4);
-  background: transparent;
-  transition: all 0.25s ease;
-  cursor: pointer;
-}
-
-.filter-btn.active, .filter-btn:hover {
-  color: white;
-  border-color: rgba(255,255,255,0.3);
-  background: rgba(255,255,255,0.05);
-}
-
-/* ============================
+/* ═══════════════════════════════════════════
    REDUCED MOTION
-   ============================ */
+═══════════════════════════════════════════ */
 @media (prefers-reduced-motion: reduce) {
   *, ::before, ::after {
     animation-duration: 0.01ms !important;

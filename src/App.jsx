@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import CustomCursor from './components/CustomCursor';
 import ScrollProgress from './components/ScrollProgress';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
@@ -20,17 +21,20 @@ export default function App() {
   const [activeProjectModal, setActiveProjectModal] = useState(null);
 
   return (
-    <div className="min-h-screen bg-[#07080c] text-slate-100 flex flex-col font-sans relative overflow-x-hidden">
-      {/* Fine film grain overlay */}
-      <div className="grain-overlay" aria-hidden="true" />
+    <div
+      className="min-h-screen flex flex-col font-sans relative overflow-x-hidden"
+      style={{ background: '#070809', color: '#f0f1f3' }}
+    >
+      {/* Premium custom cursor (desktop only) */}
+      <CustomCursor />
 
-      {/* Scroll progress bar */}
+      {/* Reading progress bar */}
       <ScrollProgress />
 
-      {/* Navigation */}
+      {/* Floating navigation */}
       <Navbar />
 
-      {/* Main content */}
+      {/* Main experience */}
       <main className="flex-grow">
         <Hero />
         <About />
@@ -47,7 +51,6 @@ export default function App() {
       <Footer />
       <WhatsAppFloat />
 
-      {/* Project case study modal */}
       <ProjectModal
         project={activeProjectModal}
         isOpen={Boolean(activeProjectModal)}
