@@ -1,35 +1,35 @@
 import React, { useState, useEffect } from 'react';
-import { Menu, X, Download, MessageCircle, FileText, ChevronRight } from 'lucide-react';
+import { Menu, X, Download, MessageCircle, ArrowUpRight } from 'lucide-react';
 import { portfolioData } from '../data/portfolioData';
 
-const NAV_LINKS = [
-  { label: 'Home', href: '#home' },
-  { label: 'About', href: '#about' },
-  { label: 'Skills', href: '#skills' },
-  { label: 'Projects', href: '#projects' },
-  { label: 'Training', href: '#training' },
-  { label: 'Certificates', href: '#certificates' },
-  { label: 'Education', href: '#education' },
-  { label: 'Contact', href: '#contact' },
+const NAV_ITEMS = [
+  { label: 'ABOUT', href: '#about' },
+  { label: 'CAPABILITIES', href: '#capabilities' },
+  { label: 'STACK', href: '#stack' },
+  { label: 'WORK', href: '#work' },
+  { label: 'TRAINING', href: '#training' },
+  { label: 'CERTIFICATES', href: '#certificates' },
+  { label: 'EDUCATION', href: '#education' },
+  { label: 'CONTACT', href: '#contact' },
 ];
 
 export default function Navbar() {
-  const [isScrolled, setIsScrolled] = useState(false);
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [activeSection, setActiveSection] = useState('home');
+  const [scrolled, setScrolled] = useState(false);
+  const [mobileOpen, setMobileOpen] = useState(false);
+  const [activeSection, setActiveSection] = useState('');
 
   useEffect(() => {
     const handleScroll = () => {
-      setIsScrolled(window.scrollY > 20);
+      setScrolled(window.scrollY > 40);
 
-      // Simple active section detection
-      const sections = NAV_LINKS.map(link => link.href.substring(1));
-      const currentScrollPos = window.scrollY + 200;
+      // Section tracker
+      const sectionIds = ['about', 'capabilities', 'stack', 'work', 'training', 'certificates', 'education', 'contact'];
+      const scrollPos = window.scrollY + 250;
 
-      for (let i = sections.length - 1; i >= 0; i--) {
-        const el = document.getElementById(sections[i]);
-        if (el && el.offsetTop <= currentScrollPos) {
-          setActiveSection(sections[i]);
+      for (let i = sectionIds.length - 1; i >= 0; i--) {
+        const el = document.getElementById(sectionIds[i]);
+        if (el && el.offsetTop <= scrollPos) {
+          setActiveSection(sectionIds[i]);
           break;
         }
       }
@@ -41,7 +41,7 @@ export default function Navbar() {
 
   const handleNavClick = (e, href) => {
     e.preventDefault();
-    setMobileMenuOpen(false);
+    setMobileOpen(false);
     const target = document.querySelector(href);
     if (target) {
       target.scrollIntoView({ behavior: 'smooth' });
@@ -49,151 +49,147 @@ export default function Navbar() {
   };
 
   return (
-    <header
-      className={`fixed top-0 left-0 right-0 z-40 transition-all duration-300 ${
-        isScrolled
-          ? 'bg-[#0a0d14]/85 backdrop-blur-md border-b border-slate-800/80 shadow-lg shadow-black/20 py-3.5'
-          : 'bg-transparent py-5'
-      }`}
-    >
-      <nav 
-        className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between"
-        aria-label="Main Navigation"
+    <>
+      <header
+        className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
+          scrolled
+            ? 'py-3 bg-[#07090e]/90 backdrop-blur-xl border-b border-white/[0.06] shadow-2xl'
+            : 'py-6 bg-transparent'
+        }`}
       >
-        {/* Brand / Logo */}
-        <a
-          href="#home"
-          onClick={(e) => handleNavClick(e, '#home')}
-          className="group flex items-center gap-2.5 focus:outline-none"
-        >
-          <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-cyan-500 to-indigo-500 p-[1px] shadow-sm shadow-cyan-500/30 group-hover:shadow-cyan-500/50 transition-all">
-            <div className="w-full h-full bg-[#0a0d14] rounded-[11px] flex items-center justify-center font-bold text-base text-cyan-400 font-mono">
+        <div className="max-w-7xl mx-auto px-6 sm:px-8 flex items-center justify-between">
+          {/* Brand */}
+          <a
+            href="#home"
+            className="group flex items-center gap-3 focus:outline-none"
+          >
+            <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-white/20 to-white/5 border border-white/10 flex items-center justify-center font-display font-bold text-sm tracking-wider text-white group-hover:border-cyan-400/50 transition-colors">
               AD
             </div>
-          </div>
-          <div className="flex flex-col">
-            <span className="font-bold text-slate-100 tracking-tight text-sm sm:text-base group-hover:text-cyan-400 transition-colors">
-              Aryan Dadwal
-            </span>
-            <span className="text-[10px] sm:text-xs text-slate-400 font-mono tracking-wider uppercase -mt-0.5">
-              Full Stack Dev
-            </span>
-          </div>
-        </a>
-
-        {/* Desktop Nav Links */}
-        <div className="hidden lg:flex items-center gap-1 bg-slate-900/60 p-1.5 rounded-full border border-slate-800/80 backdrop-blur-md">
-          {NAV_LINKS.map((link) => {
-            const isActive = activeSection === link.href.substring(1);
-            return (
-              <a
-                key={link.label}
-                href={link.href}
-                onClick={(e) => handleNavClick(e, link.href)}
-                className={`relative px-3.5 py-1.5 text-xs font-medium rounded-full transition-all duration-200 ${
-                  isActive
-                    ? 'text-cyan-300 bg-cyan-950/60 shadow-sm border border-cyan-500/30 font-semibold'
-                    : 'text-slate-400 hover:text-slate-100 hover:bg-slate-800/60'
-                }`}
-              >
-                {link.label}
-              </a>
-            );
-          })}
-        </div>
-
-        {/* Desktop Action Buttons */}
-        <div className="hidden md:flex items-center gap-2.5">
-          {/* Download Resume Button */}
-          <a
-            href={portfolioData.personalInfo.resumePdf}
-            download="Aryan_Dadwal_Professional_Resume.pdf"
-            className="inline-flex items-center gap-2 px-3.5 py-2 text-xs font-semibold rounded-xl bg-slate-800/80 hover:bg-slate-700 text-slate-200 hover:text-white border border-slate-700 hover:border-cyan-500/40 transition-all shadow-sm active:scale-95"
-            title="Download Professional Resume (PDF)"
-          >
-            <Download className="w-3.5 h-3.5 text-cyan-400" />
-            <span>Resume</span>
+            <div className="flex flex-col">
+              <span className="font-display font-bold tracking-wider text-sm text-white group-hover:text-cyan-300 transition-colors">
+                ARYAN DADWAL
+              </span>
+              <span className="text-[10px] font-mono tracking-widest text-slate-400 uppercase -mt-0.5">
+                Full Stack Developer
+              </span>
+            </div>
           </a>
 
-          {/* Quick WhatsApp / Contact */}
-          <a
-            href={portfolioData.personalInfo.whatsAppUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="inline-flex items-center gap-2 px-3.5 py-2 text-xs font-semibold rounded-xl bg-gradient-to-r from-emerald-500/90 to-teal-600/90 hover:from-emerald-400 hover:to-teal-500 text-white shadow-sm shadow-emerald-500/20 transition-all active:scale-95"
-            title="Chat on WhatsApp"
-          >
-            <MessageCircle className="w-3.5 h-3.5" />
-            <span>WhatsApp</span>
-          </a>
-        </div>
-
-        {/* Mobile Hamburger Button */}
-        <div className="flex md:hidden items-center gap-2">
-          <a
-            href={portfolioData.personalInfo.resumePdf}
-            download="Aryan_Dadwal_Professional_Resume.pdf"
-            className="p-2 rounded-xl bg-slate-800/80 border border-slate-700 text-cyan-400 text-xs font-medium flex items-center"
-            aria-label="Download Resume"
-          >
-            <Download className="w-4 h-4" />
-          </a>
-          <button
-            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            className="p-2.5 rounded-xl bg-slate-900 border border-slate-800 text-slate-300 hover:text-white focus:outline-none focus:ring-2 focus:ring-cyan-500"
-            aria-label={mobileMenuOpen ? 'Close Menu' : 'Open Menu'}
-            aria-expanded={mobileMenuOpen}
-          >
-            {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
-          </button>
-        </div>
-      </nav>
-
-      {/* Mobile Animated Dropdown Menu */}
-      {mobileMenuOpen && (
-        <div className="lg:hidden px-4 pt-3 pb-6 border-b border-slate-800/80 bg-[#0a0d14]/98 backdrop-blur-xl shadow-2xl transition-all">
-          <div className="grid grid-cols-2 gap-2 mb-4">
-            {NAV_LINKS.map((link) => {
-              const isActive = activeSection === link.href.substring(1);
+          {/* Desktop Nav */}
+          <nav className="hidden lg:flex items-center gap-7" aria-label="Main Navigation">
+            {NAV_ITEMS.map((item) => {
+              const isActive = activeSection === item.href.substring(1);
               return (
                 <a
-                  key={link.label}
-                  href={link.href}
-                  onClick={(e) => handleNavClick(e, link.href)}
-                  className={`px-3 py-2.5 rounded-xl text-sm font-medium flex items-center justify-between ${
+                  key={item.label}
+                  href={item.href}
+                  onClick={(e) => handleNavClick(e, item.href)}
+                  className={`text-xs font-mono tracking-widest transition-colors relative py-1 ${
                     isActive
-                      ? 'bg-cyan-950/60 text-cyan-300 border border-cyan-800/50'
-                      : 'text-slate-300 hover:bg-slate-900 hover:text-white'
+                      ? 'text-cyan-400 font-semibold'
+                      : 'text-slate-400 hover:text-white'
                   }`}
                 >
-                  <span>{link.label}</span>
-                  <ChevronRight className="w-3.5 h-3.5 text-slate-500" />
+                  {item.label}
+                  {isActive && (
+                    <span className="absolute bottom-0 left-0 right-0 h-[2px] bg-cyan-400 rounded-full" />
+                  )}
                 </a>
               );
             })}
-          </div>
+          </nav>
 
-          <div className="flex flex-col gap-2.5 pt-3 border-t border-slate-800/80">
+          {/* Right Action CTAs */}
+          <div className="hidden md:flex items-center gap-4">
+            {/* Resume Button */}
             <a
               href={portfolioData.personalInfo.resumePdf}
               download="Aryan_Dadwal_Professional_Resume.pdf"
-              className="w-full flex items-center justify-center gap-2 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-white text-sm font-semibold border border-slate-700"
+              className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-white/5 hover:bg-white/10 border border-white/10 hover:border-cyan-500/40 text-xs font-mono tracking-wider text-slate-200 hover:text-white transition-all shadow-sm"
+              title="Download Professional Resume PDF"
+            >
+              <Download className="w-3.5 h-3.5 text-cyan-400" />
+              <span>RESUME</span>
+            </a>
+
+            {/* Direct WhatsApp */}
+            <a
+              href={portfolioData.personalInfo.whatsAppUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="p-2 rounded-lg bg-emerald-500/10 hover:bg-emerald-500/20 border border-emerald-500/30 text-emerald-400 hover:text-emerald-300 transition-all"
+              title="Chat on WhatsApp (+91 8626963353)"
+              aria-label="Chat on WhatsApp"
+            >
+              <MessageCircle className="w-4 h-4" />
+            </a>
+          </div>
+
+          {/* Mobile Hamburger Toggle */}
+          <div className="flex md:hidden items-center gap-2.5">
+            <a
+              href={portfolioData.personalInfo.resumePdf}
+              download="Aryan_Dadwal_Professional_Resume.pdf"
+              className="p-2 rounded-lg bg-white/5 border border-white/10 text-cyan-400 text-xs"
+              aria-label="Download Resume"
+            >
+              <Download className="w-4 h-4" />
+            </a>
+            <button
+              onClick={() => setMobileOpen(!mobileOpen)}
+              className="p-2 rounded-lg bg-white/5 border border-white/10 text-slate-300 hover:text-white focus:outline-none"
+              aria-label={mobileOpen ? 'Close Menu' : 'Open Menu'}
+            >
+              {mobileOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+            </button>
+          </div>
+        </div>
+      </header>
+
+      {/* Mobile Fullscreen Drawer */}
+      {mobileOpen && (
+        <div className="fixed inset-0 z-40 bg-[#07090e]/98 backdrop-blur-2xl flex flex-col justify-between p-8 pt-28 lg:hidden animate-fadeIn">
+          <div className="space-y-6">
+            <span className="text-[11px] font-mono tracking-widest text-slate-500 uppercase block">
+              NAVIGATION
+            </span>
+            <div className="flex flex-col space-y-4">
+              {NAV_ITEMS.map((item) => (
+                <a
+                  key={item.label}
+                  href={item.href}
+                  onClick={(e) => handleNavClick(e, item.href)}
+                  className="font-display text-2xl font-bold tracking-tight text-slate-300 hover:text-cyan-400 transition-colors flex items-center justify-between"
+                >
+                  <span>{item.label}</span>
+                  <ArrowUpRight className="w-4 h-4 text-slate-600" />
+                </a>
+              ))}
+            </div>
+          </div>
+
+          <div className="pt-6 border-t border-white/10 space-y-3">
+            <a
+              href={portfolioData.personalInfo.resumePdf}
+              download="Aryan_Dadwal_Professional_Resume.pdf"
+              className="w-full flex items-center justify-center gap-2 py-3.5 rounded-xl bg-white/10 text-white font-mono text-xs tracking-wider border border-white/15"
             >
               <Download className="w-4 h-4 text-cyan-400" />
-              <span>Download Professional Resume (PDF)</span>
+              <span>DOWNLOAD RESUME (PDF)</span>
             </a>
             <a
               href={portfolioData.personalInfo.whatsAppUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="w-full flex items-center justify-center gap-2 py-2.5 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-600 text-white text-sm font-semibold shadow-md shadow-emerald-500/20"
+              className="w-full flex items-center justify-center gap-2 py-3.5 rounded-xl bg-emerald-500 text-slate-950 font-display font-bold text-xs tracking-wider"
             >
               <MessageCircle className="w-4 h-4" />
-              <span>Direct WhatsApp Message</span>
+              <span>MESSAGE ON WHATSAPP</span>
             </a>
           </div>
         </div>
       )}
-    </header>
+    </>
   );
 }

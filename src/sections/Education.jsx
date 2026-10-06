@@ -1,89 +1,78 @@
 import React from 'react';
-import { GraduationCap, Calendar, MapPin, Award, CheckCircle } from 'lucide-react';
+import { Calendar, MapPin, CheckCircle2 } from 'lucide-react';
 import { portfolioData } from '../data/portfolioData';
 
 export default function Education() {
   const { education } = portfolioData;
 
   return (
-    <section id="education" className="py-20 px-4 sm:px-6 lg:px-8 relative border-t border-slate-800/60 bg-[#0a0d14]/50">
-      <div className="max-w-7xl mx-auto">
-        {/* Section Header */}
-        <div className="mb-14">
-          <div className="flex items-center gap-2 text-cyan-400 font-mono text-xs font-semibold uppercase tracking-wider mb-2">
-            <GraduationCap className="w-4 h-4" />
-            <span>06 / Academic History</span>
-          </div>
-          <h2 className="text-3xl sm:text-4xl font-extrabold text-white tracking-tight">
-            Education
+    <section id="education" className="py-28 px-6 sm:px-8 lg:px-12 relative border-t border-white/[0.06] bg-[#07090e]">
+      <div className="max-w-7xl mx-auto space-y-16">
+        
+        {/* Section Identifier */}
+        <div className="flex items-center gap-3">
+          <span className="text-xs font-mono text-cyan-400 font-semibold tracking-widest uppercase">
+            07 / EDUCATION
+          </span>
+          <span className="w-12 h-[1px] bg-slate-800" />
+        </div>
+
+        {/* Section Heading */}
+        <div className="max-w-3xl space-y-3">
+          <h2 className="font-display text-3xl sm:text-5xl font-bold tracking-tight text-white">
+            Academic Foundation
           </h2>
-          <p className="text-slate-400 text-sm mt-1 max-w-xl">
-            Formal academic background in Computer Science & Engineering and foundational science.
+          <p className="text-slate-400 text-sm sm:text-base leading-relaxed">
+            Formal engineering degree and foundational sciences.
           </p>
         </div>
 
-        {/* Timeline Container */}
-        <div className="relative pl-6 sm:pl-10 space-y-10 before:absolute before:left-[11px] sm:before:left-[19px] before:top-3 before:bottom-3 before:w-[2px] before:bg-gradient-to-b before:from-cyan-500 before:via-slate-700 before:to-slate-800">
+        {/* Minimal Editorial Vertical Timeline */}
+        <div className="relative pl-6 sm:pl-10 space-y-12 before:absolute before:left-[11px] sm:before:left-[19px] before:top-2 before:bottom-2 before:w-[1px] before:bg-gradient-to-b before:from-cyan-400 before:via-white/20 before:to-transparent">
           {education.map((item, idx) => (
-            <div key={idx} className="relative group">
-              {/* Timeline Indicator Dot */}
+            <div key={idx} className="relative group space-y-2">
+              
+              {/* Timeline Indicator */}
               <div 
-                className={`absolute -left-[30px] sm:-left-[38px] top-1.5 w-5 h-5 rounded-full border-2 flex items-center justify-center transition-all duration-300 ${
+                className={`absolute -left-[30px] sm:-left-[38px] top-1.5 w-4 h-4 rounded-full border flex items-center justify-center transition-all ${
                   item.isCurrent
-                    ? 'bg-cyan-500 border-cyan-400 ring-4 ring-cyan-500/20'
-                    : 'bg-slate-900 border-slate-600 group-hover:border-cyan-400'
+                    ? 'bg-cyan-400 border-cyan-300 shadow-md shadow-cyan-500/50'
+                    : 'bg-[#07090e] border-white/30 group-hover:border-white'
                 }`}
               >
-                <div className={`w-1.5 h-1.5 rounded-full ${item.isCurrent ? 'bg-slate-950 animate-ping' : 'bg-slate-400'}`} />
+                {item.isCurrent && (
+                  <span className="w-1.5 h-1.5 rounded-full bg-slate-950 animate-ping" />
+                )}
               </div>
 
-              {/* Timeline Card */}
-              <div className="rounded-2xl bg-slate-900/80 border border-slate-800 p-6 sm:p-7 hover:border-slate-700 transition-all duration-300 shadow-md">
-                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-3">
-                  <div>
-                    <span className="text-xs font-mono font-medium text-cyan-400 uppercase tracking-wide">
-                      {item.degree}
-                    </span>
-                    <h3 className="text-xl font-bold text-white tracking-tight mt-0.5">
-                      {item.institution}
-                    </h3>
-                  </div>
-
-                  <div className="flex items-center gap-3">
-                    <span className="inline-flex items-center gap-1.5 text-xs text-slate-400 font-mono bg-slate-950 px-3 py-1 rounded-lg border border-slate-800">
-                      <Calendar className="w-3.5 h-3.5 text-slate-500" />
-                      {item.period}
-                    </span>
-                  </div>
+              {/* Content */}
+              <div className="space-y-2">
+                <div className="flex flex-wrap items-center gap-3 text-xs font-mono">
+                  <span className="text-cyan-400 font-bold uppercase tracking-wider">
+                    {item.period}
+                  </span>
+                  <span className="text-slate-600">•</span>
+                  <span className="text-slate-400">{item.location}</span>
                 </div>
 
-                <div className="flex flex-wrap items-center gap-x-6 gap-y-2 text-xs text-slate-400 mb-4">
-                  <span className="flex items-center gap-1.5">
-                    <MapPin className="w-3.5 h-3.5 text-slate-500" />
-                    {item.location}
-                  </span>
-                  <span>•</span>
-                  <span>{item.field}</span>
-                  <span>•</span>
-                  <span className="text-cyan-300 font-mono font-semibold bg-cyan-950/60 px-2 py-0.5 rounded border border-cyan-800/40">
+                <div className="flex flex-col sm:flex-row sm:items-baseline justify-between gap-2">
+                  <h3 className="font-display text-2xl font-bold text-white tracking-tight">
+                    {item.institution}
+                  </h3>
+                  <span className="text-xs font-mono font-bold text-cyan-300 bg-cyan-950/60 px-3 py-1 rounded-md border border-cyan-800/40 w-fit">
                     {item.grade}
                   </span>
                 </div>
 
-                {item.highlights && item.highlights.length > 0 && (
-                  <ul className="space-y-1.5 border-t border-slate-800/70 pt-3">
-                    {item.highlights.map((highlight, hIdx) => (
-                      <li key={hIdx} className="flex items-start gap-2 text-xs sm:text-sm text-slate-300">
-                        <CheckCircle className="w-3.5 h-3.5 text-cyan-400 shrink-0 mt-0.5" />
-                        <span>{highlight}</span>
-                      </li>
-                    ))}
-                  </ul>
-                )}
+                <p className="text-sm font-mono text-slate-300">
+                  {item.degree} — <span className="text-slate-400">{item.field}</span>
+                </p>
               </div>
+
             </div>
           ))}
         </div>
+
       </div>
     </section>
   );

@@ -1,172 +1,179 @@
 import React from 'react';
-import { ArrowDown, Download, MessageCircle, Github, Linkedin, Mail, Sparkles, Code2, Database, Coffee, Server } from 'lucide-react';
+import { ArrowDownRight, Download, MessageCircle, Github, Linkedin, Mail, Sparkles } from 'lucide-react';
 import { portfolioData } from '../data/portfolioData';
 
-export default function Hero({ onOpenProject }) {
+export default function Hero() {
   const { personalInfo, socialLinks } = portfolioData;
 
   return (
     <section 
       id="home"
-      className="relative min-h-[92vh] flex items-center justify-center pt-24 pb-16 px-4 sm:px-6 lg:px-8 overflow-hidden bg-grid-pattern"
+      className="relative min-h-screen flex items-center justify-center pt-28 pb-20 px-6 sm:px-8 lg:px-12 overflow-hidden bg-precision-grid"
     >
-      {/* Ambient background glows */}
-      <div className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[550px] h-[550px] bg-cyan-500/10 rounded-full blur-[140px] pointer-events-none" />
-      <div className="absolute top-1/3 right-10 w-[400px] h-[400px] bg-indigo-500/10 rounded-full blur-[130px] pointer-events-none" />
+      {/* Cinematic subtle light pools */}
+      <div className="absolute top-1/4 left-1/4 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-cyan-600/5 rounded-full blur-[160px] pointer-events-none" />
+      <div className="absolute bottom-1/4 right-1/4 w-[500px] h-[500px] bg-indigo-600/5 rounded-full blur-[180px] pointer-events-none" />
 
       <div className="relative max-w-7xl mx-auto w-full grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-8 items-center">
-        {/* Left Column: Personal Brand & Intro */}
-        <div className="lg:col-span-7 space-y-6 text-center lg:text-left">
-          {/* Status Badge */}
-          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-slate-900/90 border border-slate-700/80 shadow-inner">
-            <span className="relative flex h-2 w-2">
-              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
-              <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500" />
-            </span>
-            <span className="text-xs font-mono text-slate-300 font-medium tracking-wide">
-              {personalInfo.status}
+        
+        {/* Left Editorial Text Column */}
+        <div className="lg:col-span-7 space-y-8 z-10 text-center lg:text-left">
+          {/* Eyebrow */}
+          <div className="inline-flex items-center gap-3 px-3.5 py-1.5 rounded-full bg-white/[0.03] border border-white/[0.08] backdrop-blur-md">
+            <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+            <span className="text-[11px] font-mono tracking-widest text-slate-300 uppercase">
+              COMPUTER SCIENCE ENGINEER • FULL STACK DEVELOPER
             </span>
           </div>
 
-          {/* Heading */}
-          <div className="space-y-2">
-            <p className="text-sm sm:text-base font-mono text-cyan-400 font-semibold tracking-wider uppercase">
-              Hello, I'm
-            </p>
-            <h1 className="text-4xl sm:text-6xl lg:text-7xl font-extrabold text-white tracking-tight leading-[1.08]">
-              Aryan Dadwal
+          {/* Huge Editorial Headline */}
+          <div className="space-y-3">
+            <h1 className="font-display text-4xl sm:text-6xl lg:text-7xl font-extrabold tracking-tight text-white leading-[1.05]">
+              Building software <br />
+              <span className="text-gradient-editorial">that solves</span> <br />
+              <span className="text-gradient-cyan">real problems.</span>
             </h1>
-            <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold bg-gradient-to-r from-cyan-400 via-sky-300 to-indigo-400 bg-clip-text text-transparent">
-              {personalInfo.title}
-            </h2>
           </div>
 
-          {/* Supporting Statement (Strictly based on CV) */}
-          <p className="text-base sm:text-lg text-slate-300 max-w-2xl leading-relaxed mx-auto lg:mx-0 font-normal">
-            {personalInfo.summary}
-          </p>
+          {/* Identity & Short Intro */}
+          <div className="space-y-3 max-w-xl mx-auto lg:mx-0">
+            <div className="flex items-center justify-center lg:justify-start gap-3">
+              <span className="text-xs font-mono tracking-widest text-cyan-400 uppercase font-semibold">
+                ARYAN DADWAL
+              </span>
+              <span className="w-8 h-[1px] bg-slate-700" />
+              <span className="text-xs font-mono text-slate-400">
+                LPU • CGPA: {personalInfo.cgpa}
+              </span>
+            </div>
 
-          {/* Education pill */}
-          <div className="inline-flex flex-wrap items-center justify-center lg:justify-start gap-2 text-xs font-mono text-slate-400 bg-slate-900/60 border border-slate-800/80 px-3.5 py-2 rounded-xl">
-            <span className="text-slate-200 font-medium">B.Tech CSE</span>
-            <span className="text-slate-600">•</span>
-            <span>Lovely Professional University</span>
-            <span className="text-slate-600">•</span>
-            <span className="text-cyan-400 font-semibold">CGPA: {personalInfo.cgpa}</span>
+            <p className="text-base sm:text-lg text-slate-300 font-normal leading-relaxed">
+              Computer Science student focused on Full Stack Development, Java & DSA, and building practical digital products.
+            </p>
           </div>
 
-          {/* Action CTAs */}
-          <div className="flex flex-wrap items-center justify-center lg:justify-start gap-3.5 pt-2">
-            {/* View Projects */}
+          {/* Editorial Action Buttons */}
+          <div className="flex flex-wrap items-center justify-center lg:justify-start gap-4 pt-2">
+            {/* Explore My Work */}
             <a
-              href="#projects"
-              className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-slate-950 font-bold text-sm shadow-lg shadow-cyan-500/25 hover:shadow-cyan-500/40 hover:-translate-y-0.5 active:translate-y-0 transition-all"
+              href="#work"
+              className="inline-flex items-center gap-2.5 px-6 py-3.5 rounded-xl bg-white text-slate-950 font-display font-bold text-xs tracking-wider uppercase hover:bg-slate-200 transition-all shadow-xl hover:-translate-y-0.5 active:translate-y-0"
             >
-              <span>View Projects</span>
-              <ArrowDown className="w-4 h-4" />
+              <span>EXPLORE MY WORK</span>
+              <ArrowDownRight className="w-4 h-4" />
             </a>
 
-            {/* Download Professional Resume (PDF) */}
+            {/* Download Resume */}
             <a
               href={personalInfo.resumePdf}
               download="Aryan_Dadwal_Professional_Resume.pdf"
-              className="inline-flex items-center gap-2 px-5 py-3 rounded-xl bg-slate-900 hover:bg-slate-800 text-slate-100 font-semibold text-sm border border-slate-700 hover:border-cyan-500/50 hover:-translate-y-0.5 active:translate-y-0 transition-all shadow-md"
+              className="inline-flex items-center gap-2 px-6 py-3.5 rounded-xl bg-white/5 hover:bg-white/10 text-white font-mono text-xs tracking-wider uppercase border border-white/15 hover:border-cyan-400/40 transition-all hover:-translate-y-0.5 active:translate-y-0"
               title="Download Professional Resume PDF"
             >
-              <Download className="w-4 h-4 text-cyan-400" />
-              <span>Download Resume</span>
+              <Download className="w-3.5 h-3.5 text-cyan-400" />
+              <span>DOWNLOAD RESUME</span>
             </a>
 
-            {/* WhatsApp Me */}
+            {/* Let's Connect */}
             <a
-              href={personalInfo.whatsAppUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 px-5 py-3 rounded-xl bg-emerald-950/70 hover:bg-emerald-900/80 text-emerald-300 font-semibold text-sm border border-emerald-500/40 hover:border-emerald-400 hover:-translate-y-0.5 active:translate-y-0 transition-all shadow-sm"
-              title="Direct message on WhatsApp"
+              href="#contact"
+              className="inline-flex items-center gap-2 px-5 py-3.5 rounded-xl text-slate-300 hover:text-white font-mono text-xs tracking-wider uppercase transition-colors"
             >
-              <MessageCircle className="w-4 h-4 text-emerald-400" />
-              <span>WhatsApp Me</span>
+              <span>LET'S CONNECT</span>
             </a>
           </div>
 
-          {/* Social Links */}
-          <div className="flex items-center justify-center lg:justify-start gap-4 pt-4 text-slate-400">
-            <span className="text-xs font-mono uppercase tracking-wider text-slate-500">
-              Connect:
-            </span>
+          {/* Social Proof & Profiles */}
+          <div className="pt-4 flex items-center justify-center lg:justify-start gap-6 text-slate-400 text-xs font-mono">
+            <span className="text-slate-600 uppercase tracking-widest text-[10px]">VERIFIED LINKS:</span>
             <a
               href={socialLinks.github}
               target="_blank"
               rel="noopener noreferrer"
-              className="p-2 rounded-lg bg-slate-900/80 border border-slate-800 text-slate-300 hover:text-white hover:border-cyan-500/50 hover:bg-slate-800 transition-all"
-              aria-label="GitHub Profile"
+              className="hover:text-white transition-colors flex items-center gap-1.5"
             >
-              <Github className="w-4 h-4" />
+              <Github className="w-3.5 h-3.5" />
+              <span>GITHUB</span>
             </a>
             <a
               href={socialLinks.linkedin}
               target="_blank"
               rel="noopener noreferrer"
-              className="p-2 rounded-lg bg-slate-900/80 border border-slate-800 text-slate-300 hover:text-white hover:border-cyan-500/50 hover:bg-slate-800 transition-all"
-              aria-label="LinkedIn Profile"
+              className="hover:text-cyan-400 transition-colors flex items-center gap-1.5"
             >
-              <Linkedin className="w-4 h-4" />
+              <Linkedin className="w-3.5 h-3.5" />
+              <span>LINKEDIN</span>
             </a>
             <a
-              href={socialLinks.email}
-              className="p-2 rounded-lg bg-slate-900/80 border border-slate-800 text-slate-300 hover:text-cyan-400 hover:border-cyan-500/50 hover:bg-slate-800 transition-all"
-              aria-label="Send Email"
+              href={portfolioData.personalInfo.whatsAppUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="hover:text-emerald-400 transition-colors flex items-center gap-1.5"
             >
-              <Mail className="w-4 h-4" />
+              <MessageCircle className="w-3.5 h-3.5" />
+              <span>WHATSAPP</span>
             </a>
           </div>
         </div>
 
-        {/* Right Column: Authentic Professional Portrait with Subtle Tech Halo */}
-        <div className="lg:col-span-5 flex justify-center">
+        {/* Right Editorial Portrait Composition */}
+        <div className="lg:col-span-5 flex justify-center relative">
           <div className="relative w-full max-w-sm sm:max-w-md">
-            {/* Subtle Gradient Backing Glow */}
-            <div className="absolute -inset-1.5 bg-gradient-to-tr from-cyan-500/30 via-indigo-500/20 to-teal-500/30 rounded-3xl blur-xl opacity-70 group-hover:opacity-100 transition-all duration-700" />
+            
+            {/* Oversized typography partially behind the portrait */}
+            <div 
+              className="absolute -top-10 -left-6 sm:-left-10 font-display font-black text-7xl sm:text-8xl text-white/[0.04] select-none pointer-events-none tracking-tighter"
+              aria-hidden="true"
+            >
+              ARYAN
+            </div>
+            
+            {/* Ambient lighting halo */}
+            <div className="absolute inset-4 bg-gradient-to-tr from-cyan-500/20 via-transparent to-indigo-500/20 rounded-full blur-2xl opacity-60" />
 
-            {/* Portrait Frame */}
-            <div className="relative rounded-2xl bg-slate-900 border border-slate-700/80 shadow-2xl overflow-hidden p-2.5 backdrop-blur-xl">
-              <div className="relative rounded-xl overflow-hidden aspect-[4/5] bg-slate-950">
+            {/* Portrait Frame (Editorial cut, not a generic card) */}
+            <div className="relative rounded-2xl overflow-hidden border border-white/10 shadow-2xl bg-[#090d16]">
+              {/* Image */}
+              <div className="relative aspect-[3.8/5] overflow-hidden">
                 <img
                   src={personalInfo.profileImage}
                   alt="Aryan Dadwal — Full Stack Developer"
-                  className="w-full h-full object-cover object-top hover:scale-[1.02] transition-transform duration-500 ease-out"
+                  className="w-full h-full object-cover object-top filter contrast-[1.04] brightness-[0.98] transition-transform duration-700 ease-out hover:scale-105"
                   loading="eager"
                 />
 
-                {/* Subtle bottom vignette gradient for text contrast */}
-                <div className="absolute inset-0 bg-gradient-to-t from-slate-950/90 via-transparent to-transparent pointer-events-none" />
+                {/* Subtle cinematic gradient vignette */}
+                <div className="absolute inset-0 bg-gradient-to-t from-[#07090e] via-transparent to-transparent pointer-events-none" />
+                <div className="absolute inset-0 bg-gradient-to-b from-[#07090e]/40 via-transparent to-transparent pointer-events-none" />
 
-                {/* Card overlay info */}
-                <div className="absolute bottom-3 left-3 right-3 p-3 rounded-xl bg-slate-900/90 border border-slate-700/80 backdrop-blur-md flex items-center justify-between">
+                {/* Editorial minimal overlay badge */}
+                <div className="absolute bottom-4 left-4 right-4 p-3.5 rounded-xl bg-black/60 backdrop-blur-xl border border-white/10 flex items-center justify-between">
                   <div>
-                    <p className="text-xs font-semibold text-white">Aryan Dadwal</p>
-                    <p className="text-[11px] text-cyan-400 font-mono">B.Tech CSE • LPU</p>
+                    <span className="text-xs font-display font-bold text-white block">
+                      Aryan Dadwal
+                    </span>
+                    <span className="text-[10px] font-mono text-cyan-400 block tracking-wider uppercase">
+                      Full Stack Engineer
+                    </span>
                   </div>
-                  <span className="text-[10px] font-mono font-medium px-2 py-0.5 rounded bg-emerald-950/80 text-emerald-400 border border-emerald-500/30">
-                    Full Stack Dev
-                  </span>
+                  <div className="flex items-center gap-1.5 px-2 py-0.5 rounded bg-emerald-500/10 border border-emerald-500/30">
+                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+                    <span className="text-[10px] font-mono text-emerald-400 uppercase tracking-wider">
+                      Available
+                    </span>
+                  </div>
                 </div>
               </div>
             </div>
 
-            {/* Subtle Floating Technical Badges */}
-            <div className="absolute -top-3 -right-3 hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-900/95 border border-slate-700 text-slate-200 text-xs font-mono shadow-lg backdrop-blur-md">
-              <Code2 className="w-3.5 h-3.5 text-cyan-400" />
-              <span>React & Node.js</span>
-            </div>
-
-            <div className="absolute -bottom-3 -left-3 hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-900/95 border border-slate-700 text-slate-200 text-xs font-mono shadow-lg backdrop-blur-md">
-              <Coffee className="w-3.5 h-3.5 text-amber-400" />
-              <span>Java & DSA</span>
+            {/* Subtle technical coordinate stamp */}
+            <div className="mt-3 flex items-center justify-between text-[10px] font-mono text-slate-500 tracking-wider">
+              <span>SYS // AD-2026</span>
+              <span>LPU.CSE.707</span>
             </div>
           </div>
         </div>
+
       </div>
     </section>
   );
