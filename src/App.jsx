@@ -9,7 +9,7 @@ import Navbar from './components/Navbar';
 import Footer from './components/Footer';
 import WhatsAppFloat from './components/WhatsAppFloat';
 import ProjectModal from './components/ProjectModal';
-import UniverseBackground from './components/UniverseBackground';
+import EngineeringWorld3D from './components/EngineeringWorld3D';
 import useSmoothScroll from './hooks/useSmoothScroll';
 
 import Hero from './sections/Hero';
@@ -53,8 +53,8 @@ export default function App() {
         {loading && <IntroLoader onComplete={() => setLoading(false)} />}
       </AnimatePresence>
 
-      {/* Layered 3D deep-space universe background — fixed, behind everything */}
-      <UniverseBackground />
+      {/* 3D Engineering World — fixed behind everything */}
+      <EngineeringWorld3D />
 
       <motion.div
         initial={{ opacity: 0 }}

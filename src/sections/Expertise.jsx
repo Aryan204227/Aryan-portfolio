@@ -163,7 +163,7 @@ function ExpertiseCard({ item, idx, IconComp }) {
 
 export default function Expertise() {
   return (
-    <section id="expertise" className="relative bg-[#0a0a0a] py-32 px-6 sm:px-10 lg:px-16 overflow-hidden">
+    <section id="expertise" className="relative bg-[#07080a]/75 backdrop-blur-[2px] py-32 px-6 sm:px-10 lg:px-16 overflow-hidden">
       
       {/* Subtle background glow */}
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[500px] bg-lime-500/[0.02] rounded-full blur-3xl pointer-events-none" />

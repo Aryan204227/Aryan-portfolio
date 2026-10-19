@@ -322,7 +322,7 @@ export default function Projects({ onSelectProject }) {
   });
 
   return (
-    <section id="work" className="relative bg-[#07080a] py-32 px-6 sm:px-10 lg:px-16 overflow-hidden border-t border-white/[0.06]">
+    <section id="work" className="relative bg-[#07080a]/75 backdrop-blur-[2px] py-32 px-6 sm:px-10 lg:px-16 overflow-hidden border-t border-white/[0.06]">
       {/* Background Ambient Glow */}
       <div className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[950px] h-[550px] bg-lime-500/[0.025] rounded-full blur-3xl pointer-events-none" />
 
