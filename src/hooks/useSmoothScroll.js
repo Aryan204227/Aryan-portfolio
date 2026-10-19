@@ -18,6 +18,10 @@ export default function useSmoothScroll() {
     async function initLenis() {
       try {
         const { default: Lenis } = await import('lenis');
+        const { gsap } = await import('gsap');
+        const { ScrollTrigger } = await import('gsap/ScrollTrigger');
+        gsap.registerPlugin(ScrollTrigger);
+
         lenis = new Lenis({
           duration: 1.15,
           easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
@@ -28,14 +32,17 @@ export default function useSmoothScroll() {
           infinite: false,
         });
 
-        function raf(time) {
-          lenis.raf(time);
-          rafId = requestAnimationFrame(raf);
-        }
-        rafId = requestAnimationFrame(raf);
+        // Sync Lenis with GSAP ScrollTrigger
+        lenis.on('scroll', ScrollTrigger.update);
+
+        gsap.ticker.add((time) => {
+          lenis.raf(time * 1000);
+        });
+        gsap.ticker.lagSmoothing(0);
+
       } catch (e) {
         // Lenis not available, use native scroll
-        console.warn('Lenis smooth scroll not available, using native scroll.');
+        console.warn('Lenis/GSAP smooth scroll not available, using native scroll.', e);
       }
     }
 

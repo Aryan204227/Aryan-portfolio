@@ -110,7 +110,7 @@ export default function InteractiveBackground() {
         // Draw particle
         ctx.beginPath();
         ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
-        ctx.fillStyle = `rgba(249,115,22,${p.alpha})`;
+        ctx.fillStyle = `rgba(132,204,22,${p.alpha})`;
         ctx.fill();
       });
 
@@ -126,7 +126,7 @@ export default function InteractiveBackground() {
               ctx.beginPath();
               ctx.moveTo(particles[i].x, particles[i].y);
               ctx.lineTo(particles[j].x, particles[j].y);
-              ctx.strokeStyle = `rgba(249,115,22,${alpha})`;
+              ctx.strokeStyle = `rgba(132,204,22,${alpha})`;
               ctx.lineWidth = 0.5;
               ctx.stroke();
             }
