@@ -9,7 +9,7 @@ import Navbar from './components/Navbar';
 import Footer from './components/Footer';
 import WhatsAppFloat from './components/WhatsAppFloat';
 import ProjectModal from './components/ProjectModal';
-import InteractiveBackground from './components/InteractiveBackground';
+import UniverseBackground from './components/UniverseBackground';
 import useSmoothScroll from './hooks/useSmoothScroll';
 
 import Hero from './sections/Hero';
@@ -53,14 +53,14 @@ export default function App() {
         {loading && <IntroLoader onComplete={() => setLoading(false)} />}
       </AnimatePresence>
 
-      {/* Interactive particle canvas — fixed, behind everything */}
-      <InteractiveBackground />
+      {/* Layered 3D deep-space universe background — fixed, behind everything */}
+      <UniverseBackground />
 
       <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: loading ? 0 : 1 }}
         transition={{ duration: 0.6, ease: 'easeOut' }}
-        className="min-h-screen flex flex-col font-sans relative overflow-x-hidden bg-[#07080a] text-white"
+        className="min-h-screen flex flex-col font-sans relative overflow-x-hidden bg-transparent text-white"
         style={{ zIndex: 2, position: 'relative' }}
       >
         {/* Premium custom cursor (desktop only) */}

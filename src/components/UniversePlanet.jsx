@@ -4,51 +4,45 @@ import * as THREE from 'three';
 /**
  * UniversePlanet.jsx
  *
- * A cinematic Three.js 3D planet for the hero section.
- * Features:
- * - Sphere with phong shading + neon lime-green rim lighting
- * - Wireframe overlay layer for technical aesthetic
- * - Multiple inclined orbital rings (TorusGeometry)
- * - Dense starfield particle cloud
- * - Orbiting geometric fragments (icosahedra + octahedra)
- * - Pointer-responsive parallax on desktop
- * - Pauses when off-screen via IntersectionObserver
- * - Graceful WebGL fallback (glowing CSS circle)
- * - Respects prefers-reduced-motion
+ * Cinematic 3D Celestial Planet with visible, continuous rotation:
+ * - Visibly rotating textured Phong/Standard surface with craters & surface flow
+ * - High-contrast electric lime neon rim light + ambient atmosphere
+ * - 4 Independent orbital rings rotating at varied speeds and opposite directions
+ * - Constellation node lattice layer on the outer sphere
+ * - 8 Orbiting geometric satellite fragments with independent planetary paths
+ * - Floating cosmic dust halo encircling the planet
+ * - Pointer-reactive parallax tilt with smooth damping
+ * - Automatically throttles and disposes gracefully
  */
 export default function UniversePlanet({ className = '' }) {
   const mountRef = useRef(null);
   const isVisibleRef = useRef(true);
-  const webglSupported = useRef(true);
 
   useEffect(() => {
     const container = mountRef.current;
     if (!container) return;
 
-    // ── WebGL capability check ──
+    // Check WebGL capability
     try {
       const testCanvas = document.createElement('canvas');
       const gl = testCanvas.getContext('webgl') || testCanvas.getContext('experimental-webgl');
-      if (!gl) { webglSupported.current = false; return; }
+      if (!gl) return;
     } catch (_) {
-      webglSupported.current = false;
       return;
     }
 
     const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     const isMobile = window.matchMedia('(pointer: coarse)').matches;
 
-    const w = container.clientWidth || 480;
-    const h = container.clientHeight || 480;
+    const w = container.clientWidth || 520;
+    const h = container.clientHeight || 520;
 
-    // ── Scene ──
+    // ── Scene & Camera ──
     const scene = new THREE.Scene();
+    const camera = new THREE.PerspectiveCamera(40, w / h, 0.1, 100);
+    camera.position.set(0, 0, 7.2);
 
-    // ── Camera ──
-    const camera = new THREE.PerspectiveCamera(42, w / h, 0.1, 200);
-    camera.position.set(0, 0, 6.5);
-
-    // ── Renderer ──
+    // ── WebGL Renderer ──
     const renderer = new THREE.WebGLRenderer({
       alpha: true,
       antialias: !isMobile,
@@ -57,127 +51,196 @@ export default function UniversePlanet({ className = '' }) {
     renderer.setSize(w, h);
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, isMobile ? 1.5 : 2));
     renderer.setClearColor(0x000000, 0);
-    renderer.shadowMap.enabled = false;
     container.appendChild(renderer.domElement);
 
-    // ── Lighting ──
-    const ambient = new THREE.AmbientLight(0xffffff, 0.04);
-    scene.add(ambient);
+    // ── Lighting Setup ──
+    // Ambient light
+    const ambientLight = new THREE.AmbientLight(0x0f172a, 0.6);
+    scene.add(ambientLight);
 
-    // Primary rim light — neon lime-green, positioned left-back
-    const rimLight = new THREE.PointLight(0x84cc16, 12, 30);
-    rimLight.position.set(-4, 1.5, -2);
+    // Intense neon lime rim light (top-left rear)
+    const rimLight = new THREE.PointLight(0x84cc16, 18, 25);
+    rimLight.position.set(-5, 2.5, -2);
     scene.add(rimLight);
 
-    // Secondary fill — cool cyan, right
-    const fillLight = new THREE.PointLight(0x38bdf8, 3.5, 20);
-    fillLight.position.set(4, -1, 2);
+    // Key light (cool cyan front-right)
+    const keyLight = new THREE.DirectionalLight(0x38bdf8, 1.2);
+    keyLight.position.set(4, 3, 4);
+    scene.add(keyLight);
+
+    // Fill light (deep emerald under-glow)
+    const fillLight = new THREE.PointLight(0x10b981, 6, 20);
+    fillLight.position.set(2, -4, 1);
     scene.add(fillLight);
 
-    // Faint top light for atmosphere
-    const topLight = new THREE.DirectionalLight(0xffffff, 0.15);
-    topLight.position.set(0, 5, 3);
-    scene.add(topLight);
-
-    // ── Planet Core ──
+    // ── Planet Body ──
     const planetGroup = new THREE.Group();
     scene.add(planetGroup);
 
-    // Main sphere
-    const sphereGeo = new THREE.SphereGeometry(1.75, 64, 64);
-    const sphereMat = new THREE.MeshPhongMaterial({
-      color: 0x0d1117,
-      emissive: 0x050a05,
-      shininess: 45,
-      specular: new THREE.Color(0x84cc16).multiplyScalar(0.2),
-      transparent: false,
-    });
-    const sphere = new THREE.Mesh(sphereGeo, sphereMat);
-    planetGroup.add(sphere);
+    // Generate procedural surface texture for clear visual rotation cues
+    const createPlanetTexture = () => {
+      const canvas = document.createElement('canvas');
+      canvas.width = 1024;
+      canvas.height = 512;
+      const ctx = canvas.getContext('2d');
 
-    // Wireframe overlay — very subtle
-    const wireGeo = new THREE.SphereGeometry(1.755, 22, 22);
-    const wireMat = new THREE.MeshBasicMaterial({
+      // Base dark graphite
+      ctx.fillStyle = '#0a0d14';
+      ctx.fillRect(0, 0, 1024, 512);
+
+      // Distinct topographic bands & craters
+      ctx.fillStyle = '#141a29';
+      for (let i = 0; i < 40; i++) {
+        const y = Math.random() * 512;
+        const h = Math.random() * 40 + 10;
+        ctx.fillRect(0, y, 1024, h);
+      }
+
+      // Neon-green energy veins & fissures
+      ctx.strokeStyle = 'rgba(132, 204, 22, 0.6)';
+      ctx.lineWidth = 2.5;
+      for (let i = 0; i < 18; i++) {
+        ctx.beginPath();
+        let sx = Math.random() * 1024;
+        let sy = Math.random() * 512;
+        ctx.moveTo(sx, sy);
+        for (let j = 0; j < 6; j++) {
+          sx += (Math.random() - 0.5) * 140;
+          sy += (Math.random() - 0.5) * 80;
+          ctx.lineTo(sx, sy);
+        }
+        ctx.stroke();
+      }
+
+      // Luminous surface node points
+      for (let i = 0; i < 90; i++) {
+        const x = Math.random() * 1024;
+        const y = Math.random() * 512;
+        const rad = Math.random() * 3 + 1;
+        ctx.beginPath();
+        ctx.arc(x, y, rad, 0, Math.PI * 2);
+        ctx.fillStyle = i % 3 === 0 ? '#84cc16' : '#38bdf8';
+        ctx.shadowColor = '#84cc16';
+        ctx.shadowBlur = 6;
+        ctx.fill();
+      }
+
+      return new THREE.CanvasTexture(canvas);
+    };
+
+    const planetTexture = createPlanetTexture();
+    planetTexture.wrapS = THREE.RepeatWrapping;
+    planetTexture.wrapT = THREE.ClampToEdgeWrapping;
+
+    // Main Sphere
+    const sphereGeo = new THREE.SphereGeometry(1.85, 64, 64);
+    const sphereMat = new THREE.MeshStandardMaterial({
+      map: planetTexture,
+      roughness: 0.65,
+      metalness: 0.35,
+      emissive: 0x051a05,
+      emissiveIntensity: 0.4,
+    });
+    const sphereMesh = new THREE.Mesh(sphereGeo, sphereMat);
+    planetGroup.add(sphereMesh);
+
+    // Technical geodesic lattice shell
+    const latticeGeo = new THREE.IcosahedronGeometry(1.88, 2);
+    const latticeMat = new THREE.MeshBasicMaterial({
       color: 0x84cc16,
       wireframe: true,
       transparent: true,
-      opacity: 0.045,
+      opacity: 0.08,
     });
-    const wireMesh = new THREE.Mesh(wireGeo, wireMat);
-    planetGroup.add(wireMesh);
+    const latticeMesh = new THREE.Mesh(latticeGeo, latticeMat);
+    planetGroup.add(latticeMesh);
 
-    // Rim glow shell — thin transparent sphere slightly larger
-    const glowGeo = new THREE.SphereGeometry(1.82, 32, 32);
-    const glowMat = new THREE.MeshBasicMaterial({
+    // Glowing atmospheric rim halo
+    const haloGeo = new THREE.SphereGeometry(1.98, 32, 32);
+    const haloMat = new THREE.MeshBasicMaterial({
       color: 0x84cc16,
       transparent: true,
-      opacity: 0.06,
+      opacity: 0.09,
       side: THREE.BackSide,
+      blending: THREE.AdditiveBlending,
     });
-    const glowShell = new THREE.Mesh(glowGeo, glowMat);
-    planetGroup.add(glowShell);
+    const haloMesh = new THREE.Mesh(haloGeo, haloMat);
+    planetGroup.add(haloMesh);
 
-    // ── Orbital Rings ──
-    const ringData = [
-      { radius: 2.55, tube: 0.008, inclineX: 0.4,  inclineZ: 0.1,  color: 0x84cc16, opacity: 0.55, speed: 0.12 },
-      { radius: 2.95, tube: 0.005, inclineX: -0.6, inclineZ: 0.25, color: 0x84cc16, opacity: 0.35, speed: -0.09 },
-      { radius: 3.4,  tube: 0.004, inclineX: 1.1,  inclineZ: -0.3, color: 0x38bdf8, opacity: 0.25, speed: 0.07  },
-      { radius: 3.85, tube: 0.003, inclineX: -0.2, inclineZ: 0.7,  color: 0x84cc16, opacity: 0.18, speed: -0.05 },
+    // ── Independent Multi-Axis Orbital Rings ──
+    const rings = [];
+    const ringConfigs = [
+      { radius: 2.65, tube: 0.012, inclineX: 0.55, inclineY: 0.1,  inclineZ: 0.2,  speed: 0.28, color: 0x84cc16, opacity: 0.75 },
+      { radius: 3.10, tube: 0.008, inclineX: -0.65, inclineY: 0.3, inclineZ: -0.15, speed: -0.22, color: 0x38bdf8, opacity: 0.55 },
+      { radius: 3.60, tube: 0.006, inclineX: 1.15, inclineY: -0.2, inclineZ: 0.4,  speed: 0.16, color: 0x84cc16, opacity: 0.40 },
+      { radius: 4.15, tube: 0.004, inclineX: -0.35, inclineY: 0.5, inclineZ: -0.6, speed: -0.12, color: 0xa3e635, opacity: 0.30 },
     ];
 
-    const rings = ringData.map(({ radius, tube, inclineX, inclineZ, color, opacity, speed }) => {
-      const geo = new THREE.TorusGeometry(radius, tube, 8, 120);
-      const mat = new THREE.MeshBasicMaterial({ color, transparent: true, opacity });
-      const mesh = new THREE.Mesh(geo, mat);
-      mesh.rotation.x = inclineX;
-      mesh.rotation.z = inclineZ;
-      mesh.userData.speed = speed;
-      scene.add(mesh);
-      return mesh;
+    ringConfigs.forEach((cfg) => {
+      const rGeo = new THREE.TorusGeometry(cfg.radius, cfg.tube, 8, 128);
+      const rMat = new THREE.MeshBasicMaterial({
+        color: cfg.color,
+        transparent: true,
+        opacity: cfg.opacity,
+      });
+      const rMesh = new THREE.Mesh(rGeo, rMat);
+      rMesh.rotation.set(cfg.inclineX, cfg.inclineY, cfg.inclineZ);
+      rMesh.userData = { speed: cfg.speed };
+      scene.add(rMesh);
+      rings.push(rMesh);
     });
 
-    // ── Starfield ──
-    const starCount = isMobile ? 900 : 1800;
-    const starPos = new Float32Array(starCount * 3);
-    for (let i = 0; i < starCount; i++) {
-      const r = 18 + Math.random() * 30;
-      const theta = Math.random() * Math.PI * 2;
-      const phi = Math.acos(2 * Math.random() - 1);
-      starPos[i * 3]     = r * Math.sin(phi) * Math.cos(theta);
-      starPos[i * 3 + 1] = r * Math.sin(phi) * Math.sin(theta);
-      starPos[i * 3 + 2] = r * Math.cos(phi);
+    // ── Orbiting Geometric Satellites ──
+    const satellites = [];
+    const satConfigs = [
+      { geo: new THREE.IcosahedronGeometry(0.09, 0), color: 0x84cc16, dist: 2.45, speed: 0.75, offset: 0,    tilt: 0.55 },
+      { geo: new THREE.OctahedronGeometry(0.08, 0),  color: 0x38bdf8, dist: 2.85, speed: -0.60, offset: 1.8, tilt: -0.45 },
+      { geo: new THREE.TetrahedronGeometry(0.07, 0), color: 0xffffff, dist: 3.25, speed: 0.45, offset: 3.4, tilt: 0.90 },
+      { geo: new THREE.IcosahedronGeometry(0.06, 0), color: 0x84cc16, dist: 3.75, speed: -0.35, offset: 5.1, tilt: -0.80 },
+    ];
+
+    satConfigs.forEach((sc) => {
+      const sMat = new THREE.MeshBasicMaterial({ color: sc.color, wireframe: true });
+      const sMesh = new THREE.Mesh(sc.geo, sMat);
+      sMesh.userData = { ...sc, currentAngle: sc.offset };
+      scene.add(sMesh);
+      satellites.push(sMesh);
+    });
+
+    // ── Planetary Particle Halo ──
+    const haloParticleCount = isMobile ? 120 : 350;
+    const haloPositions = new Float32Array(haloParticleCount * 3);
+    const haloColors = new Float32Array(haloParticleCount * 3);
+
+    for (let i = 0; i < haloParticleCount; i++) {
+      const angle = Math.random() * Math.PI * 2;
+      const radius = 2.1 + Math.random() * 2.2;
+      const height = (Math.random() - 0.5) * 1.6;
+
+      haloPositions[i * 3]     = Math.cos(angle) * radius;
+      haloPositions[i * 3 + 1] = height;
+      haloPositions[i * 3 + 2] = Math.sin(angle) * radius;
+
+      const c = Math.random() > 0.4 ? new THREE.Color(0x84cc16) : new THREE.Color(0x38bdf8);
+      haloColors[i * 3]     = c.r;
+      haloColors[i * 3 + 1] = c.g;
+      haloColors[i * 3 + 2] = c.b;
     }
-    const starGeo = new THREE.BufferGeometry();
-    starGeo.setAttribute('position', new THREE.BufferAttribute(starPos, 3));
-    const starMat = new THREE.PointsMaterial({
-      color: 0xffffff,
-      size: 0.06,
+
+    const haloPGeo = new THREE.BufferGeometry();
+    haloPGeo.setAttribute('position', new THREE.BufferAttribute(haloPositions, 3));
+    haloPGeo.setAttribute('color', new THREE.BufferAttribute(haloColors, 3));
+
+    const haloPMat = new THREE.PointsMaterial({
+      size: 0.055,
+      vertexColors: true,
       transparent: true,
-      opacity: 0.65,
-      sizeAttenuation: true,
+      opacity: 0.75,
     });
-    const stars = new THREE.Points(starGeo, starMat);
-    scene.add(stars);
+    const haloParticles = new THREE.Points(haloPGeo, haloPMat);
+    scene.add(haloParticles);
 
-    // ── Orbiting Geometric Fragments ──
-    const fragmentData = [
-      { geo: new THREE.IcosahedronGeometry(0.08, 0), color: 0x84cc16, orbitR: 2.3, speed: 0.55, offsetAngle: 0,    incline: 0.4  },
-      { geo: new THREE.OctahedronGeometry(0.065, 0), color: 0x38bdf8, orbitR: 2.7, speed: -0.4, offsetAngle: 1.2,  incline: -0.6 },
-      { geo: new THREE.IcosahedronGeometry(0.06, 0), color: 0x84cc16, orbitR: 3.1, speed: 0.35, offsetAngle: 2.5,  incline: 1.0  },
-      { geo: new THREE.OctahedronGeometry(0.055, 0), color: 0xffffff, orbitR: 2.5, speed: -0.28,offsetAngle: 4.0,  incline: -0.3 },
-      { geo: new THREE.IcosahedronGeometry(0.05, 0), color: 0x84cc16, orbitR: 3.6, speed: 0.22, offsetAngle: 0.7,  incline: 0.75 },
-      { geo: new THREE.OctahedronGeometry(0.045, 0), color: 0x38bdf8, orbitR: 2.2, speed: -0.18,offsetAngle: 3.3,  incline: -0.9 },
-    ];
-
-    const fragments = fragmentData.map(({ geo, color, orbitR, speed, offsetAngle, incline }) => {
-      const mat = new THREE.MeshBasicMaterial({ color, transparent: true, opacity: 0.9 });
-      const mesh = new THREE.Mesh(geo, mat);
-      mesh.userData = { orbitR, speed, offsetAngle, incline, angle: offsetAngle };
-      scene.add(mesh);
-      return mesh;
-    });
-
-    // ── Mouse Parallax ──
+    // ── Pointer Parallax ──
     const mouse = { x: 0, y: 0, tx: 0, ty: 0 };
     const handleMouseMove = (e) => {
       if (isMobile) return;
@@ -187,57 +250,59 @@ export default function UniversePlanet({ className = '' }) {
     };
     window.addEventListener('mousemove', handleMouseMove, { passive: true });
 
-    // ── IntersectionObserver pause ──
+    // ── Intersection Observer ──
     const observer = new IntersectionObserver(
       ([entry]) => { isVisibleRef.current = entry.isIntersecting; },
       { threshold: 0.05 }
     );
     observer.observe(container);
 
-    // ── Animation ──
-    let raf;
+    // ── Active Animation Loop ──
+    let rafId;
     const clock = new THREE.Clock();
 
     const animate = () => {
-      raf = requestAnimationFrame(animate);
+      rafId = requestAnimationFrame(animate);
       if (!isVisibleRef.current) return;
 
-      const t = clock.getElapsedTime();
       const delta = clock.getDelta();
+      const elapsed = clock.getElapsedTime();
 
       if (!prefersReducedMotion) {
-        // Planet slow rotation
-        sphere.rotation.y = t * 0.06;
-        wireMesh.rotation.y = t * 0.04;
+        // Continuous, visible planet rotation (cycle ~28s)
+        sphereMesh.rotation.y += delta * 0.22;
+        latticeMesh.rotation.y += delta * 0.18;
+        latticeMesh.rotation.x += delta * 0.05;
 
-        // Ring rotation
-        rings.forEach(ring => {
-          ring.rotation.y += delta * ring.userData.speed;
+        // Independent multi-speed ring rotations
+        rings.forEach((ring) => {
+          ring.rotation.z += delta * ring.userData.speed;
         });
 
-        // Stars very slow drift
-        stars.rotation.y = t * 0.005;
-
-        // Mouse parallax — smooth damping
-        mouse.x += (mouse.tx - mouse.x) * 0.04;
-        mouse.y += (mouse.ty - mouse.y) * 0.04;
-        scene.rotation.y = mouse.x * 0.18;
-        scene.rotation.x = mouse.y * 0.12;
-
-        // Orbiting fragments
-        fragments.forEach(frag => {
-          frag.userData.angle += delta * frag.userData.speed;
-          const a = frag.userData.angle;
-          const r = frag.userData.orbitR;
-          const inc = frag.userData.incline;
-          frag.position.set(
-            r * Math.cos(a),
-            r * Math.sin(a) * Math.sin(inc),
-            r * Math.sin(a) * Math.cos(inc)
+        // Orbiting satellites
+        satellites.forEach((sat) => {
+          sat.userData.currentAngle += delta * sat.userData.speed;
+          const a = sat.userData.currentAngle;
+          const d = sat.userData.dist;
+          const t = sat.userData.tilt;
+          sat.position.set(
+            Math.cos(a) * d,
+            Math.sin(a) * d * Math.sin(t),
+            Math.sin(a) * d * Math.cos(t)
           );
-          frag.rotation.x += delta * 0.8;
-          frag.rotation.y += delta * 0.6;
+          sat.rotation.x += delta * 1.5;
+          sat.rotation.y += delta * 1.8;
         });
+
+        // Particle halo slow drift
+        haloParticles.rotation.y += delta * 0.12;
+
+        // Mouse orientation dampening
+        mouse.x += (mouse.tx - mouse.x) * 0.05;
+        mouse.y += (mouse.ty - mouse.y) * 0.05;
+
+        planetGroup.rotation.y = mouse.x * 0.35;
+        planetGroup.rotation.x = -mouse.y * 0.25;
       }
 
       renderer.render(scene, camera);
@@ -248,27 +313,32 @@ export default function UniversePlanet({ className = '' }) {
     // ── Resize ──
     const handleResize = () => {
       if (!container) return;
-      const nw = container.clientWidth || 480;
-      const nh = container.clientHeight || 480;
+      const nw = container.clientWidth || 520;
+      const nh = container.clientHeight || 520;
       camera.aspect = nw / nh;
       camera.updateProjectionMatrix();
       renderer.setSize(nw, nh);
     };
-    window.addEventListener('resize', handleResize, { passive: true });
+    window.addEventListener('resize', handleResize);
 
     // ── Cleanup ──
     return () => {
-      cancelAnimationFrame(raf);
+      cancelAnimationFrame(rafId);
       window.removeEventListener('mousemove', handleMouseMove);
       window.removeEventListener('resize', handleResize);
       observer.disconnect();
 
-      // Dispose geometries & materials
-      [sphereGeo, wireGeo, glowGeo, starGeo].forEach(g => g.dispose());
-      [sphereMat, wireMat, glowMat, starMat].forEach(m => m.dispose());
+      sphereGeo.dispose();
+      sphereMat.dispose();
+      planetTexture.dispose();
+      latticeGeo.dispose();
+      latticeMat.dispose();
+      haloGeo.dispose();
+      haloMat.dispose();
       rings.forEach(r => { r.geometry.dispose(); r.material.dispose(); });
-      fragments.forEach(f => { f.geometry.dispose(); f.material.dispose(); });
-      fragmentData.forEach(fd => fd.geo.dispose());
+      satellites.forEach(s => { s.geometry.dispose(); s.material.dispose(); });
+      haloPGeo.dispose();
+      haloPMat.dispose();
       renderer.dispose();
 
       if (container.contains(renderer.domElement)) {
@@ -281,15 +351,15 @@ export default function UniversePlanet({ className = '' }) {
     <div
       ref={mountRef}
       className={`relative w-full h-full flex items-center justify-center select-none ${className}`}
-      aria-hidden="true"
+      aria-label="3D Interactive Universe Planet"
     >
-      {/* Ambient lime glow beneath planet */}
-      <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+      {/* Background ambient radial glow */}
+      <div className="absolute inset-0 flex items-center justify-center pointer-events-none -z-10">
         <div
-          className="w-64 h-64 rounded-full pointer-events-none"
+          className="w-72 sm:w-96 h-72 sm:h-96 rounded-full pointer-events-none"
           style={{
-            background: 'radial-gradient(circle, rgba(132,204,22,0.12) 0%, rgba(132,204,22,0.04) 40%, transparent 70%)',
-            filter: 'blur(32px)',
+            background: 'radial-gradient(circle, rgba(132, 204, 22, 0.18) 0%, rgba(56, 189, 248, 0.06) 45%, transparent 75%)',
+            filter: 'blur(40px)',
           }}
         />
       </div>

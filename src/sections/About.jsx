@@ -14,7 +14,7 @@ const BADGES = [
 
 export default function About() {
   return (
-    <section id="about" className="relative bg-[#07080a] py-32 px-6 sm:px-10 lg:px-16 overflow-hidden border-t border-white/[0.06]">
+    <section id="about" className="relative bg-[#07080a]/65 backdrop-blur-[2px] py-32 px-6 sm:px-10 lg:px-16 overflow-hidden border-t border-white/[0.06]">
       {/* Background Subtle Glow */}
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[450px] bg-lime-500/[0.02] rounded-full blur-3xl pointer-events-none" />
 

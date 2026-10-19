@@ -6,13 +6,13 @@
    ROOT
 ═══════════════════════════════════════════════════ */
 :root {
-  --bg:       #0a0a0a;
-  --surface:  #111111;
-  --surface2: #161616;
+  --bg:       #07080a;
+  --surface:  #0d0f17;
+  --surface2: #12141c;
   --border:   rgba(255,255,255,0.08);
-  --muted:    rgba(255,255,255,0.4);
-  --accent:   #f97316;
-  --accent2:  #ea580c;
+  --muted:    rgba(255,255,255,0.45);
+  --accent:   #84cc16;
+  --accent2:  #65a30d;
   --green:    #84cc16;
 }
 
@@ -36,7 +36,7 @@ body {
 /* ═══════════════════════════════════════════════════
    SELECTION
 ═══════════════════════════════════════════════════ */
-::selection { background: rgba(249,115,22,0.22); color: #fed7aa; }
+::selection { background: rgba(132,204,22,0.25); color: #d9f99d; }
 
 /* ═══════════════════════════════════════════════════
    GRAIN — animated film texture
@@ -84,27 +84,33 @@ a, button, [data-cursor], [role="button"] { cursor: none !important; }
 /* ═══════════════════════════════════════════════════
    MARQUEE — Seamless Bidirectional Dual Track
 ═══════════════════════════════════════════════════ */
-@keyframes marquee-left {
-  0%   { transform: translateX(0); }
+@keyframes marquee-scroll-left {
+  0% { transform: translateX(0); }
   100% { transform: translateX(-50%); }
 }
-@keyframes marquee-right {
-  0%   { transform: translateX(-50%); }
+
+@keyframes marquee-scroll-right {
+  0% { transform: translateX(-50%); }
   100% { transform: translateX(0); }
 }
 
-.animate-marquee-left {
-  animation: marquee-left 34s linear infinite;
+.marquee-left {
+  animation: marquee-scroll-left 28s linear infinite;
   display: flex;
   width: max-content;
   will-change: transform;
 }
 
-.animate-marquee-right {
-  animation: marquee-right 34s linear infinite;
+.marquee-right {
+  animation: marquee-scroll-right 28s linear infinite;
   display: flex;
   width: max-content;
   will-change: transform;
+}
+
+.marquee-left:hover,
+.marquee-right:hover {
+  animation-play-state: paused;
 }
 
 /* ═══════════════════════════════════════════════════

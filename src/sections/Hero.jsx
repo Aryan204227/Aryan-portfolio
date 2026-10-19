@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { motion, useMotionValue, useSpring } from 'framer-motion';
+import { motion, useMotionValue, useSpring, useScroll, useTransform } from 'framer-motion';
 import { ArrowRight, Terminal as TerminalIcon, Github, Linkedin, Mail, FileText, ChevronDown, MessageCircle } from 'lucide-react';
 import { portfolioData } from '../data/portfolioData';
 import TerminalDrawer from '../components/TerminalDrawer';
@@ -18,7 +18,7 @@ function AnimatedWord({ text, delay = 0, className = '', outlined = false }) {
         animate={{ y: 0, opacity: 1, rotateX: 0 }}
         transition={{ duration: 0.9, delay, ease: EASE }}
         style={outlined ? {
-          WebkitTextStroke: '1.5px rgba(255,255,255,0.75)',
+          WebkitTextStroke: '1.5px rgba(255,255,255,0.85)',
           WebkitTextFillColor: 'transparent',
         } : undefined}
         className={className}
@@ -40,6 +40,18 @@ export default function Hero() {
 
   const sectionRef = useRef(null);
   const isMobile = typeof window !== 'undefined' && window.matchMedia('(pointer: coarse)').matches;
+
+  // Scroll parallax choreography
+  const { scrollYProgress } = useScroll({
+    target: sectionRef,
+    offset: ['start start', 'end start'],
+  });
+
+  const planetScale = useTransform(scrollYProgress, [0, 1], [1, 0.82]);
+  const planetY = useTransform(scrollYProgress, [0, 1], [0, 90]);
+  const planetOpacity = useTransform(scrollYProgress, [0, 0.85, 1], [1, 0.9, 0]);
+  const textY = useTransform(scrollYProgress, [0, 1], [0, -40]);
+  const textOpacity = useTransform(scrollYProgress, [0, 0.7, 1], [1, 0.8, 0]);
 
   useEffect(() => {
     if (isMobile) return;
@@ -73,39 +85,37 @@ export default function Hero() {
     <section
       id="home"
       ref={sectionRef}
-      className="relative min-h-screen flex flex-col justify-between items-center bg-[#07080a] overflow-hidden select-none px-6 pt-28 pb-12"
+      className="relative min-h-screen flex flex-col justify-between items-center bg-transparent overflow-hidden select-none px-6 pt-28 pb-12"
     >
       {/* ── Pointer-responsive ambient glow ── */}
       {!isMobile && (
         <motion.div
           className="absolute pointer-events-none rounded-full z-0"
           style={{
-            width: 640,
-            height: 640,
+            width: 680,
+            height: 680,
             x: glowX,
             y: glowY,
             translateX: '-50%',
             translateY: '-50%',
             background:
-              'radial-gradient(circle, rgba(132,204,22,0.055) 0%, rgba(56,189,248,0.025) 40%, transparent 70%)',
+              'radial-gradient(circle, rgba(132,204,22,0.07) 0%, rgba(56,189,248,0.03) 40%, transparent 70%)',
           }}
         />
       )}
 
       {/* ── Top ambient radial at center ── */}
-      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[900px] h-[420px] pointer-events-none z-0"
-        style={{ background: 'radial-gradient(ellipse at 50% 0%, rgba(132,204,22,0.07) 0%, rgba(56,189,248,0.025) 35%, transparent 65%)' }}
+      <div
+        className="absolute top-0 left-1/2 -translate-x-1/2 w-[950px] h-[450px] pointer-events-none z-0"
+        style={{ background: 'radial-gradient(ellipse at 50% 0%, rgba(132,204,22,0.09) 0%, rgba(56,189,248,0.03) 40%, transparent 70%)' }}
       />
 
-      {/* ── Planet edge ambient glow (right side on desktop) ── */}
-      <div className="absolute right-0 top-1/2 -translate-y-1/2 w-[520px] h-[520px] pointer-events-none z-0 hidden lg:block"
-        style={{ background: 'radial-gradient(ellipse at 100% 50%, rgba(132,204,22,0.06) 0%, transparent 60%)' }}
-      />
-
-      {/* ── Availability ribbon ── */}
+      {/* ── Right-Edge Availability Ribbon ── */}
       <div className="fixed right-3 sm:right-5 top-1/2 -translate-y-1/2 z-40 hidden lg:flex items-center">
-        <div className="flex items-center gap-2 py-3 px-1.5 rounded-full border border-white/10 bg-[#101218]/90 backdrop-blur-md shadow-2xl text-[10px] text-neutral-400"
-          style={{ writingMode: 'vertical-rl', textOrientation: 'mixed', letterSpacing: '0.12em' }}>
+        <div
+          className="flex items-center gap-2 py-3 px-1.5 rounded-full border border-lime-500/25 bg-[#0d0f17]/90 backdrop-blur-md shadow-[0_0_20px_rgba(132,204,22,0.15)] text-[10px] text-neutral-300"
+          style={{ writingMode: 'vertical-rl', textOrientation: 'mixed', letterSpacing: '0.12em' }}
+        >
           <span className="w-2 h-2 rounded-full bg-lime-400 animate-pulse" />
           <span>AVAILABLE FOR INTERNSHIPS &amp; ROLES</span>
         </div>
@@ -129,7 +139,7 @@ export default function Hero() {
           <span>CLASS OF <strong className="text-white">2028</strong></span>
           <button
             onClick={() => setTerminalOpen(true)}
-            className="hidden sm:inline-flex items-center gap-1.5 text-neutral-400 hover:text-white transition-colors"
+            className="hidden sm:inline-flex items-center gap-1.5 text-neutral-400 hover:text-lime-300 transition-colors"
           >
             <TerminalIcon className="w-3.5 h-3.5 text-lime-400" />
             <span>CLI TERMINAL</span>
@@ -137,20 +147,22 @@ export default function Hero() {
         </div>
       </motion.div>
 
-      {/* ── Main hero composition ── */}
-      <div className="relative my-auto w-full max-w-7xl grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-4 items-center z-10 py-10 lg:py-14">
+      {/* ── Main hero composition with cinematic scroll transition ── */}
+      <div className="relative my-auto w-full max-w-7xl grid grid-cols-1 lg:grid-cols-12 gap-8 items-center z-10 py-10 lg:py-16">
 
         {/* Left — editorial typography (7 cols) */}
-        <div className="lg:col-span-7 flex flex-col items-start text-left">
-
+        <motion.div
+          style={{ y: textY, opacity: textOpacity }}
+          className="lg:col-span-7 flex flex-col items-start text-left"
+        >
           {/* Badge */}
           <motion.div
             initial={{ opacity: 0, y: 14, filter: 'blur(6px)' }}
             animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
             transition={{ duration: 0.65, delay: 0.1, ease: EASE }}
-            className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/[0.04] border border-white/[0.1] text-neutral-300 text-[11px] font-mono uppercase tracking-widest mb-7"
+            className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-lime-500/10 border border-lime-500/30 text-lime-400 text-[11px] font-mono uppercase tracking-widest mb-7 shadow-[0_0_15px_rgba(132,204,22,0.15)]"
           >
-            <span className="text-lime-400">✦</span>
+            <span className="text-lime-400 animate-spin" style={{ animationDuration: '6s' }}>✦</span>
             <span>CREATIVE DEVELOPER &amp; SOFTWARE ENGINEER</span>
           </motion.div>
 
@@ -176,7 +188,7 @@ export default function Hero() {
             transition={{ duration: 0.7, delay: 0.52, ease: EASE }}
             className="text-sm sm:text-base font-mono tracking-widest text-lime-400 uppercase mb-4"
           >
-            Full Stack Developer
+            Full Stack Developer &amp; Systems Builder
           </motion.div>
 
           {/* Editorial bio */}
@@ -214,7 +226,7 @@ export default function Hero() {
               rel="noopener noreferrer"
               whileHover={{ scale: 1.04, y: -2 }}
               whileTap={{ scale: 0.97 }}
-              className="inline-flex items-center gap-2 px-7 py-3.5 rounded-full bg-[#11131a] hover:bg-[#181b24] text-white border border-white/10 hover:border-lime-400/30 text-sm font-semibold tracking-wide transition-all shadow-xl"
+              className="inline-flex items-center gap-2 px-7 py-3.5 rounded-full bg-[#11131a] hover:bg-[#181b24] text-white border border-white/10 hover:border-lime-400/40 text-sm font-semibold tracking-wide transition-all shadow-xl"
             >
               <FileText className="w-4 h-4 text-lime-400" />
               <span>VIEW RESUME</span>
@@ -235,18 +247,25 @@ export default function Hero() {
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label={label}
-                className="w-10 h-10 rounded-full bg-[#11131a] border border-white/10 flex items-center justify-center text-neutral-400 hover:text-white hover:border-lime-400/40 transition-all"
+                className="w-10 h-10 rounded-full bg-[#11131a] border border-white/10 flex items-center justify-center text-neutral-400 hover:text-white hover:border-lime-400/50 hover:shadow-[0_0_15px_rgba(132,204,22,0.2)] transition-all"
               >
                 <Icon className="w-4 h-4" />
               </a>
             ))}
           </motion.div>
-        </div>
+        </motion.div>
 
-        {/* Right — 3D Universe Planet (5 cols) */}
-        <div className="lg:col-span-5 relative flex items-center justify-center h-[320px] sm:h-[400px] lg:h-[520px] w-full">
+        {/* Right — 3D Universe Planet with scroll parallax transformation (5 cols) */}
+        <motion.div
+          style={{
+            scale: planetScale,
+            y: planetY,
+            opacity: planetOpacity,
+          }}
+          className="lg:col-span-5 relative flex items-center justify-center h-[340px] sm:h-[440px] lg:h-[540px] w-full"
+        >
           <UniversePlanet className="w-full h-full" />
-        </div>
+        </motion.div>
 
       </div>
 
@@ -259,7 +278,7 @@ export default function Hero() {
       >
         {META_ITEMS.map((item, i) => (
           <React.Fragment key={item}>
-            <span className="text-[10px] font-mono tracking-widest text-neutral-500 uppercase px-4">
+            <span className="text-[10px] font-mono tracking-widest text-neutral-400 uppercase px-4">
               {item}
             </span>
             {i < META_ITEMS.length - 1 && (
