@@ -120,7 +120,7 @@ export default function SystemArchitecture() {
   const activeNode = currentArch.nodes.find((n) => n.id === selectedNodeId) || currentArch.nodes[0];
 
   return (
-    <section id="architecture" className="relative bg-[#07080a]/75 backdrop-blur-[2px] py-32 px-6 sm:px-10 lg:px-16 overflow-hidden border-t border-white/[0.06]">
+    <section id="architecture" className="relative scroll-mt-28 bg-[#07080a]/75 backdrop-blur-[2px] py-32 px-6 sm:px-10 lg:px-16 overflow-hidden border-t border-white/[0.06]">
       {/* Background Ambient Glow */}
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[850px] h-[450px] bg-lime-500/[0.025] rounded-full blur-3xl pointer-events-none" />
 

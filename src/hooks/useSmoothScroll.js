@@ -34,6 +34,7 @@ export default function useSmoothScroll() {
 
         // Sync Lenis with GSAP ScrollTrigger
         lenis.on('scroll', ScrollTrigger.update);
+        window.__lenis = lenis;
 
         gsap.ticker.add((time) => {
           lenis.raf(time * 1000);

@@ -16,7 +16,11 @@
   --green:    #84cc16;
 }
 
-html { scroll-behavior: smooth; background: var(--bg); }
+html {
+  scroll-behavior: smooth;
+  background: var(--bg);
+  scroll-padding-top: 6.5rem;
+}
 
 body {
   margin: 0; padding: 0;
@@ -108,9 +112,10 @@ a, button, [data-cursor], [role="button"] { cursor: none !important; }
   will-change: transform;
 }
 
-.marquee-left:hover,
-.marquee-right:hover {
-  animation-play-state: paused;
+/* Keep tracks moving continuously independent of hover */
+.marquee-left,
+.marquee-right {
+  pointer-events: auto;
 }
 
 /* ═══════════════════════════════════════════════════

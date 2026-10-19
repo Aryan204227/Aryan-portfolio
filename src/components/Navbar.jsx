@@ -6,7 +6,7 @@ import { portfolioData } from '../data/portfolioData';
 const NAV_ITEMS = [
   { label: 'Home', href: '#home', icon: Home },
   { label: 'About', href: '#about', icon: User },
-  { label: 'Skills', href: '#stack', icon: Code2 },
+  { label: 'Skills', href: '#skills', icon: Code2 },
   { label: 'Projects', href: '#work', icon: Briefcase },
   { label: 'Architecture', href: '#architecture', icon: Network },
   { label: 'GitHub', href: '#github', icon: Github },
@@ -22,14 +22,16 @@ export default function Navbar() {
     const handleScroll = () => {
       setScrolled(window.scrollY > 40);
 
-      const sectionIds = ['home', 'about', 'expertise', 'stack', 'work', 'architecture', 'github', 'training', 'contact'];
-      const scrollPos = window.scrollY + 280;
+      const sectionIds = ['home', 'about', 'expertise', 'skills', 'stack', 'work', 'architecture', 'github', 'training', 'contact'];
+      const scrollPos = window.scrollY + 200;
 
       for (let i = sectionIds.length - 1; i >= 0; i--) {
         const el = document.getElementById(sectionIds[i]);
         if (el && el.offsetTop <= scrollPos) {
           if (sectionIds[i] === 'expertise' || sectionIds[i] === 'training') {
             setActiveSection('about');
+          } else if (sectionIds[i] === 'stack') {
+            setActiveSection('skills');
           } else {
             setActiveSection(sectionIds[i]);
           }
@@ -45,9 +47,15 @@ export default function Navbar() {
   const handleNavClick = (e, href) => {
     e.preventDefault();
     setMobileOpen(false);
-    const target = document.querySelector(href);
+    const target = document.querySelector(href) || (href === '#skills' ? document.querySelector('#stack') : null);
     if (target) {
-      target.scrollIntoView({ behavior: 'smooth' });
+      if (window.__lenis) {
+        window.__lenis.scrollTo(target, { offset: -95, duration: 1.1 });
+      } else {
+        const navOffset = 95;
+        const targetPos = target.getBoundingClientRect().top + window.pageYOffset - navOffset;
+        window.scrollTo({ top: Math.max(0, targetPos), behavior: 'smooth' });
+      }
     }
   };
 

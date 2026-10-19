@@ -7,7 +7,7 @@ const { personalInfo, socialLinks } = portfolioData;
 
 export default function Contact() {
   return (
-    <section id="contact" className="relative bg-[#07080a]/75 backdrop-blur-[2px] pt-32 pb-44 px-6 sm:px-10 lg:px-16 overflow-hidden border-t border-white/[0.06]">
+    <section id="contact" className="relative scroll-mt-28 bg-[#07080a]/75 backdrop-blur-[2px] pt-32 pb-44 px-6 sm:px-10 lg:px-16 overflow-hidden border-t border-white/[0.06]">
       {/* Background Ambient Glow */}
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[850px] h-[450px] bg-lime-500/[0.03] rounded-full blur-3xl pointer-events-none" />
 
