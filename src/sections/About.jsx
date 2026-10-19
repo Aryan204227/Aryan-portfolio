@@ -1,234 +1,163 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { ExternalLink } from 'lucide-react';
+import { MapPin, GraduationCap, Award, FileText, CheckCircle2, Terminal } from 'lucide-react';
 import { portfolioData } from '../data/portfolioData';
 
 const { personalInfo } = portfolioData;
 
 const BADGES = [
-  { label: 'CGPA 7.07', color: 'text-orange-400' },
-  { label: 'B.Tech CSE', color: 'text-neutral-300' },
-  { label: 'Class of 2028', color: 'text-neutral-300' },
-  { label: 'LPU', color: 'text-neutral-300' },
+  { label: 'CGPA 7.07 (EXACT)', color: 'text-lime-400', border: 'border-lime-500/30' },
+  { label: 'B.TECH CSE', color: 'text-neutral-200', border: 'border-white/10' },
+  { label: 'LPU PHAGWARA', color: 'text-neutral-200', border: 'border-white/10' },
+  { label: 'CLASS OF 2028', color: 'text-neutral-200', border: 'border-white/10' },
 ];
 
 export default function About() {
   return (
-    <section id="about" className="relative bg-[#0a0a0a] py-32 px-6 sm:px-10 lg:px-16 overflow-hidden">
-      
-      {/* Top Arc */}
-      <div className="absolute top-0 left-0 right-0 h-36 overflow-hidden pointer-events-none z-0">
-        <div
-          className="absolute left-1/2 -translate-x-1/2 top-[-140px] w-[130%] max-w-[1400px] h-[240px] rounded-[100%] border-b border-orange-500/60"
-          style={{ boxShadow: '0 8px 40px rgba(249,115,22,0.5)' }}
-        />
-      </div>
+    <section id="about" className="relative bg-[#07080a] py-32 px-6 sm:px-10 lg:px-16 overflow-hidden border-t border-white/[0.06]">
+      {/* Background Subtle Glow */}
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[450px] bg-lime-500/[0.02] rounded-full blur-3xl pointer-events-none" />
 
       <div className="relative z-10 max-w-7xl mx-auto flex flex-col items-center">
-        
-        {/* Badge */}
+        {/* Pill Badge */}
         <motion.div
           initial={{ opacity: 0, y: 15 }}
           whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: '-60px' }}
+          viewport={{ once: true }}
           transition={{ duration: 0.6 }}
-          className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[#161616] border border-orange-500/30 text-orange-400 text-xs font-mono uppercase tracking-widest mb-6 shadow-[0_0_15px_rgba(249,115,22,0.15)]"
+          className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[#12141a] border border-lime-500/30 text-lime-400 text-xs font-mono uppercase tracking-widest mb-6 shadow-[0_0_15px_rgba(132,204,22,0.15)]"
         >
-          <span className="w-4 h-4 rounded-full bg-orange-500/20 flex items-center justify-center text-[10px] text-orange-400 font-bold">✦</span>
-          <span>GET TO KNOW ME</span>
+          <span className="w-2 h-2 rounded-full bg-lime-400 animate-pulse" />
+          <span>ABOUT &amp; ACADEMIC FOUNDATION</span>
         </motion.div>
 
-        {/* Heading — honest */}
+        {/* Section Heading */}
         <motion.h2
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: '-60px' }}
+          viewport={{ once: true }}
           transition={{ duration: 0.7, delay: 0.1 }}
-          className="font-extrabold tracking-tight text-center leading-[1.05]"
-          style={{ fontSize: 'clamp(38px, 6vw, 76px)' }}
+          className="font-extrabold tracking-tight text-center leading-[1.05] text-white max-w-3xl mb-4"
+          style={{ fontSize: 'clamp(34px, 5vw, 64px)' }}
         >
-          <span className="text-white">Turning ideas into </span>
-          <span className="text-neutral-400">reality</span>
+          Engineering mindset &amp; core identity.
         </motion.h2>
 
-        {/* Accurate, honest subtitle */}
         <motion.p
           initial={{ opacity: 0, y: 15 }}
           whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: '-60px' }}
-          transition={{ duration: 0.7, delay: 0.2 }}
-          className="text-neutral-400 italic text-base sm:text-lg lg:text-xl text-center max-w-2xl mt-4 mb-16 font-light"
+          viewport={{ once: true }}
+          transition={{ duration: 0.7, delay: 0.15 }}
+          className="text-neutral-400 text-sm sm:text-base text-center max-w-xl mb-16 font-light"
         >
-          Developer and problem solver by nature. Let's build something together.
+          Computer Science undergraduate combining algorithmic rigor with practical full-stack web engineering.
         </motion.p>
 
-        {/* Bento Grid */}
-        <div className="w-full grid grid-cols-1 lg:grid-cols-12 gap-6">
-
-          {/* Profile Card — Sequential 1-4 elements */}
+        {/* Asymmetric Bento Spread */}
+        <div className="w-full grid grid-cols-1 lg:grid-cols-12 gap-8">
+          
+          {/* Left Column: Portrait & Identity Profile (5 cols) */}
           <motion.div
-            initial={{ opacity: 0, y: 35 }}
+            initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, margin: '-60px' }}
-            transition={{ duration: 0.7, delay: 0.15, ease: [0.16, 1, 0.3, 1] }}
-            className="lg:col-span-7 rounded-3xl bg-[#121214] border border-white/10 p-6 sm:p-8 flex flex-col sm:flex-row items-center gap-6 sm:gap-8 shadow-2xl relative overflow-hidden group hover:border-orange-500/30 transition-all duration-300"
+            viewport={{ once: true }}
+            transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
+            className="lg:col-span-5 rounded-3xl bg-[#0d0f17] border border-white/10 p-6 sm:p-8 flex flex-col justify-between shadow-2xl relative overflow-hidden group hover:border-lime-500/30 transition-all"
           >
-            <div className="absolute top-0 right-0 w-64 h-64 bg-orange-500/5 rounded-full blur-3xl pointer-events-none" />
-
-            {/* 1. Photo: subtle scale & fade */}
-            <motion.div
-              initial={{ opacity: 0, scale: 0.94 }}
-              whileInView={{ opacity: 1, scale: 1 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.6, delay: 0.25 }}
-              className="relative w-36 h-44 sm:w-44 sm:h-52 shrink-0 rounded-2xl overflow-hidden border border-white/10 shadow-lg"
-            >
-              <img
-                src={personalInfo.profileImage}
-                alt="Aryan Dadwal — B.Tech CSE student and Full Stack Developer"
-                className="w-full h-full object-cover object-top filter brightness-95 contrast-105 group-hover:scale-105 transition-transform duration-500"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-[#0a0a0a]/80 via-transparent to-transparent" />
-              <div className="absolute bottom-2 left-2 right-2 flex items-center justify-center py-1 rounded bg-black/60 backdrop-blur-md text-[9px] font-mono text-emerald-400 uppercase tracking-wider">
-                ● LPU CSE
+            <div>
+              {/* Profile Image with subtle scale */}
+              <div className="relative w-full h-72 sm:h-80 rounded-2xl overflow-hidden border border-white/10 shadow-lg mb-6">
+                <img
+                  src={personalInfo.profileImage}
+                  alt="Aryan Dadwal — Full Stack Developer & B.Tech CSE Student"
+                  className="w-full h-full object-cover object-top filter brightness-95 contrast-105 group-hover:scale-105 transition-transform duration-700"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-[#0d0f17] via-transparent to-transparent opacity-80" />
+                
+                <div className="absolute bottom-3 left-3 right-3 flex items-center justify-between p-2.5 rounded-xl bg-black/60 backdrop-blur-md border border-white/10 text-xs font-mono">
+                  <span className="text-white font-semibold">Aryan Dadwal</span>
+                  <span className="text-lime-400 font-bold">LPU • B.Tech CSE</span>
+                </div>
               </div>
-            </motion.div>
 
-            {/* Content Beside Photo */}
-            <div className="flex-1 space-y-3 text-left">
-              {/* 2. Name & Title reveal */}
-              <motion.span
-                initial={{ opacity: 0, y: 10 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.5, delay: 0.3 }}
-                className="text-[11px] font-mono tracking-widest text-neutral-400 uppercase block"
-              >
-                B.TECH CSE STUDENT &amp; FULL STACK DEVELOPER
-              </motion.span>
-              
-              <motion.h3
-                initial={{ opacity: 0, y: 12 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.5, delay: 0.35 }}
-                className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight"
-              >
-                Aryan Dadwal.
-              </motion.h3>
-
-              {/* 3. Description reveal */}
-              <motion.p
-                initial={{ opacity: 0, y: 12 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.5, delay: 0.4 }}
-                className="text-neutral-400 text-sm leading-relaxed font-light"
-              >
-                I build modern web applications and AI-focused projects using the MERN stack, Java and REST APIs. I enjoy turning ideas into practical, responsive and well-structured software projects.
-              </motion.p>
-
-              {/* 4. Badges staggered */}
-              <div className="pt-2 flex flex-wrap items-center gap-2 text-xs font-mono">
-                {BADGES.map((b, i) => (
-                  <motion.span
+              {/* Verified Badges Strip */}
+              <div className="flex flex-wrap gap-2 mb-4">
+                {BADGES.map((b) => (
+                  <span
                     key={b.label}
-                    initial={{ opacity: 0, scale: 0.9 }}
-                    whileInView={{ opacity: 1, scale: 1 }}
-                    viewport={{ once: true }}
-                    transition={{ duration: 0.4, delay: 0.45 + i * 0.06 }}
-                    className={`px-3 py-1 rounded-full bg-white/[0.05] border border-white/10 ${b.color}`}
+                    className={`px-3 py-1 rounded-full text-xs font-mono font-medium bg-white/[0.03] border ${b.border} ${b.color}`}
                   >
                     {b.label}
-                  </motion.span>
+                  </span>
                 ))}
               </div>
             </div>
+
+            <div className="pt-6 border-t border-white/[0.08] flex items-center justify-between text-xs font-mono text-neutral-400">
+              <span>LOCATION</span>
+              <span className="text-neutral-200">Punjab / Himachal Pradesh, India</span>
+            </div>
           </motion.div>
 
-          {/* Right Column */}
-          <div className="lg:col-span-5 flex flex-col gap-6">
-
-            {/* Identity pill strip */}
-            <motion.div
-              initial={{ opacity: 0, y: 25 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, margin: '-60px' }}
-              transition={{ duration: 0.6, delay: 0.25 }}
-              className="rounded-2xl bg-[#121214] border border-white/10 p-4 flex items-center justify-center text-center shadow-xl"
-            >
-              <span className="text-[11px] sm:text-xs font-mono uppercase tracking-widest text-neutral-300 flex flex-wrap items-center justify-center gap-2">
-                <span>FULL STACK</span>
-                <span className="text-orange-500">•</span>
-                <span>MERN STACK</span>
-                <span className="text-orange-500">•</span>
-                <span>JAVA &amp; DSA</span>
-                <span className="text-orange-500">•</span>
-                <span>AI PROJECTS</span>
+          {/* Right Column: Statement & Academic Architecture (7 cols) */}
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.7, delay: 0.15, ease: [0.16, 1, 0.3, 1] }}
+            className="lg:col-span-7 flex flex-col justify-between gap-6"
+          >
+            {/* Primary Statement Card */}
+            <div className="rounded-3xl bg-[#0d0f17] border border-white/10 p-6 sm:p-8 shadow-2xl relative">
+              <span className="text-[10px] font-mono tracking-widest text-lime-400 uppercase font-bold block mb-3">
+                STATEMENT OF PURPOSE
               </span>
-            </motion.div>
+              <h3 className="text-xl sm:text-2xl font-bold text-white tracking-tight leading-snug mb-4">
+                "I focus on writing clean, decoupled code and translating complex problem logic into resilient, performant software."
+              </h3>
+              <p className="text-neutral-300 text-sm sm:text-base font-light leading-relaxed mb-6">
+                Currently pursuing my Bachelor of Technology in Computer Science and Engineering at Lovely Professional University (expected graduation 2028) with an exact CGPA of 7.07. My technical foundation spans MERN full-stack development, Java DSA and algorithmic problem solving, REST APIs, and AI integrations.
+              </p>
 
-            {/* Stats Grid */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 flex-1">
-
-              {/* 5. Stats Card reveal */}
-              <motion.div
-                initial={{ opacity: 0, y: 25 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true, margin: '-60px' }}
-                transition={{ duration: 0.6, delay: 0.35 }}
-                className="rounded-3xl bg-[#121214] border border-white/10 p-6 flex flex-col justify-between shadow-xl hover:border-emerald-500/30 transition-colors"
-              >
-                <div className="flex items-center gap-2 text-xs font-mono text-neutral-400">
-                  <span className="text-[10px] uppercase tracking-widest">ACADEMIC</span>
-                </div>
-
-                <div className="my-4">
-                  <div className="text-4xl font-extrabold text-white tracking-tight">
-                    7.07
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-4 border-t border-white/[0.08]">
+                {[
+                  'MERN Full-Stack Development',
+                  'Algorithmic Problem Solving (Java)',
+                  'Decoupled REST API Architecture',
+                  'AI & Machine Learning Integrations',
+                ].map((item) => (
+                  <div key={item} className="flex items-center gap-2 text-xs font-mono text-neutral-300">
+                    <CheckCircle2 className="w-3.5 h-3.5 text-lime-400 shrink-0" />
+                    <span>{item}</span>
                   </div>
-                  <div className="text-[10px] font-mono text-neutral-400 tracking-widest uppercase mt-1">
-                    CGPA — LOVELY PROFESSIONAL UNIVERSITY
-                  </div>
-                </div>
-
-                <div className="text-xs text-neutral-400 font-light border-t border-white/10 pt-3">
-                  B.Tech CSE • Class of 2028
-                </div>
-              </motion.div>
-
-              {/* 6. Project Showcase reveal */}
-              <motion.div
-                initial={{ opacity: 0, y: 25 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true, margin: '-60px' }}
-                transition={{ duration: 0.6, delay: 0.45 }}
-                className="rounded-3xl bg-[#121214] border border-white/10 p-6 flex flex-col justify-between shadow-xl relative overflow-hidden group hover:border-orange-500/30 transition-colors"
-              >
-                <div className="text-[10px] font-mono tracking-widest text-neutral-400 uppercase">
-                  PROJECTS BUILT
-                </div>
-
-                <div className="my-3">
-                  <div className="text-4xl font-extrabold text-white tracking-tight">
-                    3
-                  </div>
-                  <div className="text-[10px] font-mono text-neutral-400 tracking-widest uppercase mt-1">
-                    MERN • JAVA • AI
-                  </div>
-                </div>
-
-                <div className="text-[11px] font-mono text-neutral-400 flex items-center justify-between border-t border-white/10 pt-3">
-                  <span>Featured Projects</span>
-                  <ExternalLink className="w-3.5 h-3.5 text-neutral-500 group-hover:text-orange-400 transition-colors" />
-                </div>
-              </motion.div>
-
+                ))}
+              </div>
             </div>
-          </div>
+
+            {/* University & Degree Metric Bento Card */}
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+              <div className="p-5 rounded-2xl bg-[#0d0f17] border border-white/10 flex flex-col justify-between">
+                <span className="text-[10px] font-mono text-neutral-400 uppercase">DEGREE</span>
+                <span className="text-base font-bold text-white mt-1">B.Tech CSE</span>
+                <span className="text-[10px] font-mono text-lime-400 mt-2">Class of 2028</span>
+              </div>
+
+              <div className="p-5 rounded-2xl bg-[#0d0f17] border border-white/10 flex flex-col justify-between">
+                <span className="text-[10px] font-mono text-neutral-400 uppercase">INSTITUTION</span>
+                <span className="text-base font-bold text-white mt-1">LPU Phagwara</span>
+                <span className="text-[10px] font-mono text-neutral-400 mt-2">Punjab, India</span>
+              </div>
+
+              <div className="p-5 rounded-2xl bg-[#0d0f17] border border-white/10 flex flex-col justify-between">
+                <span className="text-[10px] font-mono text-neutral-400 uppercase">EXACT CGPA</span>
+                <span className="text-2xl font-black text-lime-400 mt-1">7.07</span>
+                <span className="text-[10px] font-mono text-neutral-400 mt-2">Scale of 10.0</span>
+              </div>
+            </div>
+
+          </motion.div>
 
         </div>
-
       </div>
     </section>
   );

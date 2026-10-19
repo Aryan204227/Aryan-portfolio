@@ -17,10 +17,12 @@ import About from './sections/About';
 import Expertise from './sections/Expertise';
 import TechArsenal from './sections/TechArsenal';
 import Projects from './sections/Projects';
+import SystemArchitecture from './sections/SystemArchitecture';
+import EngineeringApproach from './sections/EngineeringApproach';
+import Education from './sections/Education';
 import Training from './sections/Training';
 import Certificates from './sections/Certificates';
-import Education from './sections/Education';
-import EngineeringApproach from './sections/EngineeringApproach';
+import GitHubActivity from './sections/GitHubActivity';
 import Contact from './sections/Contact';
 
 export default function App() {
@@ -51,20 +53,20 @@ export default function App() {
         {loading && <IntroLoader onComplete={() => setLoading(false)} />}
       </AnimatePresence>
 
-      {/* Interactive particle background — fixed, behind everything */}
+      {/* Interactive particle canvas — fixed, behind everything */}
       <InteractiveBackground />
 
       <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: loading ? 0 : 1 }}
         transition={{ duration: 0.6, ease: 'easeOut' }}
-        className="min-h-screen flex flex-col font-sans relative overflow-x-hidden bg-[#0a0a0a] text-white"
+        className="min-h-screen flex flex-col font-sans relative overflow-x-hidden bg-[#07080a] text-white"
         style={{ zIndex: 2, position: 'relative' }}
       >
         {/* Premium custom cursor (desktop only) */}
         <CustomCursor />
 
-        {/* Reading progress bar */}
+        {/* Reading scroll progress bar */}
         <ScrollProgress />
 
         {/* Global Developer Command Palette (Ctrl+K) */}
@@ -90,10 +92,12 @@ export default function App() {
           <Expertise />
           <TechArsenal />
           <Projects onSelectProject={setActiveProjectModal} />
+          <SystemArchitecture />
+          <EngineeringApproach />
+          <Education />
           <Training />
           <Certificates />
-          <Education />
-          <EngineeringApproach />
+          <GitHubActivity />
           <Contact />
         </main>
 

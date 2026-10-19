@@ -10,7 +10,7 @@ export default function CustomCursor() {
   const rafId = useRef(null);
 
   useEffect(() => {
-    // Only on desktop
+    // Only on desktop pointer devices
     if (window.matchMedia('(pointer: coarse)').matches) return;
 
     const move = (e) => {
@@ -23,8 +23,8 @@ export default function CustomCursor() {
     const lerp = (a, b, t) => a + (b - a) * t;
 
     const loop = () => {
-      ring.current.x = lerp(ring.current.x, pos.current.x, 0.12);
-      ring.current.y = lerp(ring.current.y, pos.current.y, 0.12);
+      ring.current.x = lerp(ring.current.x, pos.current.x, 0.15);
+      ring.current.y = lerp(ring.current.y, pos.current.y, 0.15);
       if (ringRef.current) {
         ringRef.current.style.transform = `translate(${ring.current.x - 20}px, ${ring.current.y - 20}px)`;
       }
@@ -36,12 +36,17 @@ export default function CustomCursor() {
       if (el) {
         setHovered(true);
         setLabel(el.dataset.cursor || '');
+      } else if (e.target.closest('a, button, input, textarea')) {
+        setHovered(true);
+        setLabel('');
       }
     };
 
-    const leave = () => {
-      setHovered(false);
-      setLabel('');
+    const leave = (e) => {
+      if (e.target.closest('[data-cursor], a, button, input, textarea')) {
+        setHovered(false);
+        setLabel('');
+      }
     };
 
     window.addEventListener('mousemove', move, { passive: true });
@@ -62,28 +67,31 @@ export default function CustomCursor() {
       {/* Small dot — follows cursor directly */}
       <div
         ref={dotRef}
-        className="fixed top-0 left-0 z-[9999] w-2 h-2 rounded-full bg-white pointer-events-none mix-blend-difference"
+        className="fixed top-0 left-0 z-[9999] w-2 h-2 rounded-full bg-lime-400 pointer-events-none shadow-[0_0_8px_#a3e635]"
         style={{ willChange: 'transform', transition: 'opacity 0.2s' }}
       />
-      {/* Lagging ring */}
+      {/* Lagging ring with electric lime accent */}
       <div
         ref={ringRef}
         className="fixed top-0 left-0 z-[9998] pointer-events-none"
         style={{
-          width: hovered ? 56 : 40,
-          height: hovered ? 56 : 40,
-          marginLeft: hovered ? -8 : 0,
-          marginTop: hovered ? -8 : 0,
+          width: hovered ? (label ? 64 : 48) : 36,
+          height: hovered ? (label ? 64 : 48) : 36,
+          marginLeft: hovered ? (label ? -12 : -4) : 2,
+          marginTop: hovered ? (label ? -12 : -4) : 2,
           willChange: 'transform',
-          transition: 'width 0.3s, height 0.3s, opacity 0.2s',
+          transition: 'width 0.25s cubic-bezier(0.16, 1, 0.3, 1), height 0.25s cubic-bezier(0.16, 1, 0.3, 1)',
         }}
       >
         <div
-          className="w-full h-full rounded-full border border-white/30 flex items-center justify-center"
-          style={{ transition: 'border-color 0.3s' }}
+          className={`w-full h-full rounded-full flex items-center justify-center transition-all duration-300 ${
+            hovered
+              ? 'border border-lime-400/80 bg-lime-500/10 backdrop-blur-[2px]'
+              : 'border border-white/20'
+          }`}
         >
           {label && (
-            <span className="font-mono text-[8px] text-white/70 tracking-widest uppercase whitespace-nowrap">
+            <span className="font-mono text-[9px] text-lime-400 font-bold tracking-widest uppercase whitespace-nowrap">
               {label}
             </span>
           )}

@@ -1,0 +1,317 @@
+import React, { useState } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import {
+  Layers, Server, Cpu, Database, Cloud, ArrowRight,
+  ShieldCheck, Network, CheckCircle2, Terminal, Code2
+} from 'lucide-react';
+
+const ARCHITECTURES = {
+  career: {
+    id: 'career',
+    title: 'Career Guidance System (MERN)',
+    subtitle: 'Modular full-stack client-server architecture with persistent scoring engine',
+    nodes: [
+      {
+        id: 'client',
+        label: 'Client Tier',
+        name: 'React.js SPA',
+        tech: 'React 18 • Tailwind CSS • Axios',
+        role: 'Interactive UI, aptitude test runner, multi-step assessment state',
+        flow: 'Captures 12 assessment questions across 4 domains, submits responses via JSON payloads',
+        icon: Layers,
+        color: '#38bdf8',
+      },
+      {
+        id: 'api',
+        label: 'API Gateway',
+        name: 'Express.js REST API',
+        tech: 'Node.js • Express • CORS Middleware',
+        role: 'Decoupled request routing, endpoint dispatching, validation',
+        flow: 'Validates test answers, handles routing, passes structured data to scoring engine',
+        icon: Server,
+        color: '#a3e635',
+      },
+      {
+        id: 'engine',
+        label: 'Logic Core',
+        name: 'Weighted-Sum Scoring Engine',
+        tech: 'Algorithmic Evaluation Logic',
+        role: 'Career path matching across 22 career outcomes & 4 domains',
+        flow: 'Computes analytical, technical, creative, and managerial domain fit scores',
+        icon: Cpu,
+        color: '#fb923c',
+      },
+      {
+        id: 'db',
+        label: 'Persistence',
+        name: 'MongoDB Atlas',
+        tech: 'MongoDB • Mongoose ODM',
+        role: 'Test session records, career recommendation schemas',
+        flow: 'Stores assessment session outcomes and queryable career guidance profiles',
+        icon: Database,
+        color: '#10b981',
+      },
+      {
+        id: 'cloud',
+        label: 'Deployment',
+        name: 'Render Cloud Platform',
+        tech: 'Render Web Services • HTTPS/TLS',
+        role: 'Automated cloud deployment, single-page client hosting',
+        flow: 'Serves production build with zero-downtime restarts and live HTTPS',
+        icon: Cloud,
+        color: '#c084fc',
+      },
+    ],
+  },
+  stock: {
+    id: 'stock',
+    title: 'StockSense AI (Decoupled Client-Server)',
+    subtitle: 'Decoupled client-server sentiment analysis pipeline with independent service lifecycles',
+    nodes: [
+      {
+        id: 'client',
+        label: 'Client Interface',
+        name: 'Conversational Web Client',
+        tech: 'Vanilla JS / Modern CSS • Async Fetch API',
+        role: 'Clean user input capture, real-time message stream formatting',
+        flow: 'Transmits ticker symbols and query statements to backend processing endpoints',
+        icon: Layers,
+        color: '#38bdf8',
+      },
+      {
+        id: 'api',
+        label: 'Backend Service',
+        name: 'Node.js Query Server',
+        tech: 'Express.js • REST Endpoints',
+        role: 'Independent client-server API orchestration',
+        flow: 'Ingests incoming market prompts, performs sanitization, routes to sentiment pipeline',
+        icon: Server,
+        color: '#a3e635',
+      },
+      {
+        id: 'engine',
+        label: 'NLP Engine',
+        name: 'Market Sentiment Analyzer',
+        tech: 'Text Sentiment Scorer • Weighted Signals',
+        role: 'Extracts market sentiment polarity and contextual confidence score',
+        flow: 'Outputs bullish/bearish indicators with contextual score (+0.74 confidence)',
+        icon: Cpu,
+        color: '#fb923c',
+      },
+      {
+        id: 'cloud',
+        label: 'Hosting Tier',
+        name: 'Render Web Service',
+        tech: 'Render Cloud • GitHub Auto-Deploy',
+        role: 'Public production deployment with automated CI/CD from GitHub',
+        flow: 'Live public endpoint accessible globally via HTTPS',
+        icon: Cloud,
+        color: '#c084fc',
+      },
+    ],
+  },
+};
+
+export default function SystemArchitecture() {
+  const [activeArch, setActiveArch] = useState('career');
+  const [selectedNodeId, setSelectedNodeId] = useState('client');
+
+  const currentArch = ARCHITECTURES[activeArch];
+  const activeNode = currentArch.nodes.find((n) => n.id === selectedNodeId) || currentArch.nodes[0];
+
+  return (
+    <section id="architecture" className="relative bg-[#07080a] py-32 px-6 sm:px-10 lg:px-16 overflow-hidden border-t border-white/[0.06]">
+      {/* Background Ambient Glow */}
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[850px] h-[450px] bg-lime-500/[0.025] rounded-full blur-3xl pointer-events-none" />
+
+      <div className="relative z-10 max-w-7xl mx-auto flex flex-col items-center">
+        {/* Badge */}
+        <motion.div
+          initial={{ opacity: 0, y: 15 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.6 }}
+          className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[#12141a] border border-lime-500/30 text-lime-400 text-xs font-mono uppercase tracking-widest mb-6 shadow-[0_0_20px_rgba(132,204,22,0.12)]"
+        >
+          <span className="w-2 h-2 rounded-full bg-lime-400 animate-pulse" />
+          <span>TECHNICAL ARCHITECTURE</span>
+        </motion.div>
+
+        {/* Section Heading */}
+        <motion.h2
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.7, delay: 0.1 }}
+          className="font-extrabold tracking-tight text-center leading-[1.05] text-white max-w-3xl mb-6"
+          style={{ fontSize: 'clamp(34px, 5vw, 64px)' }}
+        >
+          How my systems are engineered.
+        </motion.h2>
+
+        <motion.p
+          initial={{ opacity: 0, y: 15 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.7, delay: 0.15 }}
+          className="text-neutral-400 text-sm sm:text-base text-center max-w-2xl mb-12 font-light"
+        >
+          Interactive system pipelines from my verified production codebases. Click or hover any tier to inspect data flow, protocol specifications, and implementation details.
+        </motion.p>
+
+        {/* Architecture Selector Tabs */}
+        <div className="flex items-center gap-3 mb-16 p-1.5 rounded-full bg-[#101218] border border-white/10 shadow-xl">
+          <button
+            onClick={() => {
+              setActiveArch('career');
+              setSelectedNodeId('client');
+            }}
+            className={`px-5 py-2 rounded-full text-xs font-mono transition-all duration-200 ${
+              activeArch === 'career'
+                ? 'bg-lime-400 text-black font-bold shadow-lg'
+                : 'text-neutral-400 hover:text-white'
+            }`}
+          >
+            Career Guidance (MERN)
+          </button>
+          <button
+            onClick={() => {
+              setActiveArch('stock');
+              setSelectedNodeId('client');
+            }}
+            className={`px-5 py-2 rounded-full text-xs font-mono transition-all duration-200 ${
+              activeArch === 'stock'
+                ? 'bg-lime-400 text-black font-bold shadow-lg'
+                : 'text-neutral-400 hover:text-white'
+            }`}
+          >
+            StockSense AI (Decoupled)
+          </button>
+        </div>
+
+        {/* Interactive Diagram Pipeline Container */}
+        <div className="w-full bg-[#0c0e14]/90 border border-white/10 rounded-3xl p-6 sm:p-10 shadow-2xl backdrop-blur-md relative overflow-hidden">
+          
+          {/* Subtle Top Metadata Strip */}
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-6 border-b border-white/[0.08] mb-10 text-xs font-mono text-neutral-400">
+            <div className="flex items-center gap-2 text-lime-400 font-semibold">
+              <Terminal className="w-4 h-4" />
+              <span>PIPELINE: {currentArch.title}</span>
+            </div>
+            <div className="flex items-center gap-4 text-[11px] text-neutral-400">
+              <span>PROTOCOL: REST / JSON / HTTPS</span>
+              <span className="hidden sm:inline">•</span>
+              <span className="text-emerald-400">STATUS: DEPLOYED ON RENDER</span>
+            </div>
+          </div>
+
+          {/* Interactive Flow Nodes (Horizontal on desktop, vertical on mobile) */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4 relative">
+            {currentArch.nodes.map((node, idx) => {
+              const Icon = node.icon;
+              const isSelected = selectedNodeId === node.id;
+
+              return (
+                <motion.div
+                  key={node.id}
+                  onClick={() => setSelectedNodeId(node.id)}
+                  onMouseEnter={() => setSelectedNodeId(node.id)}
+                  whileHover={{ y: -4 }}
+                  whileTap={{ scale: 0.98 }}
+                  className={`p-5 rounded-2xl border transition-all duration-300 cursor-pointer flex flex-col justify-between relative group ${
+                    isSelected
+                      ? 'bg-[#151922] border-lime-400/80 shadow-[0_0_24px_rgba(132,204,22,0.18)]'
+                      : 'bg-[#101218]/80 border-white/[0.08] hover:border-white/20'
+                  }`}
+                >
+                  {/* Active selection indicator bar */}
+                  {isSelected && (
+                    <div className="absolute top-0 left-6 right-6 h-[2px] bg-lime-400 shadow-[0_0_8px_#a3e635]" />
+                  )}
+
+                  <div>
+                    {/* Header: Step & Icon */}
+                    <div className="flex items-center justify-between mb-4">
+                      <span className="text-[10px] font-mono tracking-widest text-neutral-400 uppercase font-semibold">
+                        STAGE 0{idx + 1}
+                      </span>
+                      <div
+                        className="w-8 h-8 rounded-lg flex items-center justify-center transition-colors"
+                        style={{
+                          backgroundColor: `${node.color}15`,
+                          color: node.color,
+                        }}
+                      >
+                        <Icon className="w-4 h-4" />
+                      </div>
+                    </div>
+
+                    <span className="text-[10px] font-mono tracking-wider text-lime-400 uppercase block mb-1">
+                      {node.label}
+                    </span>
+                    <h4 className="text-base font-bold text-white tracking-tight mb-2">
+                      {node.name}
+                    </h4>
+                    <p className="text-xs text-neutral-400 font-mono leading-relaxed">
+                      {node.tech}
+                    </p>
+                  </div>
+
+                  {/* Flow Arrow Indicator */}
+                  <div className="pt-4 mt-4 border-t border-white/[0.06] flex items-center justify-between text-[11px] font-mono text-neutral-400 group-hover:text-lime-300">
+                    <span>{isSelected ? 'INSPECTING' : 'CLICK TO VIEW'}</span>
+                    <ArrowRight className={`w-3.5 h-3.5 transition-transform ${isSelected ? 'translate-x-1 text-lime-400' : ''}`} />
+                  </div>
+                </motion.div>
+              );
+            })}
+          </div>
+
+          {/* Interactive Inspector Console */}
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={activeNode.id}
+              initial={{ opacity: 0, y: 15 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -10 }}
+              transition={{ duration: 0.3 }}
+              className="mt-10 p-6 sm:p-7 rounded-2xl bg-[#090b10] border border-white/10 relative overflow-hidden"
+            >
+              <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6">
+                <div className="space-y-2 max-w-2xl">
+                  <div className="flex items-center gap-2.5">
+                    <span className="w-2 h-2 rounded-full bg-lime-400" />
+                    <span className="text-xs font-mono uppercase tracking-widest text-lime-400 font-bold">
+                      INSPECTOR: {activeNode.label} — {activeNode.name}
+                    </span>
+                  </div>
+                  <h3 className="text-lg font-bold text-white tracking-tight">
+                    {activeNode.role}
+                  </h3>
+                  <p className="text-xs sm:text-sm text-neutral-300 font-light leading-relaxed">
+                    {activeNode.flow}
+                  </p>
+                </div>
+
+                <div className="shrink-0 flex flex-wrap lg:flex-col gap-2.5 pt-4 lg:pt-0 border-t lg:border-t-0 lg:border-l border-white/[0.08] lg:pl-8">
+                  <div className="text-[11px] font-mono text-neutral-400">
+                    <span className="text-neutral-500 block">STACK COMPONENTS:</span>
+                    <span className="text-white font-medium">{activeNode.tech}</span>
+                  </div>
+                  <div className="text-[11px] font-mono text-neutral-400">
+                    <span className="text-neutral-500 block">VALIDATION:</span>
+                    <span className="text-emerald-400 flex items-center gap-1">
+                      <CheckCircle2 className="w-3.5 h-3.5" />
+                      Production Tested
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </motion.div>
+          </AnimatePresence>
+
+        </div>
+      </div>
+    </section>
+  );
+}

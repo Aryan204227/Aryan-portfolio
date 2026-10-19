@@ -1,0 +1,18 @@
+{
+  "services": {
+    "aryan-portfolio": {
+      "root": ".",
+      "framework": "vite",
+      "buildCommand": "npm install && npm run build"
+    }
+  },
+  "rewrites": [
+    {
+      "source": "/(.*)",
+      "destination": {
+        "type": "service",
+        "service": "aryan-portfolio"
+      }
+    }
+  ]
+}

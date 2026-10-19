@@ -82,17 +82,30 @@ a, button, [data-cursor], [role="button"] { cursor: none !important; }
 }
 
 /* ═══════════════════════════════════════════════════
-   MARQUEE
+   MARQUEE — Seamless Bidirectional Dual Track
 ═══════════════════════════════════════════════════ */
 @keyframes marquee-left {
   0%   { transform: translateX(0); }
   100% { transform: translateX(-50%); }
 }
-.animate-marquee {
-  animation: marquee-left 25s linear infinite;
-  display: flex; width: max-content;
+@keyframes marquee-right {
+  0%   { transform: translateX(-50%); }
+  100% { transform: translateX(0); }
 }
-.animate-marquee:hover { animation-play-state: paused; }
+
+.animate-marquee-left {
+  animation: marquee-left 34s linear infinite;
+  display: flex;
+  width: max-content;
+  will-change: transform;
+}
+
+.animate-marquee-right {
+  animation: marquee-right 34s linear infinite;
+  display: flex;
+  width: max-content;
+  will-change: transform;
+}
 
 /* ═══════════════════════════════════════════════════
    ARC GLOW  (for hero)
