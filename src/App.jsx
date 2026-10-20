@@ -3,6 +3,7 @@ import { AnimatePresence, motion } from 'framer-motion';
 import IntroLoader from './components/IntroLoader';
 import CustomCursor from './components/CustomCursor';
 import ScrollProgress from './components/ScrollProgress';
+import ScrollStory from './components/ScrollStory';
 import CommandPalette from './components/CommandPalette';
 import TerminalDrawer from './components/TerminalDrawer';
 import Navbar from './components/Navbar';
@@ -68,6 +69,7 @@ export default function App() {
 
         {/* Reading scroll progress bar */}
         <ScrollProgress />
+        <ScrollStory />
 
         {/* Global Developer Command Palette (Ctrl+K) */}
         <CommandPalette
