@@ -78,7 +78,7 @@ function EditorialProjectCard({ project, idx, onSelectProject }) {
         0{idx + 1}
       </span>
 
-      <div className="relative z-10 grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+      <div data-scroll-reveal className="relative z-10 grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
         
         {/* Left Column: Project Overview & Specs (5 cols) */}
         <div className="lg:col-span-5 flex flex-col justify-between h-full">
