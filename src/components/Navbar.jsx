@@ -19,29 +19,32 @@ export default function Navbar() {
   const [scrolled, setScrolled] = useState(false);
 
   useEffect(() => {
-    const handleScroll = () => {
-      setScrolled(window.scrollY > 40);
+    const sectionAliases = {
+      expertise: 'skills',
+      stack: 'skills',
+      education: 'about',
+      training: 'about',
+      certificates: 'about',
+      approach: 'architecture',
+    };
 
-      const sectionIds = ['home', 'about', 'expertise', 'skills', 'stack', 'work', 'architecture', 'github', 'training', 'contact'];
-      const scrollPos = window.scrollY + 200;
-
-      for (let i = sectionIds.length - 1; i >= 0; i--) {
-        const el = document.getElementById(sectionIds[i]);
-        if (el && el.offsetTop <= scrollPos) {
-          if (sectionIds[i] === 'expertise' || sectionIds[i] === 'training') {
-            setActiveSection('about');
-          } else if (sectionIds[i] === 'stack') {
-            setActiveSection('skills');
-          } else {
-            setActiveSection(sectionIds[i]);
-          }
-          break;
-        }
-      }
+    const handleScroll = () => setScrolled(window.scrollY > 40);
+    const handleChapterChange = (event) => {
+      const sectionId = event.detail?.sectionId;
+      if (!sectionId) return;
+      const navSection = sectionAliases[sectionId] || sectionId;
+      const navIds = NAV_ITEMS.map((item) => item.href.slice(1));
+      if (navIds.includes(navSection)) setActiveSection(navSection);
     };
 
     window.addEventListener('scroll', handleScroll, { passive: true });
-    return () => window.removeEventListener('scroll', handleScroll);
+    window.addEventListener('portfolio:chapterchange', handleChapterChange);
+    window.addEventListener('portfolio:scroll-engine-ready', handleChapterChange);
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+      window.removeEventListener('portfolio:chapterchange', handleChapterChange);
+      window.removeEventListener('portfolio:scroll-engine-ready', handleChapterChange);
+    };
   }, []);
 
   const handleNavClick = (e, href) => {
