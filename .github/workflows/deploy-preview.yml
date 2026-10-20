@@ -75,3 +75,14 @@ jobs:
           done
           echo "Live page or portrait asset did not return the expected response in time."
           exit 1
+
+      - name: Install browser test runner
+        run: npm install --no-save --package-lock=false playwright
+
+      - name: Install Chromium for scroll verification
+        run: npx playwright install --with-deps chromium
+
+      - name: Verify scroll animations and navigation in a real browser
+        run: node scripts/portfolio-smoke.mjs
+        env:
+          PORTFOLIO_URL: https://aryan204227.github.io/Aryan-portfolio/
