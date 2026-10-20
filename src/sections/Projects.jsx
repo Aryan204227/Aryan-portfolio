@@ -183,7 +183,7 @@ function EditorialProjectCard({ project, idx, onSelectProject }) {
                   ? 'https://career-guidance-system-l855.onrender.com'
                   : isStock
                   ? 'https://stocksense-ai-r24w.onrender.com'
-                  : 'MazeSolver.java — DFS Pathfinding Visualizer (15×15)'}
+                  : 'MazeSolver.java — DFS Pathfinding Visualizer'}
               </span>
               <div className="w-4" />
             </div>
