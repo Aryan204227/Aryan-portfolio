@@ -2,8 +2,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import { motion, useMotionValue, useSpring, useScroll, useTransform } from 'framer-motion';
 import {
   ArrowRight, Terminal as TerminalIcon,
-  Github, Linkedin, Mail, FileText, ChevronDown, MessageCircle,
-  ExternalLink, Sparkles
+  Github, Linkedin, Mail, FileText, ChevronDown, MessageCircle
 } from 'lucide-react';
 import { portfolioData } from '../data/portfolioData';
 import TerminalDrawer from '../components/TerminalDrawer';
@@ -16,9 +15,9 @@ function AnimatedWord({ text, delay = 0, className = '' }) {
   return (
     <div className="overflow-hidden">
       <motion.div
-        initial={{ y: 100, opacity: 0, rotateX: 40 }}
-        animate={{ y: 0, opacity: 1, rotateX: 0 }}
-        transition={{ duration: 0.92, delay, ease: EASE }}
+        initial={{ y: 80, opacity: 0 }}
+        animate={{ y: 0, opacity: 1 }}
+        transition={{ duration: 0.85, delay, ease: EASE }}
         className={className}
       >
         {text}
@@ -32,7 +31,7 @@ export default function Hero() {
   const sectionRef = useRef(null);
   const isMobile = typeof window !== 'undefined' && window.matchMedia('(pointer: coarse)').matches;
 
-  // Pointer light
+  // Pointer light tracking
   const mouseX = useMotionValue(0);
   const mouseY = useMotionValue(0);
   const glowX = useSpring(mouseX, { stiffness: 45, damping: 22 });
@@ -43,8 +42,8 @@ export default function Hero() {
     target: sectionRef,
     offset: ['start start', 'end start'],
   });
-  const contentY = useTransform(scrollYProgress, [0, 1], [0, -60]);
-  const contentOpacity = useTransform(scrollYProgress, [0, 0.7, 1], [1, 0.85, 0]);
+  const contentY = useTransform(scrollYProgress, [0, 1], [0, -50]);
+  const contentOpacity = useTransform(scrollYProgress, [0, 0.75, 1], [1, 0.85, 0]);
 
   useEffect(() => {
     if (isMobile) return;
@@ -66,7 +65,7 @@ export default function Hero() {
     { href: personalInfo.whatsAppUrl,  Icon: MessageCircle, label: 'WhatsApp'  },
   ];
 
-  // Authentic reference stats
+  // Authentic reference metadata cards
   const STATS = [
     { value: '02+',   label: 'Major Projects'  },
     { value: 'MERN',  label: 'Tech Stack'      },
@@ -81,33 +80,23 @@ export default function Hero() {
       className="relative scroll-mt-28 min-h-screen flex flex-col justify-between overflow-hidden select-none px-6 sm:px-10 lg:px-16 pt-28 pb-10"
       style={{ background: 'transparent' }}
     >
-      {/* Pointer-responsive subtle glow */}
+      {/* Pointer-responsive ambient illumination */}
       {!isMobile && (
         <motion.div
           className="absolute pointer-events-none rounded-full z-0"
           style={{
-            width: 700,
-            height: 700,
+            width: 650,
+            height: 650,
             x: glowX,
             y: glowY,
             translateX: '-50%',
             translateY: '-50%',
-            background: 'radial-gradient(circle, rgba(132,204,22,0.06) 0%, rgba(56,189,248,0.02) 45%, transparent 70%)',
+            background: 'radial-gradient(circle, rgba(132,204,22,0.06) 0%, rgba(56,189,248,0.015) 50%, transparent 70%)',
           }}
         />
       )}
 
-      {/* Top subtle ambient halo */}
-      <div
-        className="absolute top-0 left-1/3 -translate-x-1/2 pointer-events-none z-0"
-        style={{
-          width: 900,
-          height: 400,
-          background: 'radial-gradient(ellipse at 50% 0%, rgba(132,204,22,0.08) 0%, transparent 70%)',
-        }}
-      />
-
-      {/* ── Main Hero Content Grid ── */}
+      {/* ── Main Hero Content ── */}
       <motion.div
         style={{ y: contentY, opacity: contentOpacity }}
         className="relative my-auto w-full max-w-7xl mx-auto z-10 grid grid-cols-1 lg:grid-cols-12 gap-8 items-center py-6 lg:py-10"
@@ -115,10 +104,10 @@ export default function Hero() {
         {/* Left Column — Editorial Typography (7 cols on desktop) */}
         <div className="lg:col-span-7 flex flex-col items-start text-left">
 
-          {/* Academic Credential Tag */}
+          {/* Academic Credential Badge */}
           <motion.div
-            initial={{ opacity: 0, y: 14, filter: 'blur(6px)' }}
-            animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
+            initial={{ opacity: 0, y: 14 }}
+            animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.08, ease: EASE }}
             className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-lime-500/10 border border-lime-500/30 text-[11px] font-mono uppercase tracking-widest mb-6 shadow-[0_0_15px_rgba(132,204,22,0.15)]"
           >
@@ -126,27 +115,27 @@ export default function Hero() {
             <span className="text-lime-300 font-semibold">B.TECH CSE • LOVELY PROFESSIONAL UNIVERSITY</span>
           </motion.div>
 
-          {/* Name Display: ARYAN (white) / DADWAL (neon lime) */}
+          {/* Name Display: ARYAN (solid white) / DADWAL (solid neon lime) */}
           <div className="mb-1">
             <AnimatedWord
               text="ARYAN"
-              delay={0.16}
-              className="font-black tracking-[-0.03em] font-display text-white text-hero leading-[0.88]"
+              delay={0.15}
+              className="font-black font-display text-white text-5xl sm:text-7xl lg:text-8xl tracking-tight leading-[0.92]"
             />
           </div>
           <div className="mb-5">
             <AnimatedWord
               text="DADWAL"
-              delay={0.28}
-              className="font-black tracking-[-0.03em] font-display text-lime-400 text-hero leading-[0.88] drop-shadow-[0_0_35px_rgba(132,204,22,0.4)]"
+              delay={0.25}
+              className="font-black font-display text-lime-400 text-5xl sm:text-7xl lg:text-8xl tracking-tight leading-[0.92] drop-shadow-[0_0_35px_rgba(132,204,22,0.38)]"
             />
           </div>
 
-          {/* Typing subtitle with stable height */}
+          {/* Typewriter Professional Identity */}
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            transition={{ duration: 0.5, delay: 0.5 }}
+            transition={{ duration: 0.5, delay: 0.45 }}
             className="mb-4 flex items-center"
             style={{ minHeight: '2.2rem' }}
           >
@@ -155,21 +144,21 @@ export default function Hero() {
             </span>
           </motion.div>
 
-          {/* Bio text */}
+          {/* Authentic introduction */}
           <motion.p
-            initial={{ opacity: 0, y: 16 }}
+            initial={{ opacity: 0, y: 14 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.75, delay: 0.6, ease: EASE }}
+            transition={{ duration: 0.7, delay: 0.55, ease: EASE }}
             className="text-base sm:text-lg text-neutral-300 font-light leading-relaxed max-w-xl mb-8"
           >
             Building modern web applications, exploring AI, and solving real-world problems through code.
           </motion.p>
 
-          {/* CTAs matching reference */}
+          {/* Action CTAs */}
           <motion.div
             initial={{ opacity: 0, y: 14 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.7, delay: 0.7, ease: EASE }}
+            transition={{ duration: 0.7, delay: 0.65, ease: EASE }}
             className="flex flex-wrap items-center gap-4 mb-8"
           >
             <motion.a
@@ -187,7 +176,7 @@ export default function Hero() {
               }}
               whileHover={{ scale: 1.04, y: -2 }}
               whileTap={{ scale: 0.97 }}
-              className="inline-flex items-center gap-2.5 px-8 py-3.5 rounded-full bg-lime-400 text-black font-bold text-sm tracking-wide shadow-[0_0_32px_rgba(132,204,22,0.4)] hover:bg-lime-300 transition-all"
+              className="inline-flex items-center gap-2.5 px-8 py-3.5 rounded-full bg-lime-400 text-black font-bold text-sm tracking-wide shadow-[0_0_30px_rgba(132,204,22,0.35)] hover:bg-lime-300 transition-all"
             >
               <span>Explore Projects</span>
               <ArrowRight className="w-4 h-4" />
@@ -210,7 +199,7 @@ export default function Hero() {
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            transition={{ duration: 0.55, delay: 0.8 }}
+            transition={{ duration: 0.55, delay: 0.75 }}
             className="flex items-center gap-3"
           >
             {SOCIAL.map(({ href, Icon, label }) => (
@@ -236,52 +225,22 @@ export default function Hero() {
           </motion.div>
         </div>
 
-        {/* Right Column (5 cols) — Open window framing the real 3D CPU core & metropolis */}
-        <div className="lg:col-span-5 hidden lg:flex flex-col items-end justify-center pointer-events-none">
-          {/* Subtle HUD corner frame indicating live 3D view */}
-          <motion.div
-            initial={{ opacity: 0, scale: 0.9 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 1.2, delay: 0.4 }}
-            className="w-72 p-5 rounded-2xl bg-[#090d12]/40 border border-white/[0.08] backdrop-blur-[2px] shadow-2xl relative"
-          >
-            <div className="flex items-center justify-between mb-3">
-              <span className="text-[10px] font-mono text-lime-400 uppercase tracking-widest flex items-center gap-1.5">
-                <span className="w-1.5 h-1.5 rounded-full bg-lime-400 animate-pulse" />
-                CORE TELEMETRY
-              </span>
-              <span className="text-[9px] font-mono text-neutral-500">64-BIT DUAL TIER</span>
-            </div>
-            <div className="space-y-1.5 text-[11px] font-mono text-neutral-400">
-              <div className="flex justify-between">
-                <span>PROCESSOR:</span>
-                <span className="text-white font-semibold">AD COMPUTATIONAL CORE</span>
-              </div>
-              <div className="flex justify-between">
-                <span>ARCHITECTURE:</span>
-                <span className="text-lime-300">ISOMETRIC 3D METROPOLIS</span>
-              </div>
-              <div className="flex justify-between">
-                <span>STATUS:</span>
-                <span className="text-lime-400">ONLINE · LIVE FLIGHT</span>
-              </div>
-            </div>
-          </motion.div>
-        </div>
+        {/* Right Column (5 cols) — Completely transparent focal space framing the 3D AD core & city */}
+        <div className="lg:col-span-5 hidden lg:block pointer-events-none" aria-hidden="true" />
       </motion.div>
 
-      {/* ── Bottom Reference Stats Strip (Glass Cards) ── */}
+      {/* ── Bottom Reference Metadata Cards ── */}
       <motion.div
-        initial={{ opacity: 0, y: 20 }}
+        initial={{ opacity: 0, y: 15 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.7, delay: 0.95 }}
+        transition={{ duration: 0.7, delay: 0.85 }}
         className="w-full max-w-7xl mx-auto z-10 flex flex-wrap items-center justify-between gap-4 pt-6 border-t border-white/[0.06]"
       >
         <div className="flex flex-wrap items-center gap-3">
           {STATS.map((s) => (
             <div
               key={s.label}
-              className="px-5 py-2.5 rounded-2xl bg-[#0d1017]/80 border border-white/[0.08] backdrop-blur-md shadow-lg flex items-center gap-3"
+              className="px-5 py-2.5 rounded-2xl bg-[#0d1017]/85 border border-white/[0.08] backdrop-blur-md shadow-lg flex items-center gap-3"
             >
               <span className="font-mono text-sm sm:text-base font-bold text-lime-400">
                 {s.value}
@@ -293,7 +252,7 @@ export default function Hero() {
           ))}
         </div>
 
-        {/* Scroll down indicator */}
+        {/* Scroll indicator */}
         <div
           onClick={() => {
             const target = document.querySelector('#about');

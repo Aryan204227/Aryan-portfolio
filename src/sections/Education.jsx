@@ -7,7 +7,7 @@ const { education } = portfolioData;
 
 export default function Education() {
   return (
-    <section id="education" className="relative bg-[#07080a]/75 backdrop-blur-[2px] py-32 px-6 sm:px-10 lg:px-16 overflow-hidden border-t border-white/[0.06]">
+    <section id="education" className="relative scroll-mt-28 bg-[#07080a]/75 backdrop-blur-[2px] py-32 px-6 sm:px-10 lg:px-16 overflow-hidden border-t border-white/[0.06]">
       {/* Background Glow */}
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[350px] bg-lime-500/[0.02] rounded-full blur-3xl pointer-events-none" />
 
