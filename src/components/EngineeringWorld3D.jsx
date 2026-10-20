@@ -194,6 +194,7 @@ function makePcbTexture() {
   }
 
   const t = new THREE.CanvasTexture(c);
+  t.colorSpace = THREE.SRGBColorSpace;
   t.anisotropy = 4;
   t.wrapS = THREE.RepeatWrapping;
   t.wrapT = THREE.RepeatWrapping;
@@ -264,6 +265,7 @@ function makeHudTexture(title, number, lines) {
   });
 
   const t = new THREE.CanvasTexture(c);
+  t.colorSpace = THREE.SRGBColorSpace;
   t.anisotropy = 4;
   return t;
 }
