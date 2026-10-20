@@ -808,15 +808,31 @@ export default function EngineeringWorld3D() {
     // Each waypoint: { s: scrollRatio, pos, look }
     // Camera starts elevated-isometric, gradually descends & circles through scene
     const WAYPOINTS = [
-      { s: 0.00, pos: new THREE.Vector3(20, 34, 34), look: new THREE.Vector3(-3, 1, 0)  },  // Hero
-      { s: 0.18, pos: new THREE.Vector3(12, 26, 22), look: new THREE.Vector3(-8, 2, -5) }, // About
-      { s: 0.36, pos: new THREE.Vector3(18, 28, 14), look: new THREE.Vector3(8, 2, -6)  }, // Skills
-      { s: 0.54, pos: new THREE.Vector3(10, 22, 24), look: new THREE.Vector3(-8, 1, 7)  }, // Projects
-      { s: 0.72, pos: new THREE.Vector3(20, 28, 18), look: new THREE.Vector3(8, 1, 8)   }, // Architecture
-      { s: 1.00, pos: new THREE.Vector3(26, 42, 34), look: new THREE.Vector3(0, 0, 0)   }, // End
+      { s: 0.00, anchor: 'home',         pos: new THREE.Vector3(20, 34, 34), look: new THREE.Vector3(-3, 1, 0) },
+      { s: 0.14, anchor: 'about',        pos: new THREE.Vector3(12, 26, 22), look: new THREE.Vector3(-8, 2, -5) },
+      { s: 0.34, anchor: 'skills',       pos: new THREE.Vector3(18, 28, 14), look: new THREE.Vector3(8, 2, -6) },
+      { s: 0.52, anchor: 'work',         pos: new THREE.Vector3(10, 22, 24), look: new THREE.Vector3(-8, 1, 7) },
+      { s: 0.70, anchor: 'architecture', pos: new THREE.Vector3(20, 28, 18), look: new THREE.Vector3(8, 1, 8) },
+      { s: 0.88, anchor: 'contact',      pos: new THREE.Vector3(24, 34, 26), look: new THREE.Vector3(0, 2, 10) },
+      { s: 1.00,                          pos: new THREE.Vector3(26, 42, 34), look: new THREE.Vector3(0, 0, 0) },
     ];
 
     const scrollRatio = { current: 0 };
+    const syncScrollPath = () => {
+      const maxScroll = Math.max(1, document.documentElement.scrollHeight - window.innerHeight);
+      scrollRatio.current = Math.min(1, Math.max(0, window.scrollY / maxScroll));
+
+      // Bind each camera waypoint to the real document position of its section.
+      // This keeps the 3D move in sync with changing content and responsive heights.
+      WAYPOINTS.forEach((waypoint) => {
+        if (!waypoint.anchor) return;
+        const anchor = document.getElementById(waypoint.anchor);
+        if (!anchor) return;
+        const documentTop = anchor.getBoundingClientRect().top + window.scrollY;
+        waypoint.s = Math.min(1, Math.max(0, documentTop / maxScroll));
+      });
+    };
+    const onScroll = () => syncScrollPath();
     const mouse       = { x: 0, y: 0 };
     const curPos      = BASE_POS.clone();
     const curLook     = BASE_LOOK.clone();
@@ -832,6 +848,7 @@ export default function EngineeringWorld3D() {
       mouse.x = (e.clientX / window.innerWidth) * 2 - 1;
       mouse.y = -(e.clientY / window.innerHeight) * 2 + 1;
     };
+    syncScrollPath();
     window.addEventListener('scroll', onScroll, { passive: true });
     window.addEventListener('mousemove', onMouse, { passive: true });
 
@@ -877,7 +894,8 @@ export default function EngineeringWorld3D() {
       }
 
       // ── Camera scroll interpolation ──
-      const s = scrollRatio.current;
+      // Respect reduced-motion preferences by holding the camera on the hero view.
+      const s = reduced ? 0 : scrollRatio.current;
       let wpA = WAYPOINTS[0], wpB = WAYPOINTS[WAYPOINTS.length - 1];
       for (let w = 0; w < WAYPOINTS.length - 1; w++) {
         if (s >= WAYPOINTS[w].s && s <= WAYPOINTS[w + 1].s) {
@@ -890,7 +908,7 @@ export default function EngineeringWorld3D() {
       tgtLook.lerpVectors(wpA.look, wpB.look, frac);
 
       // Mouse parallax
-      if (!mobile) {
+      if (!mobile && !reduced) {
         tgtPos.x  += mouse.x * 2.8;
         tgtPos.y  += mouse.y * 1.8;
         tgtLook.x += mouse.x * 0.28;
@@ -911,6 +929,7 @@ export default function EngineeringWorld3D() {
       camera.aspect = window.innerWidth / window.innerHeight;
       camera.updateProjectionMatrix();
       renderer.setSize(window.innerWidth, window.innerHeight);
+      syncScrollPath();
     };
     window.addEventListener('resize', onResize, { passive: true });
 
