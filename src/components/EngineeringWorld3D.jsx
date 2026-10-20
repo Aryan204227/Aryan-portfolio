@@ -839,10 +839,6 @@ export default function EngineeringWorld3D() {
     const tgtPos      = new THREE.Vector3();
     const tgtLook     = new THREE.Vector3();
 
-    const onScroll = () => {
-      const max = Math.max(1, document.documentElement.scrollHeight - window.innerHeight);
-      scrollRatio.current = Math.min(1, Math.max(0, window.scrollY / max));
-    };
     const onMouse = e => {
       if (mobile) return;
       mouse.x = (e.clientX / window.innerWidth) * 2 - 1;
