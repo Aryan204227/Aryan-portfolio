@@ -3,7 +3,9 @@ name: Deploy Cinematic Scroll Preview
 on:
   push:
     branches:
-      - preview/cinematic-scroll
+      - main
+    paths:
+      - .github/workflows/deploy-preview.yml
   workflow_dispatch:
 
 permissions:
