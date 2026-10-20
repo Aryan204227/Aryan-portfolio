@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - fix/3d-engineering-visuals
+      - preview/cinematic-scroll
   pull_request:
     branches:
       - main
