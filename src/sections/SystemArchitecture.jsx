@@ -190,7 +190,7 @@ export default function SystemArchitecture() {
         </div>
 
         {/* Interactive Diagram Pipeline Container */}
-        <div className="w-full bg-[#0c0e14]/90 border border-white/10 rounded-3xl p-6 sm:p-10 shadow-2xl backdrop-blur-md relative overflow-hidden">
+        <div data-scroll-reveal className="w-full bg-[#0c0e14]/90 border border-white/10 rounded-3xl p-6 sm:p-10 shadow-2xl backdrop-blur-md relative overflow-hidden">
           
           {/* Subtle Top Metadata Strip */}
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-6 border-b border-white/[0.08] mb-10 text-xs font-mono text-neutral-400">
