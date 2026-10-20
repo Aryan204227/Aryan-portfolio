@@ -6,7 +6,8 @@ const CHAPTERS = [
   { id: 'skills', label: 'TECH STACK', number: '02' },
   { id: 'work', label: 'PROJECTS', number: '03' },
   { id: 'architecture', label: 'SYSTEMS', number: '04' },
-  { id: 'contact', label: 'CONTACT', number: '05' },
+  { id: 'github', label: 'GITHUB', number: '05' },
+  { id: 'contact', label: 'CONTACT', number: '06' },
 ];
 
 const SECTION_IDS = [
