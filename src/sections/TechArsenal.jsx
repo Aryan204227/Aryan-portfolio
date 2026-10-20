@@ -169,6 +169,7 @@ export default function TechArsenal() {
                 return (
                   <div
                     key={item.id}
+                    data-scroll-reveal
                     className="p-3 rounded-xl bg-[#0e131d]/90 hover:bg-[#141b28] border border-white/[0.08] hover:border-lime-400/40 transition-all duration-200 flex items-center gap-3 group select-none"
                   >
                     <div
