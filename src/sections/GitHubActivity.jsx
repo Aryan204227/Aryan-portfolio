@@ -111,7 +111,7 @@ export default function GitHubActivity() {
                   </h3>
                 </div>
 
-                <p className="text-xs sm:text-sm text-neutral-400 font-light leading-relaxed mb-6">
+                <p data-scroll-reveal className="text-xs sm:text-sm text-neutral-400 font-light leading-relaxed mb-6">
                   {repo.description}
                 </p>
               </div>
