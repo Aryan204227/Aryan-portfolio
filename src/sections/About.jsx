@@ -157,13 +157,13 @@ export default function About() {
                 <span className="text-[10px] font-mono text-lime-400 mt-2">Class of 2028</span>
               </div>
 
-              <div className="p-5 rounded-2xl bg-[#0d0f17] border border-white/10 flex flex-col justify-between">
+              <div data-scroll-reveal className="p-5 rounded-2xl bg-[#0d0f17] border border-white/10 flex flex-col justify-between">
                 <span className="text-[10px] font-mono text-neutral-400 uppercase">INSTITUTION</span>
                 <span className="text-base font-bold text-white mt-1">LPU Phagwara</span>
                 <span className="text-[10px] font-mono text-neutral-400 mt-2">Punjab, India</span>
               </div>
 
-              <div className="p-5 rounded-2xl bg-[#0d0f17] border border-white/10 flex flex-col justify-between">
+              <div data-scroll-reveal className="p-5 rounded-2xl bg-[#0d0f17] border border-white/10 flex flex-col justify-between">
                 <span className="text-[10px] font-mono text-neutral-400 uppercase">EXACT CGPA</span>
                 <span className="text-2xl font-black text-lime-400 mt-1">7.07</span>
                 <span className="text-[10px] font-mono text-neutral-400 mt-2">Scale of 10.0</span>
