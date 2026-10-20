@@ -72,7 +72,7 @@ const ARCHITECTURES = {
         id: 'client',
         label: 'Client Interface',
         name: 'Conversational Web Client',
-        tech: 'Vanilla JS / Modern CSS • Async Fetch API',
+        tech: 'React • Vite • Tailwind CSS • Axios',
         role: 'Clean user input capture, real-time message stream formatting',
         flow: 'Transmits ticker symbols and query statements to backend processing endpoints',
         icon: Layers,
@@ -299,10 +299,10 @@ export default function SystemArchitecture() {
                     <span className="text-white font-medium">{activeNode.tech}</span>
                   </div>
                   <div className="text-[11px] font-mono text-neutral-400">
-                    <span className="text-neutral-500 block">VALIDATION:</span>
+                    <span className="text-neutral-500 block">DETAIL SOURCE:</span>
                     <span className="text-emerald-400 flex items-center gap-1">
                       <CheckCircle2 className="w-3.5 h-3.5" />
-                      Production Tested
+                      Project Architecture
                     </span>
                   </div>
                 </div>
