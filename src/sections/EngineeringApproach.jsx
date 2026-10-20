@@ -120,7 +120,7 @@ export default function EngineeringApproach() {
           transition={{ duration: 0.7, delay: 0.3 }}
           className="mt-16 text-center max-w-2xl p-6 rounded-2xl bg-white/[0.02] border border-white/5"
         >
-          <p className="text-sm sm:text-base italic text-neutral-300 font-light">
+          <p data-scroll-reveal className="text-sm sm:text-base italic text-neutral-300 font-light">
             "The goal is not simply to write more code. The goal is to solve the problem correctly with clarity, reliability, and precision."
           </p>
           <span className="text-[11px] font-mono text-lime-400 uppercase tracking-widest mt-2 block font-semibold">
