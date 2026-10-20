@@ -49,8 +49,9 @@ try {
   }));
   if (geometry.height < 20) throw new Error('Scroll reveal test target has no visible size');
 
+  const viewportHeight = page.viewportSize().height;
   const sampleAt = async (viewportTop) => {
-    const y = Math.max(0, geometry.top - window.innerHeight * viewportTop);
+    const y = Math.max(0, geometry.top - viewportHeight * viewportTop);
     await page.evaluate((scrollY) => window.scrollTo({ top: scrollY, behavior: 'instant' }), y);
     await page.waitForTimeout(420);
     return target.evaluate((element) => ({
