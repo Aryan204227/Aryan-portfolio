@@ -57,19 +57,21 @@ jobs:
         id: deployment
         uses: actions/deploy-pages@v4
 
-      - name: Verify public preview URL
+      - name: Verify live page and portrait asset
         shell: bash
         run: |
           set -euo pipefail
-          url="https://aryan204227.github.io/Aryan-portfolio/"
+          page_url="https://aryan204227.github.io/Aryan-portfolio/"
+          image_url="https://aryan204227.github.io/Aryan-portfolio/aryan-profile.jpg"
           for attempt in $(seq 1 12); do
-            status="$(curl --location --silent --show-error --output /tmp/portfolio-page.html --write-out '%{http_code}' "$url" || true)"
-            if [ "$status" = "200" ] && grep -q "Aryan Dadwal" /tmp/portfolio-page.html; then
-              echo "Live preview responded with HTTP 200 and expected portfolio title."
+            page_status="$(curl --location --silent --show-error --output /tmp/portfolio-page.html --write-out '%{http_code}' "$page_url" || true)"
+            image_status="$(curl --location --silent --show-error --output /dev/null --write-out '%{http_code}' "$image_url" || true)"
+            if [ "$page_status" = "200" ] && [ "$image_status" = "200" ] && grep -qi "Aryan Dadwal" /tmp/portfolio-page.html; then
+              echo "Live page responded with HTTP 200; portrait asset is reachable with HTTP 200."
               exit 0
             fi
-            echo "Attempt $attempt: page not ready yet (HTTP ${status:-unknown}); retrying..."
+            echo "Attempt $attempt: page HTTP ${page_status:-unknown}, portrait HTTP ${image_status:-unknown}; retrying..."
             sleep 10
           done
-          echo "Preview URL did not return the expected page in time."
+          echo "Live page or portrait asset did not return the expected response in time."
           exit 1
