@@ -15,6 +15,7 @@ export default function useSmoothScroll() {
     let gsapInstance = null;
     let tickerCallback = null;
     let scrollTrigger = null;
+    let lenisScrollHandler = null;
 
     const initLenis = async () => {
       try {
@@ -43,8 +44,8 @@ export default function useSmoothScroll() {
           autoRaf: false,
         });
 
-        const updateScrollTrigger = () => ScrollTrigger.update();
-        lenis.on('scroll', updateScrollTrigger);
+        lenisScrollHandler = () => ScrollTrigger.update();
+        lenis.on('scroll', lenisScrollHandler);
         window.__lenis = lenis;
 
         tickerCallback = (time) => {
@@ -69,7 +70,7 @@ export default function useSmoothScroll() {
       disposed = true;
       if (tickerCallback && gsapInstance) gsapInstance.ticker.remove(tickerCallback);
       if (lenis) {
-        if (scrollTrigger) lenis.off('scroll', scrollTrigger.update);
+        if (lenisScrollHandler) lenis.off('scroll', lenisScrollHandler);
         if (window.__lenis === lenis) delete window.__lenis;
         lenis.destroy();
       }
