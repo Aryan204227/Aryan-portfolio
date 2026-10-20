@@ -40,36 +40,65 @@ try {
   if (bootState.revealCount < 15) throw new Error(`Expected per-element reveal markers; got ${bootState.revealCount}`);
   if (!bootState.imageLoaded) throw new Error('Profile image failed to load in the browser');
 
-  // Measure a real element at the beginning, middle and end of its scroll-linked
-  // range. A meaningful opacity change proves that animation follows scroll progress.
+  // Measure a real element at the beginning, middle and end of its own
+  // ScrollTrigger range. Using the trigger's computed document coordinates avoids
+  // layout shifts from the intro loader and nested transforms.
   const target = page.locator('#about [data-scroll-reveal]').first();
-  const geometry = await target.evaluate((element) => ({
-    top: element.getBoundingClientRect().top + window.scrollY,
-    height: element.getBoundingClientRect().height,
-  }));
+  const geometry = await target.evaluate((element) => {
+    const trigger = window.ScrollTrigger?.getAll().find((item) => item.trigger === element);
+    return {
+      top: element.getBoundingClientRect().top + window.scrollY,
+      height: element.getBoundingClientRect().height,
+      triggerStart: trigger?.start ?? null,
+      triggerEnd: trigger?.end ?? null,
+    };
+  });
   if (geometry.height < 20) throw new Error('Scroll reveal test target has no visible size');
+  if (geometry.triggerStart === null || geometry.triggerEnd === null || geometry.triggerEnd <= geometry.triggerStart) {
+    throw new Error(`No valid ScrollTrigger range for profile reveal: ${JSON.stringify(geometry)}`);
+  }
 
-  const viewportHeight = page.viewportSize().height;
-  const sampleAt = async (viewportTop) => {
-    const y = Math.max(0, geometry.top - viewportHeight * viewportTop);
-    await page.evaluate((scrollY) => window.scrollTo({ top: scrollY, behavior: 'instant' }), y);
-    await page.waitForTimeout(420);
-    return target.evaluate((element) => ({
-      opacity: Number.parseFloat(getComputedStyle(element).opacity),
-      transform: getComputedStyle(element).transform,
-      top: element.getBoundingClientRect().top,
-    }));
+  const sampleAt = async (scrollY) => {
+    await page.evaluate((y) => {
+      if (window.__lenis?.scrollTo) {
+        window.__lenis.scrollTo(y, { immediate: true, force: true });
+      } else {
+        window.scrollTo({ top: y, behavior: 'instant' });
+      }
+      window.ScrollTrigger?.update();
+    }, scrollY);
+    await page.waitForTimeout(450);
+    return target.evaluate((element) => {
+      const trigger = window.ScrollTrigger?.getAll().find((item) => item.trigger === element);
+      return {
+        opacity: Number.parseFloat(getComputedStyle(element).opacity),
+        progress: trigger?.progress ?? null,
+        scrollY: window.scrollY,
+        top: element.getBoundingClientRect().top,
+      };
+    });
   };
 
-  const start = await sampleAt(0.91);
-  const middle = await sampleAt(0.74);
-  const end = await sampleAt(0.55);
+  const start = await sampleAt(geometry.triggerStart + 5);
+  const middle = await sampleAt((geometry.triggerStart + geometry.triggerEnd) / 2);
+  const end = await sampleAt(geometry.triggerEnd + 5);
 
+  console.log(JSON.stringify({
+    scrollTriggerRange: { start: geometry.triggerStart, end: geometry.triggerEnd },
+    revealSamples: { start, middle, end },
+  }, null, 2));
+
+  if (!(middle.progress > start.progress + 0.25)) {
+    throw new Error(`ScrollTrigger progress did not advance: start=${start.progress}, middle=${middle.progress}`);
+  }
+  if (!(end.progress > middle.progress + 0.25)) {
+    throw new Error(`ScrollTrigger progress did not complete: middle=${middle.progress}, end=${end.progress}`);
+  }
   if (!(middle.opacity > start.opacity + 0.15)) {
-    throw new Error(`Scroll-scrub reveal did not advance: start=${start.opacity}, middle=${middle.opacity}`);
+    throw new Error(`Scroll-scrub opacity did not advance: start=${start.opacity}, middle=${middle.opacity}`);
   }
   if (!(end.opacity > middle.opacity + 0.15)) {
-    throw new Error(`Scroll-scrub reveal did not complete: middle=${middle.opacity}, end=${end.opacity}`);
+    throw new Error(`Scroll-scrub opacity did not complete: middle=${middle.opacity}, end=${end.opacity}`);
   }
 
   // Exercise the actual navbar click and ensure both navigation indicators update.
