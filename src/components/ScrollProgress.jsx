@@ -1,29 +1,43 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef } from 'react';
 
 export default function ScrollProgress() {
-  const [scrollProgress, setScrollProgress] = useState(0);
+  const barRef = useRef(null);
 
   useEffect(() => {
-    const handleScroll = () => {
-      const totalHeight = document.documentElement.scrollHeight - document.documentElement.clientHeight;
-      if (totalHeight > 0) {
-        const progress = (window.scrollY / totalHeight) * 100;
-        setScrollProgress(progress);
-      }
+    let frame = 0;
+
+    const update = () => {
+      cancelAnimationFrame(frame);
+      frame = requestAnimationFrame(() => {
+        const root = document.documentElement;
+        const total = Math.max(1, root.scrollHeight - window.innerHeight);
+        const progress = Math.min(1, Math.max(0, window.scrollY / total));
+        if (barRef.current) {
+          barRef.current.style.transform = `scaleX(${progress})`;
+        }
+      });
     };
 
-    window.addEventListener('scroll', handleScroll, { passive: true });
-    return () => window.removeEventListener('scroll', handleScroll);
+    update();
+    window.addEventListener('scroll', update, { passive: true });
+    window.addEventListener('resize', update, { passive: true });
+
+    return () => {
+      cancelAnimationFrame(frame);
+      window.removeEventListener('scroll', update);
+      window.removeEventListener('resize', update);
+    };
   }, []);
 
   return (
-    <div 
-      className="fixed top-0 left-0 right-0 h-[2px] z-[100] bg-transparent pointer-events-none"
+    <div
+      className="pointer-events-none fixed inset-x-0 top-0 z-[100] h-[3px] overflow-hidden bg-white/[0.035]"
       aria-hidden="true"
     >
-      <div 
-        className="h-full bg-gradient-to-r from-orange-500 via-amber-400 to-orange-600 transition-all duration-75 ease-out shadow-[0_0_12px_rgba(249,115,22,0.8)]"
-        style={{ width: `${scrollProgress}%` }}
+      <div
+        ref={barRef}
+        className="h-full w-full origin-left scale-x-0 bg-gradient-to-r from-lime-300 via-emerald-400 to-cyan-300 shadow-[0_0_16px_rgba(163,230,53,0.72)]"
+        style={{ transform: 'scaleX(0)', transformOrigin: 'left center', willChange: 'transform' }}
       />
     </div>
   );
