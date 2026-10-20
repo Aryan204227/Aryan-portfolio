@@ -12,10 +12,10 @@ export const portfolioData = {
     degree: "B.Tech in Computer Science and Engineering",
     cgpa: "7.07",
     status: "Available for Internships & Full-time Roles",
-    profileImage: "/aryan-profile.jpg",
+    profileImage: `${import.meta.env.BASE_URL}aryan-profile.jpg`,
     // Primary single source of truth for resume
-    resumePdf: "/resume/Aryan-Dadwal-Resume.pdf",
-    cvPdf: "/Aryan_Dadwal_CV.pdf",
+    resumePdf: `${import.meta.env.BASE_URL}resume/Aryan-Dadwal-Resume.pdf`,
+    cvPdf: `${import.meta.env.BASE_URL}Aryan_Dadwal_CV.pdf`,
     whatsAppUrl: "https://wa.me/918626963353?text=Hi%20Aryan%2C%20I%20came%20across%20your%20portfolio%20and%20would%20like%20to%20connect%20with%20you."
   },
 
