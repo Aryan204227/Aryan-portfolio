@@ -201,18 +201,16 @@ function EditorialProjectCard({ project, idx, onSelectProject }) {
                     12 Aptitude Evaluation Questions • 4 Domains
                   </h4>
 
-                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 pt-2">
-                    {[
-                      { domain: 'Analytical', score: '94%', color: '#38bdf8' },
-                      { domain: 'Technical', score: '91%', color: '#a3e635' },
-                      { domain: 'Creative', score: '82%', color: '#fb923c' },
-                      { domain: 'Managerial', score: '78%', color: '#c084fc' },
-                    ].map((d) => (
-                      <div key={d.domain} className="p-3 rounded-xl bg-white/[0.03] border border-white/5 flex flex-col items-center">
-                        <span className="text-[10px] font-mono text-neutral-400">{d.domain}</span>
-                        <span className="text-base font-bold font-mono mt-1" style={{ color: d.color }}>
-                          {d.score}
+                  <p className="text-xs font-mono uppercase tracking-wider text-neutral-400">
+                    Assessment categories
+                  </p>
+                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 pt-1">
+                    {['Logical', 'Analytical', 'Verbal', 'Technical'].map((domain, i) => (
+                      <div key={domain} className="p-3 rounded-xl bg-white/[0.03] border border-white/5 flex flex-col items-center gap-2">
+                        <span className="grid h-6 w-6 place-items-center rounded-full bg-cyan-400/10 text-cyan-300 text-[10px] font-mono">
+                          0{i + 1}
                         </span>
+                        <span className="text-[10px] sm:text-xs font-mono text-neutral-200">{domain}</span>
                       </div>
                     ))}
                   </div>
@@ -232,27 +230,24 @@ function EditorialProjectCard({ project, idx, onSelectProject }) {
                     <span>AI SENTIMENT ANALYSIS ENGINE</span>
                   </div>
                   
-                  <div className="p-4 rounded-2xl bg-emerald-500/10 border border-emerald-500/20 text-left">
-                    <div className="flex items-center justify-between text-xs font-mono text-emerald-400 mb-2">
-                      <span>MARKET SIGNAL CLASSIFICATION</span>
-                      <span className="font-bold">+0.74 CONFIDENCE</span>
-                    </div>
-                    <p className="text-xs sm:text-sm text-neutral-200 font-light leading-relaxed">
-                      "Semiconductor and AI compute infrastructure sectors exhibit positive sentiment trajectory backed by enterprise cloud workload demand."
-                    </p>
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 text-left">
+                    {[
+                      { step: '01', label: 'CLIENT', detail: 'Stock-related query', color: 'text-cyan-300' },
+                      { step: '02', label: 'API', detail: 'Request processing', color: 'text-lime-300' },
+                      { step: '03', label: 'RESPONSE', detail: 'Sentiment-oriented output', color: 'text-emerald-300' },
+                    ].map((item) => (
+                      <div key={item.step} className="p-3 rounded-xl bg-white/[0.03] border border-white/10">
+                        <div className="flex items-center justify-between mb-2">
+                          <span className="text-[9px] font-mono text-neutral-500">{item.step}</span>
+                          <span className={`text-[9px] font-mono tracking-wider ${item.color}`}>{item.label}</span>
+                        </div>
+                        <p className="text-xs text-neutral-300">{item.detail}</p>
+                      </div>
+                    ))}
                   </div>
-
-                  <div className="grid grid-cols-3 gap-2 text-[10px] font-mono">
-                    <div className="p-2.5 rounded-lg bg-white/[0.03] border border-white/5 text-neutral-300">
-                      Decoupled Client
-                    </div>
-                    <div className="p-2.5 rounded-lg bg-white/[0.03] border border-white/5 text-neutral-300">
-                      Express.js API
-                    </div>
-                    <div className="p-2.5 rounded-lg bg-white/[0.03] border border-white/5 text-emerald-400">
-                      Render Cloud
-                    </div>
-                  </div>
+                  <p className="text-[10px] font-mono text-neutral-500">
+                    Architecture overview · Static illustration, not a live market signal
+                  </p>
                 </div>
               )}
 
@@ -260,42 +255,46 @@ function EditorialProjectCard({ project, idx, onSelectProject }) {
               {isMaze && (
                 <div className="w-full space-y-4 text-center">
                   <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-orange-500/10 border border-orange-500/20 text-orange-400 text-[10px] font-mono uppercase tracking-widest">
-                    <span>JAVA2D DFS &amp; RECURSIVE BACKTRACKING</span>
+                    <span>15×15 GRID • DFS &amp; BACKTRACKING</span>
                   </div>
 
-                  {/* 15x15 Miniature Grid Visualizer */}
-                  <div className="grid grid-cols-10 gap-1 w-44 mx-auto p-2 bg-[#050608] rounded-xl border border-white/10 shadow-inner">
-                    {Array.from({ length: 40 }).map((_, i) => (
-                      <div
-                        key={i}
-                        className={`w-3 h-3 rounded-[2px] transition-colors ${
-                          i === 0
-                            ? 'bg-emerald-400 shadow-[0_0_8px_#34d399]'
-                            : i === 39
-                            ? 'bg-red-400 shadow-[0_0_8px_#f87171]'
-                            : i % 4 === 0
-                            ? 'bg-lime-400/80 shadow-[0_0_6px_rgba(132,204,22,0.8)]'
-                            : i % 3 === 0
-                            ? 'bg-neutral-800'
-                            : 'bg-neutral-900'
-                        }`}
-                      />
-                    ))}
+                  {/* A genuine 15×15 cell count; this is a static illustration, not a live solver run. */}
+                  <div className="grid grid-cols-[repeat(15,minmax(0,1fr))] gap-[2px] w-52 mx-auto p-2 bg-[#050608] rounded-xl border border-white/10 shadow-inner">
+                    {Array.from({ length: 225 }).map((_, i) => {
+                      const isStart = i === 0;
+                      const isEnd = i === 224;
+                      const isWall = !isStart && !isEnd && (i % 17 === 0 || (i % 11 === 0 && Math.floor(i / 15) % 2 === 0));
+                      return (
+                        <div
+                          key={i}
+                          className={`aspect-square rounded-[1px] ${
+                            isStart
+                              ? 'bg-emerald-400 shadow-[0_0_6px_#34d399]'
+                              : isEnd
+                                ? 'bg-red-400 shadow-[0_0_6px_#f87171]'
+                                : isWall
+                                  ? 'bg-neutral-600'
+                                  : 'bg-neutral-900'
+                          }`}
+                        />
+                      );
+                    })}
                   </div>
+                  <p className="text-[9px] font-mono uppercase tracking-wider text-neutral-500">
+                    Static grid illustration · not a live solver run
+                  </p>
 
                   <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 text-[10px] font-mono">
-                    <div className="p-2 rounded-lg bg-white/[0.03] border border-white/5 text-neutral-300">
-                      15×15 Grid
-                    </div>
-                    <div className="p-2 rounded-lg bg-white/[0.03] border border-white/5 text-neutral-300">
-                      172 Nodes Visited
-                    </div>
-                    <div className="p-2 rounded-lg bg-white/[0.03] border border-white/5 text-neutral-300">
-                      79 Recursion
-                    </div>
-                    <div className="p-2 rounded-lg bg-white/[0.03] border border-white/5 text-lime-400">
-                      29-Step Path
-                    </div>
+                    {[
+                      '15×15 cell grid',
+                      'Depth-first search',
+                      'Recursive backtracking',
+                      'Custom wall editing',
+                    ].map((feature) => (
+                      <div key={feature} className="p-2 rounded-lg bg-white/[0.03] border border-white/5 text-neutral-300">
+                        {feature}
+                      </div>
+                    ))}
                   </div>
                 </div>
               )}
