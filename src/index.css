@@ -192,6 +192,41 @@ a, button, [data-cursor], [role="button"] { cursor: none !important; }
   background: rgba(255,255,255,0.03);
 }
 
+
+/* ═══════════════════════════════════════════════════
+   CINEMATIC SECTION SCAN — scroll-linked chapter progress
+═══════════════════════════════════════════════════ */
+.cinematic-section-progress {
+  position: absolute;
+  top: 0;
+  left: 8%;
+  width: 84%;
+  height: 1px;
+  z-index: 30;
+  pointer-events: none;
+  transform: scaleX(0);
+  transform-origin: left center;
+  background: linear-gradient(90deg,
+    transparent 0%,
+    rgba(163, 230, 53, 0.96) 18%,
+    rgba(74, 222, 128, 0.9) 57%,
+    rgba(56, 189, 248, 0.92) 84%,
+    transparent 100%
+  );
+  box-shadow: 0 0 10px rgba(163, 230, 53, 0.35), 0 0 22px rgba(56, 189, 248, 0.12);
+  will-change: transform, opacity;
+}
+
+[data-scroll-reveal] {
+  backface-visibility: hidden;
+  transform-style: preserve-3d;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cinematic-section-progress { display: none; }
+  [data-scroll-reveal] { transform: none !important; }
+}
+
 /* ═══════════════════════════════════════════════════
    REDUCED MOTION
 ═══════════════════════════════════════════════════ */
