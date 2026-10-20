@@ -58,7 +58,7 @@ export default function Certificates() {
               whileHover={{ y: -4 }}
               className="rounded-3xl bg-[#0d0f17] border border-white/[0.08] p-7 shadow-2xl flex flex-col justify-between hover:border-lime-500/40 transition-all duration-300 group relative overflow-hidden"
             >
-              <div>
+              <div data-scroll-reveal>
                 <div className="flex items-center justify-between mb-4">
                   <span className="text-[10px] font-mono tracking-widest text-lime-400 uppercase font-semibold">
                     CREDENTIAL 0{idx + 1}
