@@ -1,57 +1,79 @@
 /**
  * useSmoothScroll.js
- * 
- * Implements Lenis smooth scrolling with RAF loop.
- * Falls back gracefully if Lenis is not available.
- * Respects prefers-reduced-motion.
+ *
+ * Lenis + GSAP ScrollTrigger integration with safe lifecycle cleanup,
+ * reduced-motion support and a native-scroll fallback.
  */
 import { useEffect } from 'react';
 
 export default function useSmoothScroll() {
   useEffect(() => {
-    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    if (prefersReducedMotion) return;
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return undefined;
 
+    let disposed = false;
     let lenis = null;
-    let rafId = null;
+    let gsapInstance = null;
+    let tickerCallback = null;
+    let scrollTrigger = null;
+    let lenisScrollHandler = null;
 
-    async function initLenis() {
+    const initLenis = async () => {
       try {
-        const { default: Lenis } = await import('lenis');
-        const { gsap } = await import('gsap');
-        const { ScrollTrigger } = await import('gsap/ScrollTrigger');
+        const [{ default: Lenis }, gsapModule, triggerModule] = await Promise.all([
+          import('lenis'),
+          import('gsap'),
+          import('gsap/ScrollTrigger'),
+        ]);
+
+        if (disposed) return;
+
+        const { gsap } = gsapModule;
+        const { ScrollTrigger } = triggerModule;
+        gsapInstance = gsap;
+        scrollTrigger = ScrollTrigger;
         gsap.registerPlugin(ScrollTrigger);
 
         lenis = new Lenis({
-          duration: 1.15,
+          duration: 1.18,
           easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
           orientation: 'vertical',
           smoothWheel: true,
-          wheelMultiplier: 0.9,
-          touchMultiplier: 1.5,
+          wheelMultiplier: 0.88,
+          touchMultiplier: 1.35,
           infinite: false,
+          autoRaf: false,
         });
 
-        // Sync Lenis with GSAP ScrollTrigger
-        lenis.on('scroll', ScrollTrigger.update);
+        lenisScrollHandler = () => ScrollTrigger.update();
+        lenis.on('scroll', lenisScrollHandler);
         window.__lenis = lenis;
 
-        gsap.ticker.add((time) => {
-          lenis.raf(time * 1000);
-        });
+        tickerCallback = (time) => {
+          if (lenis) lenis.raf(time * 1000);
+        };
+        gsap.ticker.add(tickerCallback);
+        // Avoid GSAP's long-frame catch-up producing a visible scroll jump.
         gsap.ticker.lagSmoothing(0);
-
-      } catch (e) {
-        // Lenis not available, use native scroll
-        console.warn('Lenis/GSAP smooth scroll not available, using native scroll.', e);
+        requestAnimationFrame(() => {
+          if (!disposed) ScrollTrigger.refresh();
+        });
+      } catch (error) {
+        // Native browser scrolling remains available if a sandbox cannot load
+        // one of the animation modules.
+        console.warn('Lenis/GSAP could not initialise; using native scrolling.', error);
       }
-    }
+    };
 
     initLenis();
 
     return () => {
-      if (rafId) cancelAnimationFrame(rafId);
-      if (lenis) lenis.destroy();
+      disposed = true;
+      if (tickerCallback && gsapInstance) gsapInstance.ticker.remove(tickerCallback);
+      if (lenis) {
+        if (lenisScrollHandler) lenis.off('scroll', lenisScrollHandler);
+        if (window.__lenis === lenis) delete window.__lenis;
+        lenis.destroy();
+      }
     };
   }, []);
 }
