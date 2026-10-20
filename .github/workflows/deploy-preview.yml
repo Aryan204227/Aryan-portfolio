@@ -56,3 +56,20 @@ jobs:
       - name: Deploy preview
         id: deployment
         uses: actions/deploy-pages@v4
+
+      - name: Verify public preview URL
+        shell: bash
+        run: |
+          set -euo pipefail
+          url="https://aryan204227.github.io/Aryan-portfolio/"
+          for attempt in $(seq 1 12); do
+            status="$(curl --location --silent --show-error --output /tmp/portfolio-page.html --write-out '%{http_code}' "$url" || true)"
+            if [ "$status" = "200" ] && grep -q "Aryan Dadwal" /tmp/portfolio-page.html; then
+              echo "Live preview responded with HTTP 200 and expected portfolio title."
+              exit 0
+            fi
+            echo "Attempt $attempt: page not ready yet (HTTP ${status:-unknown}); retrying..."
+            sleep 10
+          done
+          echo "Preview URL did not return the expected page in time."
+          exit 1
