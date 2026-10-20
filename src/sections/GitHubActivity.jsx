@@ -97,7 +97,7 @@ export default function GitHubActivity() {
               className="p-6 rounded-2xl bg-[#0f1118]/80 border border-white/[0.08] hover:border-white/25 transition-all duration-300 flex flex-col justify-between group shadow-xl relative overflow-hidden"
             >
               <div>
-                <div className="flex items-center justify-between mb-4">
+                <div data-scroll-reveal className="flex items-center justify-between mb-4">
                   <span className="text-[10px] font-mono tracking-widest text-lime-400 uppercase font-semibold">
                     {repo.tag}
                   </span>
@@ -116,7 +116,7 @@ export default function GitHubActivity() {
                 </p>
               </div>
 
-              <div className="flex items-center justify-between pt-4 border-t border-white/[0.06] text-xs font-mono">
+              <div data-scroll-reveal className="flex items-center justify-between pt-4 border-t border-white/[0.06] text-xs font-mono">
                 <div className="flex items-center gap-2">
                   <span
                     className="w-2.5 h-2.5 rounded-full"
