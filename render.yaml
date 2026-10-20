@@ -1,6 +1,7 @@
 services:
   - type: web
-    name: aryan-portfolio
+    name: aryan-portfolio-scroll-preview
+    branch: preview/cinematic-scroll
     env: static
     buildCommand: npm install && npm run build
     staticPublishPath: ./dist
