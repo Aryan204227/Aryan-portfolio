@@ -77,25 +77,24 @@ export const portfolioData = {
       date: "Jul 2026",
       tagline: "Desktop Java maze generator & pathfinding visualizer using DFS & recursive backtracking.",
       summary:
-        "Created a Java desktop maze solver using DFS and recursive backtracking, tested on a 15×15 maze grid. Implemented maze generation, wall editing, pathfinding animation, and live performance tracking.",
+        "Created a Java desktop maze solver using DFS and recursive backtracking. Implemented maze generation, editable walls, start/end points, and step-by-step pathfinding visualization.",
       tags: ["Java", "Swing", "AWT", "DFS", "Backtracking", "Java2D"],
       github: "https://github.com/Aryan204227/Maze-Solver",
       live: null,
       isFeatured: true,
       features: [
-        "Tested on a 15×15 maze grid with real-time pathfinding visualization",
-        "Implemented maze generation, custom wall editing, and start/end points",
-        "Interactive live statistics including visited nodes and recursion depth",
-        "Java2D & Swing/AWT graphics engine with recursive state exploration",
-        "Benchmarked performance: 172 visited nodes, 79 max recursion depth, 17.259s solving time, 29-step path"
+        "Maze generation with adjustable grid dimensions",
+        "Custom wall editing and configurable start/end points",
+        "Step-by-step pathfinding visualization using Depth-First Search",
+        "Recursive backtracking explores alternatives and retraces dead ends",
+        "Java2D, Swing, and AWT desktop interface with responsive grid sizing"
       ],
-      architecture: "Java Desktop GUI (Java2D / Swing event-dispatching loop with recursive algorithm engine)",
+      architecture: "Java Desktop GUI (Java2D / Swing interface with a recursive DFS and backtracking algorithm engine)",
       metrics: [
-        { label: "Benchmark Grid", value: "15×15 Grid" },
-        { label: "Visited Nodes", value: "172 Nodes" },
-        { label: "Recursion Depth", value: "79 Levels" },
-        { label: "Solving Time", value: "17.259s" },
-        { label: "Optimal Path", value: "29 Steps" }
+        { label: "Algorithm", value: "DFS" },
+        { label: "Search Strategy", value: "Backtracking" },
+        { label: "Grid", value: "Resizable 2D Grid" },
+        { label: "GUI", value: "Swing / AWT" }
       ]
     },
     {
@@ -133,7 +132,7 @@ export const portfolioData = {
       tagline: "AI-powered stock market sentiment-analysis chatbot with decoupled architecture.",
       summary:
         "Developed an AI-powered stock market sentiment-analysis chatbot built on a decoupled client-server architecture. Structured independent client and server modules to simplify development, testing, and deployment cycles.",
-      tags: ["JavaScript", "Node.js", "Express.js", "AI Chatbot", "Sentiment Analysis", "Render"],
+      tags: ["React.js", "JavaScript", "Node.js", "Express.js", "Axios", "Sentiment Analysis", "Render"],
       github: "https://github.com/Aryan204227/stocksense-ai",
       live: "https://stocksense-ai-r24w.onrender.com/",
       isFeatured: true,
