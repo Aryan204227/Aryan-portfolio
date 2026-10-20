@@ -32,7 +32,18 @@ export default function ScrollStory() {
               Math.abs(bCenter - window.innerHeight * 0.48);
           });
 
-        if (candidates[0]) setActiveChapter(candidates[0].target.id);
+        if (candidates[0]) {
+          const sectionId = candidates[0].target.id;
+          const chapterAliases = {
+            expertise: 'about',
+            education: 'about',
+            training: 'about',
+            certificates: 'about',
+            approach: 'architecture',
+            github: 'contact',
+          };
+          setActiveChapter(chapterAliases[sectionId] || sectionId);
+        }
       }, {
         rootMargin: '-28% 0px -48% 0px',
         threshold: [0, 0.08, 0.2],
