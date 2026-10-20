@@ -44,9 +44,13 @@ export default function useSmoothScroll() {
           autoRaf: false,
         });
 
-        lenisScrollHandler = () => ScrollTrigger.update();
+        lenisScrollHandler = () => {
+          ScrollTrigger.update();
+          window.dispatchEvent(new Event('portfolio:scroll'));
+        };
         lenis.on('scroll', lenisScrollHandler);
         window.__lenis = lenis;
+        window.dispatchEvent(new Event('portfolio:scroll-engine-ready'));
 
         tickerCallback = (time) => {
           if (lenis) lenis.raf(time * 1000);
