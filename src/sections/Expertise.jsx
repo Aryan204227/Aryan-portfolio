@@ -106,7 +106,7 @@ function ExpertiseCard({ item, idx, IconComp }) {
       )}
 
       {/* Header Row */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-4 relative z-[1]">
+      <div data-scroll-reveal className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-4 relative z-[1]">
         <div className="flex items-center gap-3.5">
           <motion.div 
             whileHover={{ scale: 1.12, rotate: 4 }}
@@ -138,12 +138,12 @@ function ExpertiseCard({ item, idx, IconComp }) {
       </div>
 
       {/* Description */}
-      <p className="text-neutral-400 text-sm font-light leading-relaxed mb-4 relative z-[1]">
+      <p data-scroll-reveal className="text-neutral-400 text-sm font-light leading-relaxed mb-4 relative z-[1]">
         {item.description}
       </p>
 
       {/* Tech stack pill strip */}
-      <div className="flex flex-wrap items-center gap-2 pt-3 border-t border-white/[0.06] relative z-[1]">
+      <div data-scroll-reveal className="flex flex-wrap items-center gap-2 pt-3 border-t border-white/[0.06] relative z-[1]">
         {item.stack.map((tech, i) => (
           <motion.span
             key={tech}
