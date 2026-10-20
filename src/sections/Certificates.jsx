@@ -85,7 +85,7 @@ export default function Certificates() {
                 </p>
               </div>
 
-              <div className="pt-6 border-t border-white/[0.06] mt-6">
+              <div data-scroll-reveal className="pt-6 border-t border-white/[0.06] mt-6">
                 <a
                   href={cert.url}
                   target="_blank"
