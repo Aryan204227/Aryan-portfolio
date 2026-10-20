@@ -9,48 +9,60 @@ const CHAPTERS = [
   { id: 'contact', label: 'CONTACT', number: '05' },
 ];
 
+const CHAPTER_ALIASES = {
+  expertise: 'skills',
+  education: 'about',
+  training: 'about',
+  certificates: 'about',
+  approach: 'architecture',
+  github: 'contact',
+};
+
+const chapterFor = (sectionId) => CHAPTER_ALIASES[sectionId] || sectionId;
+
 export default function ScrollStory() {
   const [activeChapter, setActiveChapter] = useState('home');
 
   useEffect(() => {
     let cancelled = false;
     let gsapContext = null;
-    let observer = null;
-
+    let activeFrame = 0;
+    const addedRules = [];
     const sections = Array.from(document.querySelectorAll('main > section[id]'));
 
-    // The 3D world camera and chapter rail follow real section anchors rather
-    // than guessed percentages, so changing content height stays in sync.
-    if ('IntersectionObserver' in window) {
-      observer = new IntersectionObserver((entries) => {
-        const candidates = entries
-          .filter((entry) => entry.isIntersecting)
-          .sort((a, b) => {
-            const aCenter = a.boundingClientRect.top + a.boundingClientRect.height * 0.35;
-            const bCenter = b.boundingClientRect.top + b.boundingClientRect.height * 0.35;
-            return Math.abs(aCenter - window.innerHeight * 0.48) -
-              Math.abs(bCenter - window.innerHeight * 0.48);
-          });
+    // Determine the current chapter from the section crossing a fixed reading
+    // line. This stays correct even for very tall sections and fast scrolls.
+    const updateActiveChapter = () => {
+      cancelAnimationFrame(activeFrame);
+      activeFrame = requestAnimationFrame(() => {
+        const marker = window.innerHeight * 0.43;
+        let chosen = null;
+        let chosenDistance = Number.POSITIVE_INFINITY;
 
-        if (candidates[0]) {
-          const sectionId = candidates[0].target.id;
-          const chapterAliases = {
-            expertise: 'about',
-            education: 'about',
-            training: 'about',
-            certificates: 'about',
-            approach: 'architecture',
-            github: 'contact',
-          };
-          setActiveChapter(chapterAliases[sectionId] || sectionId);
+        sections.forEach((section) => {
+          const rect = section.getBoundingClientRect();
+          const distance = marker < rect.top
+            ? rect.top - marker
+            : marker > rect.bottom
+              ? marker - rect.bottom
+              : 0;
+
+          if (distance < chosenDistance) {
+            chosen = section;
+            chosenDistance = distance;
+          }
+        });
+
+        if (chosen) {
+          const next = chapterFor(chosen.id);
+          setActiveChapter(CHAPTERS.some((chapter) => chapter.id === next) ? next : 'contact');
         }
-      }, {
-        rootMargin: '-28% 0px -48% 0px',
-        threshold: [0, 0.08, 0.2],
       });
+    };
 
-      sections.forEach((section) => observer.observe(section));
-    }
+    window.addEventListener('scroll', updateActiveChapter, { passive: true });
+    window.addEventListener('resize', updateActiveChapter, { passive: true });
+    updateActiveChapter();
 
     const initScrollScenes = async () => {
       try {
@@ -67,40 +79,117 @@ export default function ScrollStory() {
             sections.forEach((section) => {
               if (section.id === 'home') return;
 
-              // Animate the section's content shell, not the individual
-              // Framer Motion cards inside it, to avoid transform conflicts.
+              // Main section enters with a controlled cinematic rise instead
+              // of an abrupt one-time fade. Scrubbing makes it follow the wheel.
               const shell = section.querySelector(':scope > .relative.z-10');
-              if (!shell) return;
+              if (shell) {
+                gsap.fromTo(
+                  shell,
+                  { y: 68, scale: 0.988, autoAlpha: 0.62 },
+                  {
+                    y: 0,
+                    scale: 1,
+                    autoAlpha: 1,
+                    ease: 'none',
+                    immediateRender: false,
+                    scrollTrigger: {
+                      trigger: section,
+                      start: 'top 94%',
+                      end: 'top 48%',
+                      scrub: 0.72,
+                      invalidateOnRefresh: true,
+                    },
+                  }
+                );
+              }
 
-              const travel = window.matchMedia('(min-width: 1024px)').matches ? 52 : 24;
+              // A luminous scan rule fills across the width while a section is
+              // traversed, giving the page a coherent motion language.
+              const rule = document.createElement('div');
+              rule.className = 'cinematic-section-progress';
+              rule.setAttribute('aria-hidden', 'true');
+              section.prepend(rule);
+              addedRules.push({ section, rule });
+
               gsap.fromTo(
-                shell,
-                { y: travel, autoAlpha: 0.58 },
+                rule,
+                { scaleX: 0, autoAlpha: 0.32 },
                 {
-                  y: 0,
-                  autoAlpha: 1,
+                  scaleX: 1,
+                  autoAlpha: 0.95,
                   ease: 'none',
-                  immediateRender: false,
                   scrollTrigger: {
                     trigger: section,
                     start: 'top 92%',
-                    end: 'top 44%',
-                    scrub: 0.7,
+                    end: 'bottom 12%',
+                    scrub: 0.45,
                     invalidateOnRefresh: true,
                   },
                 }
               );
+
+              // Ambient light pools shift at a slower rate than content, adding
+              // depth without moving or repainting the fixed Three.js canvas.
+              const glows = section.querySelectorAll(
+                ':scope > .absolute.rounded-full, :scope > .absolute.pointer-events-none'
+              );
+              glows.forEach((glow) => {
+                gsap.to(glow, {
+                  y: 54,
+                  scale: 1.08,
+                  ease: 'none',
+                  scrollTrigger: {
+                    trigger: section,
+                    start: 'top bottom',
+                    end: 'bottom top',
+                    scrub: 0.9,
+                    invalidateOnRefresh: true,
+                  },
+                });
+              });
+
+              // Cards marked explicitly avoid fighting with Framer Motion's
+              // existing hover and entrance transforms elsewhere on the page.
+              const reveals = Array.from(section.querySelectorAll('[data-scroll-reveal]'));
+              if (reveals.length) {
+                gsap.fromTo(
+                  reveals,
+                  {
+                    autoAlpha: 0,
+                    y: 34,
+                    scale: 0.965,
+                    rotateX: 4,
+                    transformPerspective: 900,
+                    transformOrigin: '50% 100%',
+                  },
+                  {
+                    autoAlpha: 1,
+                    y: 0,
+                    scale: 1,
+                    rotateX: 0,
+                    stagger: 0.095,
+                    ease: 'power2.out',
+                    immediateRender: false,
+                    scrollTrigger: {
+                      trigger: reveals[0],
+                      start: 'top 92%',
+                      end: 'top 46%',
+                      scrub: 0.6,
+                      invalidateOnRefresh: true,
+                    },
+                  }
+                );
+              }
             });
-          });
+          }, document.querySelector('main'));
 
           requestAnimationFrame(() => {
             if (!cancelled) ScrollTrigger.refresh();
           });
         }
       } catch (error) {
-        // The portfolio remains fully usable with native scrolling if GSAP
-        // cannot load (for example, when a preview sandbox is offline).
-        console.warn('Scroll choreography unavailable; using native motion.', error);
+        // Native scroll remains usable if GSAP cannot load in the current host.
+        console.warn('Scroll choreography unavailable; using native scrolling.', error);
       }
     };
 
@@ -108,8 +197,13 @@ export default function ScrollStory() {
 
     return () => {
       cancelled = true;
-      observer?.disconnect();
+      cancelAnimationFrame(activeFrame);
+      window.removeEventListener('scroll', updateActiveChapter);
+      window.removeEventListener('resize', updateActiveChapter);
       gsapContext?.revert();
+      addedRules.forEach(({ section, rule }) => {
+        if (section.contains(rule)) section.removeChild(rule);
+      });
     };
   }, []);
 
@@ -121,7 +215,7 @@ export default function ScrollStory() {
     const lenis = window.__lenis;
 
     if (lenis?.scrollTo && !reducedMotion) {
-      lenis.scrollTo(target, { offset: -88, duration: 1.35 });
+      lenis.scrollTo(target, { offset: -88, duration: 1.38 });
       return;
     }
 
