@@ -2,210 +2,293 @@ import React, { useEffect, useRef } from 'react';
 import * as THREE from 'three';
 
 /**
- * EngineeringWorld3D.jsx — Ultra-Premium Isometric 3D Engineering Environment
+ * EngineeringWorld3D — Premium Isometric Computing Environment
  *
- * Visual concept: A rich, detailed CPU / motherboard engineering world seen from
- * an elevated isometric perspective. Think of a high-end chip-level render with
- * neon-lime illumination, detailed geometry, and cinematic scroll-driven camera.
+ * Scene composition (left-to-right viewport, isometric view):
+ *   • Hero text occupies LEFT 40% of viewport — scene clears that region
+ *   • Central CPU processor is positioned CENTRE-RIGHT — large & dominant
+ *   • PCB motherboard spreads under everything
+ *   • 4 computing tower modules in foreground / midground / background
+ *   • 3D conduit pipes carry light pulses between modules and CPU
+ *   • Holographic info panels float above modules
+ *   • Fine ambient particle cloud
+ *   • Scroll-driven camera path with smooth lerp
  *
- * Features:
- * ─ Large, detailed multi-layer CPU die with bevelled substrate, bond wires,
- *   capacitor arrays, heatsink fins, and contact grid
- * ─ Solid motherboard floor with gold traces, SMD chips, and solder pads
- * ─ PCIe-style expansion slots and connector strips
- * ─ Physical conduit pipes running data pulses (light runners) between modules
- * ─ Four interconnected computing tower modules with server rack aesthetics
- * ─ Suspended holographic HUD info panels, floating with gentle sinusoidal motion
- * ─ Ambient particle field
- * ─ Cinematic scroll-driven camera path (6 waypoints)
- * ─ Mouse pointer parallax for tactile depth
+ * Design rules:
+ *   ✓ NO diagonal lines crossing the screen
+ *   ✓ NO hollow wireframe cubes as main scene elements
+ *   ✓ NO planets, humans, or robots
+ *   ✓ NO fabricated telemetry or fake stats
+ *   ✓ Solid geometry with metallic PBR materials
+ *   ✓ Neon-lime primary glow, cyan accent, gold traces
+ *   ✓ CPU is large, layered, unmistakably a processor
  */
 
 // ─────────────────────────────────────────────────────────────────────────────
-// CANVAS TEXTURE HELPERS
+// TEXTURE FACTORIES
 // ─────────────────────────────────────────────────────────────────────────────
 
-function createCpuDieTexture() {
-  const SIZE = 1024;
-  const canvas = document.createElement('canvas');
-  canvas.width = SIZE;
-  canvas.height = SIZE;
-  const ctx = canvas.getContext('2d');
+/** High-resolution silicon die canvas texture with realistic block layout */
+function makeCpuTexture() {
+  const S = 1024;
+  const c = document.createElement('canvas');
+  c.width = S; c.height = S;
+  const g = c.getContext('2d');
 
-  // Base: deep obsidian
-  ctx.fillStyle = '#040a06';
-  ctx.fillRect(0, 0, SIZE, SIZE);
+  // Dark silicon substrate
+  g.fillStyle = '#03090a';
+  g.fillRect(0, 0, S, S);
 
-  // Outer substrate ring
-  ctx.strokeStyle = '#84cc16';
-  ctx.lineWidth = 8;
-  ctx.strokeRect(14, 14, SIZE - 28, SIZE - 28);
+  // Very subtle substrate gradient
+  const grad = g.createRadialGradient(S / 2, S / 2, 0, S / 2, S / 2, S * 0.7);
+  grad.addColorStop(0, 'rgba(10,30,15,0.7)');
+  grad.addColorStop(1, 'rgba(0,0,0,0)');
+  g.fillStyle = grad;
+  g.fillRect(0, 0, S, S);
 
-  ctx.strokeStyle = 'rgba(132,204,22,0.4)';
-  ctx.lineWidth = 3;
-  ctx.strokeRect(30, 30, SIZE - 60, SIZE - 60);
-  ctx.strokeRect(44, 44, SIZE - 88, SIZE - 88);
+  // Outer PCB substrate frame (green-tinted fiberglass look)
+  g.fillStyle = '#071a0a';
+  g.fillRect(0, 0, S, 60);
+  g.fillRect(0, S - 60, S, 60);
+  g.fillRect(0, 0, 60, S);
+  g.fillRect(S - 60, 0, 60, S);
 
-  // HUD corner brackets
-  const drawBracket = (x, y, ox, oy) => {
-    ctx.beginPath();
-    ctx.moveTo(x, y + oy * 52);
-    ctx.lineTo(x, y);
-    ctx.lineTo(x + ox * 52, y);
-    ctx.stroke();
+  // Gold trace border
+  g.strokeStyle = '#d97706';
+  g.lineWidth = 4;
+  g.strokeRect(30, 30, S - 60, S - 60);
+
+  // Lime inner border
+  g.strokeStyle = '#84cc16';
+  g.lineWidth = 6;
+  g.strokeRect(52, 52, S - 104, S - 104);
+
+  // Corner HUD brackets
+  const bk = (x, y, dx, dy) => {
+    g.beginPath();
+    g.moveTo(x, y + dy * 56); g.lineTo(x, y); g.lineTo(x + dx * 56, y);
+    g.stroke();
   };
-  ctx.strokeStyle = '#a3e635';
-  ctx.lineWidth = 10;
-  drawBracket(14, 14, 1, 1);
-  drawBracket(SIZE - 14, 14, -1, 1);
-  drawBracket(14, SIZE - 14, 1, -1);
-  drawBracket(SIZE - 14, SIZE - 14, -1, -1);
+  g.strokeStyle = '#a3e635';
+  g.lineWidth = 10;
+  bk(52, 52, 1, 1); bk(S - 52, 52, -1, 1);
+  bk(52, S - 52, 1, -1); bk(S - 52, S - 52, -1, -1);
 
-  // Fine orthogonal silicon traces on left/right margins
-  ctx.strokeStyle = 'rgba(132,204,22,0.35)';
-  ctx.lineWidth = 2.5;
-  for (let y = 90; y <= SIZE - 90; y += 36) {
-    ctx.beginPath();
-    ctx.moveTo(58, y); ctx.lineTo(180, y);
-    ctx.moveTo(SIZE - 58, y); ctx.lineTo(SIZE - 180, y);
-    ctx.stroke();
-    // Small cross-tick
-    ctx.beginPath();
-    ctx.moveTo(180, y); ctx.lineTo(180, y + 18); ctx.lineTo(200, y + 18);
-    ctx.moveTo(SIZE - 180, y); ctx.lineTo(SIZE - 180, y + 18); ctx.lineTo(SIZE - 200, y + 18);
-    ctx.stroke();
+  // LGA contact pad grid on substrate margins
+  g.fillStyle = '#d97706';
+  for (let row = 0; row < 16; row++) {
+    for (let col = 0; col < 3; col++) {
+      const px = 68 + col * 16;
+      const py = 68 + row * 58;
+      g.fillRect(px, py, 8, 8);
+      g.fillRect(S - px - 8, py, 8, 8);
+    }
   }
 
-  // Central die container
-  const dx = 220, dy = 220, dw = SIZE - 440, dh = SIZE - 440;
-  ctx.fillStyle = '#050d08';
-  ctx.fillRect(dx, dy, dw, dh);
+  // Silicon die area
+  const DIE = { x: 170, y: 170, w: S - 340, h: S - 340 };
+  g.fillStyle = '#040e08';
+  g.fillRect(DIE.x, DIE.y, DIE.w, DIE.h);
+  g.strokeStyle = '#84cc16';
+  g.lineWidth = 4;
+  g.strokeRect(DIE.x, DIE.y, DIE.w, DIE.h);
 
-  // Die outer glow border
-  ctx.strokeStyle = '#84cc16';
-  ctx.lineWidth = 5;
-  ctx.strokeRect(dx, dy, dw, dh);
-
-  // Inner die grid (functional blocks)
-  ctx.strokeStyle = 'rgba(132,204,22,0.25)';
-  ctx.lineWidth = 1.5;
-  const step = dw / 6;
-  for (let gx = 1; gx < 6; gx++) {
-    ctx.beginPath();
-    ctx.moveTo(dx + gx * step, dy);
-    ctx.lineTo(dx + gx * step, dy + dh);
-    ctx.stroke();
-  }
-  for (let gy = 1; gy < 6; gy++) {
-    ctx.beginPath();
-    ctx.moveTo(dx, dy + gy * step);
-    ctx.lineTo(dx + dw, dy + gy * step);
-    ctx.stroke();
-  }
-
-  // Random functional block highlights (real CPU die visual)
-  const blocks = [
-    [0, 0, 3, 2], [3, 0, 3, 1], [0, 2, 2, 2], [2, 2, 4, 2],
-    [4, 2, 2, 2], [0, 4, 2, 2], [2, 4, 2, 2], [4, 4, 2, 2],
+  // Functional block grid (resembles real die photo)
+  const cols = 7, rows = 7;
+  const bw = DIE.w / cols, bh = DIE.h / rows;
+  const blockColors = [
+    'rgba(132,204,22,0.14)', 'rgba(56,189,248,0.10)', 'rgba(132,204,22,0.08)',
+    'rgba(163,230,53,0.12)', 'rgba(14,165,233,0.09)', 'rgba(132,204,22,0.16)',
   ];
-  const blockColors = ['rgba(132,204,22,0.12)', 'rgba(56,189,248,0.10)', 'rgba(132,204,22,0.08)', 'rgba(163,230,53,0.10)'];
-  blocks.forEach((b, i) => {
-    ctx.fillStyle = blockColors[i % blockColors.length];
-    ctx.fillRect(dx + b[0] * step + 2, dy + b[1] * step + 2, b[2] * step - 4, b[3] * step - 4);
-  });
+  // Fill blocks with slightly varied shades
+  for (let r = 0; r < rows; r++) {
+    for (let cc = 0; cc < cols; cc++) {
+      const bx = DIE.x + cc * bw + 2;
+      const by = DIE.y + r * bh + 2;
+      g.fillStyle = blockColors[(r * cols + cc) % blockColors.length];
+      g.fillRect(bx, by, bw - 4, bh - 4);
+    }
+  }
 
-  // "AD" Monogram
-  ctx.shadowColor = '#84cc16';
-  ctx.shadowBlur = 32;
-  ctx.fillStyle = '#84cc16';
-  ctx.font = '900 220px "Plus Jakarta Sans", sans-serif';
-  ctx.textAlign = 'center';
-  ctx.textBaseline = 'middle';
-  ctx.fillText('AD', SIZE / 2, SIZE / 2 - 20);
-  ctx.shadowBlur = 0;
+  // Die grid lines
+  g.strokeStyle = 'rgba(132,204,22,0.22)';
+  g.lineWidth = 1.5;
+  for (let r = 1; r < rows; r++) {
+    g.beginPath();
+    g.moveTo(DIE.x, DIE.y + r * bh);
+    g.lineTo(DIE.x + DIE.w, DIE.y + r * bh);
+    g.stroke();
+  }
+  for (let cc = 1; cc < cols; cc++) {
+    g.beginPath();
+    g.moveTo(DIE.x + cc * bw, DIE.y);
+    g.lineTo(DIE.x + cc * bw, DIE.y + DIE.h);
+    g.stroke();
+  }
 
-  // Label below monogram
-  ctx.fillStyle = 'rgba(255,255,255,0.75)';
-  ctx.font = '700 22px "JetBrains Mono", monospace';
-  ctx.fillText('COMPUTATIONAL CORE', SIZE / 2, SIZE / 2 + 130);
+  // Central "AD" monogram over die
+  const cx = DIE.x + DIE.w / 2, cy = DIE.y + DIE.h / 2;
+  g.shadowColor = '#84cc16';
+  g.shadowBlur = 40;
+  g.fillStyle = '#84cc16';
+  g.font = '900 190px system-ui, sans-serif';
+  g.textAlign = 'center';
+  g.textBaseline = 'middle';
+  g.fillText('AD', cx, cy - 18);
+  g.shadowBlur = 0;
 
-  ctx.fillStyle = '#84cc16';
-  ctx.font = '600 18px "JetBrains Mono", monospace';
-  ctx.fillText('ARYAN DADWAL · v1.0', SIZE / 2, SIZE / 2 + 160);
+  g.fillStyle = 'rgba(255,255,255,0.70)';
+  g.font = '700 20px monospace';
+  g.fillText('COMPUTATIONAL CORE', cx, cy + 110);
 
-  // Bottom status bar
-  ctx.fillStyle = 'rgba(132,204,22,0.15)';
-  ctx.fillRect(dx, dy + dh - 46, dw, 46);
-  ctx.fillStyle = '#a3e635';
-  ctx.font = '600 16px "JetBrains Mono", monospace';
-  ctx.fillText('STATUS: ACTIVE  ·  NODE: PRIMARY  ·  THERMAL: NOMINAL', SIZE / 2, dy + dh - 18);
+  g.fillStyle = '#84cc16';
+  g.font = '600 16px monospace';
+  g.fillText('ARYAN DADWAL  ·  v1.0', cx, cy + 138);
 
-  const texture = new THREE.CanvasTexture(canvas);
-  texture.anisotropy = 8;
-  return texture;
+  // Bottom status strip
+  g.fillStyle = 'rgba(132,204,22,0.12)';
+  g.fillRect(DIE.x, DIE.y + DIE.h - 50, DIE.w, 50);
+  g.fillStyle = '#a3e635';
+  g.font = '600 14px monospace';
+  g.fillText('STATUS: ACTIVE  ·  THERMAL: NOMINAL  ·  NODE: PRIMARY', cx, DIE.y + DIE.h - 22);
+
+  const t = new THREE.CanvasTexture(c);
+  t.anisotropy = 8;
+  return t;
 }
 
-function createHudPanelTexture(title, number, items = []) {
-  const W = 640, H = 320;
-  const canvas = document.createElement('canvas');
-  canvas.width = W;
-  canvas.height = H;
-  const ctx = canvas.getContext('2d');
+/** Motherboard PCB surface texture */
+function makePcbTexture() {
+  const S = 512;
+  const c = document.createElement('canvas');
+  c.width = S; c.height = S;
+  const g = c.getContext('2d');
 
-  ctx.fillStyle = 'rgba(4, 10, 8, 0.94)';
-  ctx.fillRect(0, 0, W, H);
+  g.fillStyle = '#060e08';
+  g.fillRect(0, 0, S, S);
 
-  ctx.strokeStyle = '#84cc16';
-  ctx.lineWidth = 4;
-  ctx.strokeRect(8, 8, W - 16, H - 16);
+  // Horizontal trace lines
+  g.strokeStyle = 'rgba(132,204,22,0.28)';
+  g.lineWidth = 1.5;
+  for (let y = 12; y < S; y += 28) {
+    g.beginPath();
+    g.moveTo(0, y); g.lineTo(S, y);
+    g.stroke();
+  }
+  // Vertical trace lines
+  for (let x = 12; x < S; x += 28) {
+    g.beginPath();
+    g.moveTo(x, 0); g.lineTo(x, S);
+    g.stroke();
+  }
 
-  ctx.strokeStyle = 'rgba(132,204,22,0.3)';
-  ctx.lineWidth = 1.5;
-  ctx.strokeRect(18, 18, W - 36, H - 36);
+  // Via holes at intersections
+  g.fillStyle = 'rgba(217,119,6,0.5)';
+  for (let y = 12; y < S; y += 56) {
+    for (let x = 12; x < S; x += 56) {
+      g.beginPath();
+      g.arc(x, y, 3, 0, Math.PI * 2);
+      g.fill();
+    }
+  }
 
-  const b = 28;
-  ctx.strokeStyle = '#a3e635';
-  ctx.lineWidth = 7;
-  ctx.beginPath();
-  ctx.moveTo(8, 8 + b); ctx.lineTo(8, 8); ctx.lineTo(8 + b, 8);
-  ctx.moveTo(W - 8 - b, 8); ctx.lineTo(W - 8, 8); ctx.lineTo(W - 8, 8 + b);
-  ctx.moveTo(8, H - 8 - b); ctx.lineTo(8, H - 8); ctx.lineTo(8 + b, H - 8);
-  ctx.moveTo(W - 8 - b, H - 8); ctx.lineTo(W - 8, H - 8); ctx.lineTo(W - 8, H - 8 - b);
-  ctx.stroke();
+  const t = new THREE.CanvasTexture(c);
+  t.anisotropy = 4;
+  t.wrapS = THREE.RepeatWrapping;
+  t.wrapT = THREE.RepeatWrapping;
+  t.repeat.set(6, 6);
+  return t;
+}
 
-  ctx.fillStyle = '#84cc16';
-  ctx.font = '700 15px "JetBrains Mono", monospace';
-  ctx.textAlign = 'left';
-  ctx.textBaseline = 'top';
-  ctx.fillText(number, 28, 30);
+/** Holographic panel canvas texture */
+function makeHudTexture(title, number, lines) {
+  const W = 640, H = 300;
+  const c = document.createElement('canvas');
+  c.width = W; c.height = H;
+  const g = c.getContext('2d');
 
-  ctx.fillStyle = '#ffffff';
-  ctx.font = '800 30px "Plus Jakarta Sans", sans-serif';
-  ctx.fillText(title, 28, 54);
+  // Dark glass background
+  g.fillStyle = 'rgba(3,10,6,0.93)';
+  g.fillRect(0, 0, W, H);
 
-  ctx.strokeStyle = 'rgba(132,204,22,0.4)';
-  ctx.lineWidth = 1.5;
-  ctx.beginPath();
-  ctx.moveTo(28, 98); ctx.lineTo(W - 28, 98);
-  ctx.stroke();
+  // Lime outer border
+  g.strokeStyle = '#84cc16';
+  g.lineWidth = 4;
+  g.strokeRect(7, 7, W - 14, H - 14);
+  // Inner hairline
+  g.strokeStyle = 'rgba(132,204,22,0.28)';
+  g.lineWidth = 1.5;
+  g.strokeRect(16, 16, W - 32, H - 32);
 
-  let y = 120;
-  items.forEach((item) => {
-    ctx.fillStyle = 'rgba(132,204,22,0.10)';
-    ctx.fillRect(28, y - 12, W - 56, 30);
-    ctx.strokeStyle = 'rgba(132,204,22,0.25)';
-    ctx.lineWidth = 1;
-    ctx.strokeRect(28, y - 12, W - 56, 30);
+  // Corner brackets
+  const bk = (x, y, dx, dy) => {
+    g.beginPath();
+    g.moveTo(x, y + dy * 26); g.lineTo(x, y); g.lineTo(x + dx * 26, y);
+    g.stroke();
+  };
+  g.strokeStyle = '#a3e635';
+  g.lineWidth = 7;
+  bk(7, 7, 1, 1); bk(W - 7, 7, -1, 1);
+  bk(7, H - 7, 1, -1); bk(W - 7, H - 7, -1, -1);
 
-    ctx.fillStyle = '#84cc16';
-    ctx.font = '700 14px "JetBrains Mono", monospace';
-    ctx.fillText('◈ ' + item, 40, y + 3);
+  // Number tag
+  g.fillStyle = '#84cc16';
+  g.font = '700 13px monospace';
+  g.textAlign = 'left';
+  g.textBaseline = 'top';
+  g.fillText(number, 26, 28);
+
+  // Title
+  g.fillStyle = '#ffffff';
+  g.font = '800 28px system-ui, sans-serif';
+  g.fillText(title, 26, 50);
+
+  // Divider
+  g.strokeStyle = 'rgba(132,204,22,0.38)';
+  g.lineWidth = 1.5;
+  g.beginPath(); g.moveTo(26, 92); g.lineTo(W - 26, 92); g.stroke();
+
+  // List items
+  let y = 115;
+  lines.forEach(item => {
+    g.fillStyle = 'rgba(132,204,22,0.11)';
+    g.fillRect(26, y - 12, W - 52, 28);
+    g.strokeStyle = 'rgba(132,204,22,0.24)';
+    g.lineWidth = 1;
+    g.strokeRect(26, y - 12, W - 52, 28);
+    g.fillStyle = '#a3e635';
+    g.font = '700 13px monospace';
+    g.fillText('◈  ' + item, 38, y + 3);
     y += 40;
   });
 
-  const texture = new THREE.CanvasTexture(canvas);
-  texture.anisotropy = 4;
-  return texture;
+  const t = new THREE.CanvasTexture(c);
+  t.anisotropy = 4;
+  return t;
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// GEOMETRY HELPERS
+// ─────────────────────────────────────────────────────────────────────────────
+
+/** Build an orthogonal (Manhattan) trace path as LineSegments */
+function buildTraceLines(points, mat) {
+  const geo = new THREE.BufferGeometry().setFromPoints(points);
+  return new THREE.LineSegments(geo, mat);
+}
+
+/** Simple box mesh helper */
+function box(w, h, d, mat, x = 0, y = 0, z = 0) {
+  const m = new THREE.Mesh(new THREE.BoxGeometry(w, h, d), mat);
+  m.position.set(x, y, z);
+  return m;
+}
+
+/** Cylinder mesh helper */
+function cyl(rt, rb, h, seg, mat, x = 0, y = 0, z = 0) {
+  const m = new THREE.Mesh(new THREE.CylinderGeometry(rt, rb, h, seg), mat);
+  m.position.set(x, y, z);
+  return m;
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -214,140 +297,160 @@ function createHudPanelTexture(title, number, items = []) {
 
 export default function EngineeringWorld3D() {
   const mountRef = useRef(null);
-  const scrollRatioRef = useRef(0);
-  const mouseRef = useRef({ x: 0, y: 0 });
 
   useEffect(() => {
     const container = mountRef.current;
     if (!container) return;
 
-    // WebGL availability check
+    // WebGL check
     try {
-      const testCanvas = document.createElement('canvas');
-      const gl = testCanvas.getContext('webgl') || testCanvas.getContext('experimental-webgl');
+      const t = document.createElement('canvas');
+      const gl = t.getContext('webgl') || t.getContext('experimental-webgl');
       if (!gl) return;
-    } catch (_) {
-      return;
-    }
+    } catch (_) { return; }
 
-    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    const isMobile = window.matchMedia('(pointer: coarse)').matches;
+    const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const mobile  = window.matchMedia('(pointer: coarse)').matches;
 
-    // ── RENDERER ──────────────────────────────────────────────────────────
+    // ── Renderer ──────────────────────────────────────────────────────────
     const renderer = new THREE.WebGLRenderer({
-      alpha: true,
-      antialias: !isMobile,
+      alpha: false, antialias: !mobile,
       powerPreference: 'high-performance',
     });
     renderer.setSize(window.innerWidth, window.innerHeight);
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio, isMobile ? 1.25 : 2.0));
-    renderer.setClearColor(0x030507, 1);
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, mobile ? 1.3 : 2.0));
+    renderer.setClearColor(0x020507, 1);
+    renderer.shadowMap.enabled = false; // keep draw calls low
     container.appendChild(renderer.domElement);
 
-    // ── SCENE & FOG ───────────────────────────────────────────────────────
+    // ── Scene & fog ───────────────────────────────────────────────────────
     const scene = new THREE.Scene();
-    scene.fog = new THREE.FogExp2(0x030507, 0.010);
+    scene.fog = new THREE.FogExp2(0x020507, 0.009);
 
-    // ── CAMERA (Elevated Isometric Perspective) ───────────────────────────
-    const aspect = window.innerWidth / window.innerHeight;
-    const camera = new THREE.PerspectiveCamera(34, aspect, 0.5, 600);
-    const baseCamPos = new THREE.Vector3(28, 34, 28);
-    const baseLookAt = new THREE.Vector3(1, 1, 0);
-    camera.position.copy(baseCamPos);
-    camera.lookAt(baseLookAt);
+    // ── Camera ────────────────────────────────────────────────────────────
+    // Elevated isometric-ish perspective; CPU sits to the right of hero text
+    const CAM_FOV = 33;
+    const camera = new THREE.PerspectiveCamera(CAM_FOV, window.innerWidth / window.innerHeight, 0.5, 700);
+    // Hero text is on the LEFT quarter — position camera so the scene fills
+    // the RIGHT 60% of the viewport at the start.
+    const BASE_POS  = new THREE.Vector3(22, 38, 32);
+    const BASE_LOOK = new THREE.Vector3(4, 0, -2);
+    camera.position.copy(BASE_POS);
+    camera.lookAt(BASE_LOOK);
 
-    // ── LIGHTING ──────────────────────────────────────────────────────────
-    const ambientLight = new THREE.AmbientLight(0x080e0a, 1.4);
-    scene.add(ambientLight);
+    // ── Lighting ──────────────────────────────────────────────────────────
+    scene.add(new THREE.AmbientLight(0x06100a, 1.6));
 
-    // Core pulsing neon-lime point light
-    const coreLight = new THREE.PointLight(0x84cc16, 30, 44);
-    coreLight.position.set(0, 5, 0);
+    // Main neon-lime core light (pulsing)
+    const coreLight = new THREE.PointLight(0x84cc16, 35, 52);
+    coreLight.position.set(0, 6, 0);
     scene.add(coreLight);
 
-    // Secondary lime fill from below
-    const coreLightLow = new THREE.PointLight(0x84cc16, 8, 22);
-    coreLightLow.position.set(0, -2, 0);
-    scene.add(coreLightLow);
+    // Secondary fill lime (low, from below)
+    const fillLow = new THREE.PointLight(0x84cc16, 10, 28);
+    fillLow.position.set(0, -3, 0);
+    scene.add(fillLow);
 
-    // Key directional (cyan/steel blue) reflecting metallic bevels
-    const keyDir = new THREE.DirectionalLight(0x38bdf8, 1.8);
-    keyDir.position.set(24, 40, -18);
+    // Key directional – steel blue, reflects off metallic tops
+    const keyDir = new THREE.DirectionalLight(0x38bdf8, 2.0);
+    keyDir.position.set(28, 48, -20);
     scene.add(keyDir);
 
-    // Warm lime fill opposite
-    const fillDir = new THREE.DirectionalLight(0x84cc16, 1.4);
-    fillDir.position.set(-22, 30, 24);
-    scene.add(fillDir);
+    // Warm rim from opposite side
+    const rimDir = new THREE.DirectionalLight(0x84cc16, 1.5);
+    rimDir.position.set(-24, 32, 28);
+    scene.add(rimDir);
 
-    // Deep back-light for depth
-    const backLight = new THREE.DirectionalLight(0x0f2a1a, 3);
-    backLight.position.set(0, -10, -30);
-    scene.add(backLight);
+    // Deep back light (very dim, adds subtle silhouette separation)
+    const backDir = new THREE.DirectionalLight(0x0a1e14, 4);
+    backDir.position.set(0, -12, -40);
+    scene.add(backDir);
 
-    // ── MATERIALS ─────────────────────────────────────────────────────────
-    const darkMetalMat = new THREE.MeshStandardMaterial({ color: 0x0b1014, roughness: 0.28, metalness: 0.92 });
-    const heatsinkMat  = new THREE.MeshStandardMaterial({ color: 0x151d2a, roughness: 0.18, metalness: 0.96 });
-    const chassisMat   = new THREE.MeshStandardMaterial({ color: 0x0f1520, roughness: 0.38, metalness: 0.82 });
-    const goldMat      = new THREE.MeshStandardMaterial({ color: 0xd97706, roughness: 0.22, metalness: 0.97 });
-    const silverMat    = new THREE.MeshStandardMaterial({ color: 0x9ca3af, roughness: 0.28, metalness: 0.92 });
-    const siliconMat   = new THREE.MeshStandardMaterial({ color: 0x071408, emissive: 0x84cc16, emissiveIntensity: 0.45, roughness: 0.18, metalness: 0.88 });
-    const conduitMat   = new THREE.MeshStandardMaterial({ color: 0x0f2012, emissive: 0x84cc16, emissiveIntensity: 0.85, roughness: 0.28, metalness: 0.72 });
-    const limeMat      = new THREE.MeshBasicMaterial({ color: 0xa3e635 });
-    const cyanMat      = new THREE.MeshBasicMaterial({ color: 0x38bdf8 });
-    const whiteGlowMat = new THREE.MeshBasicMaterial({ color: 0xe2e8f0 });
-    const lineMatLime  = new THREE.LineBasicMaterial({ color: 0x84cc16, transparent: true, opacity: 0.7 });
-    const lineMatCyan  = new THREE.LineBasicMaterial({ color: 0x38bdf8, transparent: true, opacity: 0.6 });
-    const lineMatGold  = new THREE.LineBasicMaterial({ color: 0xd97706, transparent: true, opacity: 0.55 });
+    // ── Materials ─────────────────────────────────────────────────────────
+    const M = {
+      darkMetal : new THREE.MeshStandardMaterial({ color: 0x0b1218, roughness: 0.25, metalness: 0.95 }),
+      heatsink  : new THREE.MeshStandardMaterial({ color: 0x141e2c, roughness: 0.18, metalness: 0.97 }),
+      chassis   : new THREE.MeshStandardMaterial({ color: 0x0e1622, roughness: 0.38, metalness: 0.82 }),
+      chassisDk : new THREE.MeshStandardMaterial({ color: 0x090e18, roughness: 0.45, metalness: 0.80 }),
+      gold      : new THREE.MeshStandardMaterial({ color: 0xd97706, roughness: 0.20, metalness: 0.98 }),
+      copper    : new THREE.MeshStandardMaterial({ color: 0xb45309, roughness: 0.18, metalness: 0.99 }),
+      silicon   : new THREE.MeshStandardMaterial({ color: 0x061008, emissive: 0x84cc16, emissiveIntensity: 0.40, roughness: 0.15, metalness: 0.90 }),
+      conduit   : new THREE.MeshStandardMaterial({ color: 0x0c1e10, emissive: 0x84cc16, emissiveIntensity: 0.80, roughness: 0.30, metalness: 0.70 }),
+      lime      : new THREE.MeshBasicMaterial({ color: 0xa3e635 }),
+      limeDim   : new THREE.MeshBasicMaterial({ color: 0x4d7c0f }),
+      cyan      : new THREE.MeshBasicMaterial({ color: 0x38bdf8 }),
+      cyanDim   : new THREE.MeshBasicMaterial({ color: 0x0e7490 }),
+      trLime    : new THREE.LineBasicMaterial({ color: 0x84cc16, transparent: true, opacity: 0.65 }),
+      trCyan    : new THREE.LineBasicMaterial({ color: 0x38bdf8, transparent: true, opacity: 0.55 }),
+      trGold    : new THREE.LineBasicMaterial({ color: 0xd97706, transparent: true, opacity: 0.50 }),
+      frontPanel: new THREE.MeshStandardMaterial({ color: 0x0c1628, roughness: 0.42, metalness: 0.78 }),
+      pcbGreen  : new THREE.MeshStandardMaterial({ color: 0x071a0b, roughness: 0.55, metalness: 0.40 }),
+    };
 
     // ─────────────────────────────────────────────────────────────────────
-    // 1. MOTHERBOARD FLOOR — Solid PCB with detail layer
+    // 1. MOTHERBOARD FLOOR  (large PCB slab with surface texture)
     // ─────────────────────────────────────────────────────────────────────
-    // Main PCB slab
-    const groundGeo = new THREE.BoxGeometry(70, 0.5, 70);
-    scene.add(new THREE.Mesh(groundGeo, darkMetalMat));
-
-    // PCB layer lip (slightly lighter frame showing board layers)
-    const pcbEdgeGeo = new THREE.BoxGeometry(70, 0.15, 70);
-    const pcbEdgeMat = new THREE.MeshStandardMaterial({ color: 0x0d2415, roughness: 0.45, metalness: 0.6 });
-    const pcbEdge = new THREE.Mesh(pcbEdgeGeo, pcbEdgeMat);
-    pcbEdge.position.y = -0.32;
-    scene.add(pcbEdge);
-
-    // ── Orthogonal Circuit Trace Network (Manhattan routing)
-    const tracePoints = [];
-    const coords = [-24, -18, -12, -6, 6, 12, 18, 24];
-    coords.forEach((v) => {
-      tracePoints.push(new THREE.Vector3(v, 0.1, -30), new THREE.Vector3(v, 0.1, v * 0.35));
-      tracePoints.push(new THREE.Vector3(v, 0.1, v * 0.35), new THREE.Vector3(Math.sign(v) * 32, 0.1, v * 0.35));
-      tracePoints.push(new THREE.Vector3(-30, 0.1, v), new THREE.Vector3(v * 0.35, 0.1, v));
-      tracePoints.push(new THREE.Vector3(v * 0.35, 0.1, v), new THREE.Vector3(v * 0.35, 0.1, Math.sign(v) * 30));
+    const pcbTex = makePcbTexture();
+    const pcbMat = new THREE.MeshStandardMaterial({
+      color: 0x071a0b, map: pcbTex, roughness: 0.55, metalness: 0.35,
     });
-    // Extra dense trace cluster around CPU center
-    for (let i = -4; i <= 4; i++) {
-      tracePoints.push(new THREE.Vector3(i * 1.2, 0.1, -6.5), new THREE.Vector3(i * 1.2, 0.1, -10));
-      tracePoints.push(new THREE.Vector3(-6.5, 0.1, i * 1.2), new THREE.Vector3(-10, 0.1, i * 1.2));
-      tracePoints.push(new THREE.Vector3(i * 1.2, 0.1, 6.5), new THREE.Vector3(i * 1.2, 0.1, 10));
-      tracePoints.push(new THREE.Vector3(6.5, 0.1, i * 1.2), new THREE.Vector3(10, 0.1, i * 1.2));
-    }
-    scene.add(new THREE.LineSegments(new THREE.BufferGeometry().setFromPoints(tracePoints), lineMatLime));
 
-    // ── Gold solder pads & SMD chips
-    const padGeo = new THREE.CylinderGeometry(0.22, 0.22, 0.09, 12);
-    const padMesh = new THREE.InstancedMesh(padGeo, goldMat, 40);
-    const smdGeo = new THREE.BoxGeometry(0.38, 0.2, 0.22);
-    const smdMesh = new THREE.InstancedMesh(smdGeo, heatsinkMat, 40);
-    const dummy = new THREE.Object3D();
+    const board = new THREE.Mesh(new THREE.BoxGeometry(72, 0.55, 72), pcbMat);
+    board.position.y = -0.28;
+    scene.add(board);
+
+    // PCB edge strips (show layering like a real multi-layer PCB)
+    const edgeMat = new THREE.MeshStandardMaterial({ color: 0x0d2415, roughness: 0.50, metalness: 0.45 });
+    const edgeGeo = new THREE.BoxGeometry(72, 0.18, 72);
+    const edgeBot = new THREE.Mesh(edgeGeo, edgeMat);
+    edgeBot.position.y = -0.64;
+    scene.add(edgeBot);
+
+    // ── Orthogonal circuit traces on the board (NO diagonals)
+    const trPts = [];
+    // Grid of Manhattan traces radiating from centre
+    const gridCoords = [-22, -16, -10, -5, 5, 10, 16, 22];
+    gridCoords.forEach(v => {
+      // Longitudinal (Z direction)
+      trPts.push(new THREE.Vector3(v, 0.12, -32), new THREE.Vector3(v, 0.12, v * 0.3 - 0.5));
+      trPts.push(new THREE.Vector3(v, 0.12, v * 0.3 - 0.5), new THREE.Vector3(Math.sign(v) * 34, 0.12, v * 0.3 - 0.5));
+      // Latitudinal (X direction)
+      trPts.push(new THREE.Vector3(-32, 0.12, v), new THREE.Vector3(v * 0.3 + 0.5, 0.12, v));
+      trPts.push(new THREE.Vector3(v * 0.3 + 0.5, 0.12, v), new THREE.Vector3(v * 0.3 + 0.5, 0.12, Math.sign(v) * 32));
+    });
+    // Dense cluster around CPU socket area
+    for (let i = -5; i <= 5; i++) {
+      trPts.push(new THREE.Vector3(i * 1.3, 0.12, -7.5), new THREE.Vector3(i * 1.3, 0.12, -12));
+      trPts.push(new THREE.Vector3(-7.5, 0.12, i * 1.3), new THREE.Vector3(-12, 0.12, i * 1.3));
+      trPts.push(new THREE.Vector3(i * 1.3, 0.12, 7.5), new THREE.Vector3(i * 1.3, 0.12, 12));
+      trPts.push(new THREE.Vector3(7.5, 0.12, i * 1.3), new THREE.Vector3(12, 0.12, i * 1.3));
+    }
+    scene.add(buildTraceLines(trPts, M.trLime));
+
+    // Gold bus traces (wider, fewer)
+    const busPts = [];
+    [-18, -9, 9, 18].forEach(v => {
+      busPts.push(new THREE.Vector3(v, 0.13, -28), new THREE.Vector3(v, 0.13, 28));
+      busPts.push(new THREE.Vector3(-28, 0.13, v), new THREE.Vector3(28, 0.13, v));
+    });
+    scene.add(buildTraceLines(busPts, M.trGold));
+
+    // ── Solder pads & SMD chips (instanced for performance)
+    const padGeo   = new THREE.CylinderGeometry(0.20, 0.20, 0.08, 10);
+    const padMesh  = new THREE.InstancedMesh(padGeo, M.gold, 48);
+    const smdGeo   = new THREE.BoxGeometry(0.42, 0.20, 0.26);
+    const smdMesh  = new THREE.InstancedMesh(smdGeo, M.heatsink, 48);
+    const dummy    = new THREE.Object3D();
     let pi = 0;
-    for (let px = -24; px <= 24; px += 6) {
-      for (let pz = -24; pz <= 24; pz += 6) {
-        if (Math.abs(px) < 7 && Math.abs(pz) < 7) continue;
-        if (pi < 40) {
-          dummy.position.set(px, 0.05, pz);
-          dummy.rotation.y = Math.random() * Math.PI;
+    for (let px = -26; px <= 26; px += 6) {
+      for (let pz = -26; pz <= 26; pz += 6) {
+        if (Math.abs(px) < 8 && Math.abs(pz) < 8) continue;
+        if (pi < 48) {
+          dummy.position.set(px, 0.04, pz);
+          dummy.rotation.y = (pi * 0.7) % (Math.PI * 2);
           dummy.updateMatrix();
           padMesh.setMatrixAt(pi, dummy.matrix);
-          dummy.position.set(px + 0.55, 0.1, pz + 0.2);
+          dummy.position.set(px + 0.6, 0.10, pz + 0.3);
           dummy.updateMatrix();
           smdMesh.setMatrixAt(pi, dummy.matrix);
           pi++;
@@ -356,459 +459,467 @@ export default function EngineeringWorld3D() {
     }
     padMesh.instanceMatrix.needsUpdate = true;
     smdMesh.instanceMatrix.needsUpdate = true;
-    scene.add(padMesh);
-    scene.add(smdMesh);
+    scene.add(padMesh, smdMesh);
 
-    // ── PCIe slot connector strips (at board edges)
-    const pciSlotGeo = new THREE.BoxGeometry(18, 0.35, 0.55);
-    const pciSlotMat = new THREE.MeshStandardMaterial({ color: 0x1a2530, roughness: 0.5, metalness: 0.7 });
-    [{ x: 0, z: -28 }, { x: 0, z: 26 }].forEach(({ x, z }) => {
-      const slot = new THREE.Mesh(pciSlotGeo, pciSlotMat);
-      slot.position.set(x, 0.17, z);
+    // PCIe slot connectors along board edges
+    [{ x: 0, z: -30 }, { x: 0, z: 28 }].forEach(({ x, z }) => {
+      const slot = new THREE.Mesh(new THREE.BoxGeometry(20, 0.35, 0.60), M.chassisDk);
+      slot.position.set(x, 0.18, z);
       scene.add(slot);
-      // Gold connector contacts
-      for (let ci = -8; ci <= 8; ci += 1.8) {
-        const contactGeo = new THREE.BoxGeometry(0.14, 0.22, 0.5);
-        const contact = new THREE.Mesh(contactGeo, goldMat);
-        contact.position.set(x + ci, 0.18, z);
+      for (let ci = -9; ci <= 9; ci += 2) {
+        const contact = new THREE.Mesh(new THREE.BoxGeometry(0.15, 0.24, 0.55), M.gold);
+        contact.position.set(x + ci, 0.19, z);
         scene.add(contact);
       }
     });
 
     // ─────────────────────────────────────────────────────────────────────
-    // 2. CENTRAL CPU PROCESSOR — Multi-layer, highly detailed
+    // 2. CENTRAL CPU PROCESSOR — Large, multi-layer, immediately recognisable
     // ─────────────────────────────────────────────────────────────────────
-    const cpuGroup = new THREE.Group();
-    scene.add(cpuGroup);
+    const cpu = new THREE.Group();
+    scene.add(cpu);
 
-    // Layer 1: LGA Contact Grid Substrate (thickest bottom layer)
-    const socketGeo = new THREE.BoxGeometry(12, 0.75, 12);
-    cpuGroup.add(new THREE.Mesh(socketGeo, darkMetalMat).translateY(0.375));
+    // Layer 0: Reinforcement back-plate (sits under board)
+    const bPlate = new THREE.Mesh(new THREE.BoxGeometry(13.5, 0.4, 13.5), M.darkMetal);
+    bPlate.position.y = -0.55;
+    cpu.add(bPlate);
 
-    // LGA pin contacts — dense 2D grid on socket face
-    const pinGeo = new THREE.BoxGeometry(0.12, 0.3, 0.12);
-    for (let px = -5.2; px <= 5.2; px += 0.52) {
-      for (let pz = -5.2; pz <= 5.2; pz += 0.52) {
-        const pin = new THREE.Mesh(pinGeo, goldMat);
-        pin.position.set(px, 0.15, pz);
-        cpuGroup.add(pin);
+    // Layer 1: LGA Socket body (thickest layer)
+    const socket = new THREE.Mesh(new THREE.BoxGeometry(13, 0.80, 13), M.darkMetal);
+    socket.position.y = 0.40;
+    cpu.add(socket);
+
+    // Socket frame border ridge
+    const socketRidge = new THREE.Mesh(new THREE.BoxGeometry(13, 0.16, 13), M.heatsink);
+    socketRidge.position.y = 0.88;
+    cpu.add(socketRidge);
+
+    // LGA contact pins (dense 2D grid)
+    const pinGeo = new THREE.BoxGeometry(0.11, 0.28, 0.11);
+    for (let px = -5.5; px <= 5.5; px += 0.50) {
+      for (let pz = -5.5; pz <= 5.5; pz += 0.50) {
+        const pin = new THREE.Mesh(pinGeo, M.gold);
+        pin.position.set(px, 0.14, pz);
+        cpu.add(pin);
       }
     }
 
-    // Layer 2: PCB Substrate (green-tinted, narrower)
-    const substrateGeo = new THREE.BoxGeometry(11.2, 0.4, 11.2);
-    const substrateMat = new THREE.MeshStandardMaterial({ color: 0x0a1f0e, roughness: 0.5, metalness: 0.4 });
-    const substrateMesh = new THREE.Mesh(substrateGeo, substrateMat);
-    substrateMesh.position.y = 0.95;
-    cpuGroup.add(substrateMesh);
-    // Substrate trace lines (visible on edge)
-    const subEdgeGeo = new THREE.EdgesGeometry(substrateGeo);
-    const subEdge = new THREE.LineSegments(subEdgeGeo, lineMatLime);
-    subEdge.position.y = 0.95;
-    cpuGroup.add(subEdge);
+    // Layer 2: Green PCB substrate
+    const substrate = new THREE.Mesh(new THREE.BoxGeometry(12.2, 0.45, 12.2), M.pcbGreen);
+    substrate.position.y = 1.22;
+    cpu.add(substrate);
+
+    // Substrate edge glow (emissive strip)
+    const subEdge = new THREE.LineSegments(
+      new THREE.EdgesGeometry(new THREE.BoxGeometry(12.2, 0.45, 12.2)),
+      M.trLime
+    );
+    subEdge.position.y = 1.22;
+    cpu.add(subEdge);
 
     // Layer 3: IHS — Integrated Heat Spreader
-    const spreaderGeo = new THREE.BoxGeometry(9.6, 0.8, 9.6);
-    const spreaderMesh = new THREE.Mesh(spreaderGeo, heatsinkMat);
-    spreaderMesh.position.y = 1.55;
-    cpuGroup.add(spreaderMesh);
-    // IHS surface detail — cross-hatch engraving
-    const ihsDetailPoints = [];
-    for (let d = -4.4; d <= 4.4; d += 0.8) {
-      ihsDetailPoints.push(new THREE.Vector3(d, 1.97, -4.4), new THREE.Vector3(d, 1.97, 4.4));
-      ihsDetailPoints.push(new THREE.Vector3(-4.4, 1.97, d), new THREE.Vector3(4.4, 1.97, d));
-    }
-    const ihsDetailGeo = new THREE.BufferGeometry().setFromPoints(ihsDetailPoints);
-    scene.add(new THREE.LineSegments(ihsDetailGeo, new THREE.LineBasicMaterial({ color: 0x1e3828, transparent: true, opacity: 0.6 })));
+    const ihs = new THREE.Mesh(new THREE.BoxGeometry(10.8, 0.90, 10.8), M.heatsink);
+    ihs.position.y = 1.90;
+    cpu.add(ihs);
 
-    // Layer 4: Heatsink with solid aluminum fins
-    const hsBaseGeo = new THREE.BoxGeometry(8.8, 0.5, 8.8);
-    const hsMesh = new THREE.Mesh(hsBaseGeo, heatsinkMat);
-    hsMesh.position.y = 2.6;
-    cpuGroup.add(hsMesh);
-    // Fins (horizontal slabs stacked)
-    for (let f = 0; f < 7; f++) {
-      const finGeo = new THREE.BoxGeometry(8.6, 0.22, 8.6 - f * 0.5);
-      const fin = new THREE.Mesh(finGeo, heatsinkMat);
-      fin.position.y = 3.0 + f * 0.38;
-      cpuGroup.add(fin);
+    // IHS surface engraving (shallow cross-hatch lines)
+    const engPts = [];
+    for (let d = -4.8; d <= 4.8; d += 0.9) {
+      engPts.push(new THREE.Vector3(d, 2.38, -4.8), new THREE.Vector3(d, 2.38, 4.8));
+      engPts.push(new THREE.Vector3(-4.8, 2.38, d), new THREE.Vector3(4.8, 2.38, d));
     }
-    // Heatsink heatpipes (copper cylinders)
-    const heatpipeGeo = new THREE.CylinderGeometry(0.28, 0.28, 5.8, 12);
-    const heatpipeMat = new THREE.MeshStandardMaterial({ color: 0xb45309, roughness: 0.2, metalness: 0.98 });
-    [-2.2, 0, 2.2].forEach((offset) => {
-      const hp = new THREE.Mesh(heatpipeGeo, heatpipeMat);
+    scene.add(buildTraceLines(engPts, new THREE.LineBasicMaterial({ color: 0x1e3028, transparent: true, opacity: 0.55 })));
+
+    // Layer 4: Heatsink base plate
+    const hsBase = new THREE.Mesh(new THREE.BoxGeometry(10.0, 0.55, 10.0), M.heatsink);
+    hsBase.position.y = 2.62;
+    cpu.add(hsBase);
+
+    // Heatsink fins (horizontal stacked slabs — real heatsink look)
+    const finCount = 9;
+    for (let f = 0; f < finCount; f++) {
+      const finH  = 0.24;
+      const finGap = 0.40;
+      const finW  = 9.8 - f * 0.25;
+      const fin   = new THREE.Mesh(new THREE.BoxGeometry(finW, finH, finW), M.heatsink);
+      fin.position.y = 3.05 + f * (finH + finGap);
+      cpu.add(fin);
+    }
+
+    // Heat pipes (3 copper cylinders running through fins)
+    const hpGeo = new THREE.CylinderGeometry(0.30, 0.30, 6.5, 12);
+    [-2.5, 0, 2.5].forEach(offset => {
+      const hp = new THREE.Mesh(hpGeo, M.copper);
       hp.rotation.z = Math.PI / 2;
-      hp.position.set(offset, 3.8, 0);
-      cpuGroup.add(hp);
+      hp.position.set(offset, 4.0, 0);
+      cpu.add(hp);
     });
 
-    // Layer 5: Silicon Die exposed (visible top of IHS for texture)
-    const cpuDieTex = createCpuDieTexture();
-    const dieGeo = new THREE.BoxGeometry(6.4, 0.65, 6.4);
-    const dieTopMat = new THREE.MeshBasicMaterial({ map: cpuDieTex });
-    const dieMesh = new THREE.Mesh(dieGeo, [siliconMat, siliconMat, dieTopMat, siliconMat, siliconMat, siliconMat]);
-    dieMesh.position.y = 1.95;
-    cpuGroup.add(dieMesh);
+    // Layer 5: Silicon die (exposed, with canvas texture)
+    const dieTex = makeCpuTexture();
+    const dieTopMat = new THREE.MeshBasicMaterial({ map: dieTex });
+    const die = new THREE.Mesh(
+      new THREE.BoxGeometry(7.0, 0.70, 7.0),
+      [M.silicon, M.silicon, dieTopMat, M.silicon, M.silicon, M.silicon]
+    );
+    die.position.y = 2.30;
+    cpu.add(die);
 
-    // Electrolytic capacitors (around CPU socket - 8 positions)
-    const capGeo = new THREE.CylinderGeometry(0.35, 0.35, 1.4, 12);
-    const capMat = new THREE.MeshStandardMaterial({ color: 0x1a2b3c, roughness: 0.35, metalness: 0.7 });
-    const capTopGeo = new THREE.CylinderGeometry(0.32, 0.32, 0.08, 12);
-    const capTopMat = new THREE.MeshStandardMaterial({ color: 0x60a5fa, roughness: 0.3, metalness: 0.85, emissive: 0x1e40af, emissiveIntensity: 0.3 });
-    const capPositions = [
-      [-6.2, 0], [6.2, 0], [0, -6.2], [0, 6.2],
-      [-6.2, -6.2], [6.2, -6.2], [-6.2, 6.2], [6.2, 6.2],
-    ];
-    capPositions.forEach(([cx, cz]) => {
-      const cap = new THREE.Mesh(capGeo, capMat);
-      cap.position.set(cx, 0.7, cz);
-      cpuGroup.add(cap);
-      const capTop = new THREE.Mesh(capTopGeo, capTopMat);
-      capTop.position.set(cx, 1.45, cz);
-      cpuGroup.add(capTop);
-    });
-
-    // MOSFET power regulators (large rectangular chips around socket)
-    const mosfetGeo = new THREE.BoxGeometry(1.2, 0.5, 0.8);
-    const mosfetMat = new THREE.MeshStandardMaterial({ color: 0x0c1520, roughness: 0.3, metalness: 0.85 });
-    [[-5, 0.25, -4], [5, 0.25, -4], [-5, 0.25, 4], [5, 0.25, 4]].forEach(([mx, my, mz]) => {
-      const m = new THREE.Mesh(mosfetGeo, mosfetMat);
-      m.position.set(mx, my, mz);
-      cpuGroup.add(m);
-    });
-
-    // Power inductor coils
-    const inductorGeo = new THREE.BoxGeometry(1.0, 0.8, 1.0);
-    const inductorMat = new THREE.MeshStandardMaterial({ color: 0x18202e, roughness: 0.4, metalness: 0.75 });
-    [[-7, 0.4, -2], [7, 0.4, -2], [-7, 0.4, 2], [7, 0.4, 2]].forEach(([ix, iy, iz]) => {
-      const ind = new THREE.Mesh(inductorGeo, inductorMat);
-      ind.position.set(ix, iy, iz);
-      cpuGroup.add(ind);
-      // Glowing top indicator
-      const indTopGeo = new THREE.CylinderGeometry(0.28, 0.28, 0.1, 10);
-      const indTop = new THREE.Mesh(indTopGeo, limeMat);
-      indTop.position.set(ix, iy + 0.45, iz);
-      cpuGroup.add(indTop);
-    });
-
-    // Rotating perimeter ring (mechanical trim)
-    const mechRingGeo = new THREE.TorusGeometry(5.5, 0.075, 8, 64);
-    const mechRingMesh = new THREE.Mesh(mechRingGeo, limeMat);
-    mechRingMesh.rotation.x = Math.PI / 2;
-    mechRingMesh.position.y = 1.95;
-    cpuGroup.add(mechRingMesh);
+    // Rotating mechanical trim ring
+    const ringGeo = new THREE.TorusGeometry(6.2, 0.08, 8, 72);
+    const trimRing = new THREE.Mesh(ringGeo, M.lime);
+    trimRing.rotation.x = Math.PI / 2;
+    trimRing.position.y = 2.30;
+    cpu.add(trimRing);
 
     // Secondary inner ring
-    const innerRingGeo = new THREE.TorusGeometry(3.6, 0.05, 8, 48);
-    const innerRingMesh = new THREE.Mesh(innerRingGeo, cyanMat);
-    innerRingMesh.rotation.x = Math.PI / 2;
-    innerRingMesh.position.y = 2.0;
-    cpuGroup.add(innerRingMesh);
+    const ring2Geo = new THREE.TorusGeometry(4.0, 0.055, 8, 56);
+    const innerRing = new THREE.Mesh(ring2Geo, M.cyan);
+    innerRing.rotation.x = Math.PI / 2;
+    innerRing.position.y = 2.32;
+    cpu.add(innerRing);
 
-    // ─────────────────────────────────────────────────────────────────────
-    // 3. COMPUTING TOWER MODULES
-    // ─────────────────────────────────────────────────────────────────────
-    const modules = [
-      { x: -13, z: -11, w: 5.5, h: 5.0, d: 5.5, name: 'AboutUnit' },
-      { x:  13, z: -12, w: 5.5, h: 5.5, d: 5.5, name: 'SkillsUnit' },
-      { x: -15, z:   9, w: 5.8, h: 5.8, d: 5.8, name: 'ProjectsUnit' },
-      { x:  14, z:  10, w: 5.6, h: 6.0, d: 5.6, name: 'ArchUnit' },
-      { x:  -7, z: -20, w: 4.4, h: 9.0, d: 4.4, name: 'BgTower1' },
-      { x:   7, z: -20, w: 4.4, h: 10.0, d: 4.4, name: 'BgTower2' },
-      { x:   0, z: -24, w: 6.0, h: 12.5, d: 6.0, name: 'BgTowerCenter' },
-    ];
+    // Capacitor array around socket (16 positions in a ring)
+    const capGeo    = new THREE.CylinderGeometry(0.38, 0.38, 1.50, 12);
+    const capMat    = new THREE.MeshStandardMaterial({ color: 0x1a2b40, roughness: 0.35, metalness: 0.70 });
+    const capTopGeo = new THREE.CylinderGeometry(0.34, 0.34, 0.10, 12);
+    const capTopMat = new THREE.MeshStandardMaterial({ color: 0x60a5fa, roughness: 0.28, metalness: 0.88, emissive: 0x1e3a8a, emissiveIntensity: 0.4 });
+    const capRing = 7.8;
+    for (let i = 0; i < 16; i++) {
+      const angle = (i / 16) * Math.PI * 2;
+      const cx = Math.cos(angle) * capRing;
+      const cz = Math.sin(angle) * capRing;
+      const cap = new THREE.Mesh(capGeo, capMat);
+      cap.position.set(cx, 0.75, cz);
+      cpu.add(cap);
+      const capTop = new THREE.Mesh(capTopGeo, capTopMat);
+      capTop.position.set(cx, 1.56, cz);
+      cpu.add(capTop);
+    }
 
-    const hardwareGroups = [];
-    modules.forEach((mod) => {
-      const group = new THREE.Group();
-      group.position.set(mod.x, 0, mod.z);
+    // MOSFET power regulators (8 rectangular packages around socket)
+    const mfGeo = new THREE.BoxGeometry(1.4, 0.55, 1.0);
+    const mfMat = new THREE.MeshStandardMaterial({ color: 0x0c1625, roughness: 0.30, metalness: 0.88 });
+    for (let i = 0; i < 8; i++) {
+      const angle = (i / 8) * Math.PI * 2 + Math.PI / 8;
+      const mx = Math.cos(angle) * 9.2;
+      const mz = Math.sin(angle) * 9.2;
+      const mf = new THREE.Mesh(mfGeo, mfMat);
+      mf.position.set(mx, 0.28, mz);
+      mf.rotation.y = angle;
+      cpu.add(mf);
+    }
 
-      // Main chassis block
-      const body = new THREE.Mesh(new THREE.BoxGeometry(mod.w, mod.h, mod.d), chassisMat);
-      body.position.y = mod.h / 2;
-      group.add(body);
-
-      // Front panel overlay (slightly different material for depth)
-      const frontGeo = new THREE.BoxGeometry(mod.w * 0.9, mod.h * 0.85, 0.12);
-      const frontMat = new THREE.MeshStandardMaterial({ color: 0x0d1828, roughness: 0.45, metalness: 0.75 });
-      const front = new THREE.Mesh(frontGeo, frontMat);
-      front.position.set(0, mod.h / 2, mod.d / 2 + 0.05);
-      group.add(front);
-
-      // Stepped heatsink cap
-      const cap1 = new THREE.Mesh(new THREE.BoxGeometry(mod.w * 0.82, 0.45, mod.d * 0.82), heatsinkMat);
-      cap1.position.y = mod.h + 0.22;
-      group.add(cap1);
-      const cap2 = new THREE.Mesh(new THREE.BoxGeometry(mod.w * 0.65, 0.3, mod.d * 0.65), heatsinkMat);
-      cap2.position.y = mod.h + 0.52;
-      group.add(cap2);
-
-      // Glowing status light on cap
-      const sLight = new THREE.Mesh(new THREE.CylinderGeometry(0.18, 0.18, 0.14, 10), limeMat);
-      sLight.position.y = mod.h + 0.68;
-      group.add(sLight);
-
-      // Horizontal vent slots (server rack aesthetics)
-      const numVents = Math.min(5, Math.floor(mod.h / 1.2));
-      for (let v = 1; v <= numVents; v++) {
-        const ventY = (mod.h / (numVents + 1)) * v;
-        const vent = new THREE.Mesh(
-          new THREE.BoxGeometry(mod.w * 0.75, 0.09, mod.d + 0.05),
-          v % 2 === 0 ? limeMat : cyanMat
-        );
-        vent.position.y = ventY;
-        group.add(vent);
-      }
-
-      // Small SMD chip row on front face
-      for (let ci = -1.5; ci <= 1.5; ci += 1.0) {
-        const chip = new THREE.Mesh(
-          new THREE.BoxGeometry(0.45, 0.22, 0.18),
-          new THREE.MeshStandardMaterial({ color: 0x0c1a14, roughness: 0.35, metalness: 0.8, emissive: 0x84cc16, emissiveIntensity: 0.15 })
-        );
-        chip.position.set(ci, mod.h * 0.25, mod.d / 2 + 0.16);
-        group.add(chip);
-      }
-
-      scene.add(group);
-      hardwareGroups.push({ group, mod });
+    // Power inductor chokes (4 large square inductors)
+    const indGeo = new THREE.BoxGeometry(1.1, 0.90, 1.1);
+    const indMat = new THREE.MeshStandardMaterial({ color: 0x18202e, roughness: 0.40, metalness: 0.75 });
+    [[-8.5, 0.45, -8.5], [8.5, 0.45, -8.5], [-8.5, 0.45, 8.5], [8.5, 0.45, 8.5]].forEach(([ix, iy, iz]) => {
+      const ind = new THREE.Mesh(indGeo, indMat);
+      ind.position.set(ix, iy, iz);
+      cpu.add(ind);
+      // Glowing status dot on top
+      const dot = new THREE.Mesh(new THREE.CylinderGeometry(0.22, 0.22, 0.10, 10), M.lime);
+      dot.position.set(ix, iy + 0.50, iz);
+      cpu.add(dot);
     });
 
     // ─────────────────────────────────────────────────────────────────────
-    // 4. CONDUIT PIPES & LIGHT RUNNERS
+    // 3. COMPUTING TOWER MODULES — solid server-rack aesthetics
     // ─────────────────────────────────────────────────────────────────────
-    const conduitCurves = [
-      new THREE.CatmullRomCurve3([
-        new THREE.Vector3(-6.0, 0.85, -2.5),
-        new THREE.Vector3(-9.5, 0.85, -2.5),
-        new THREE.Vector3(-9.5, 1.3, -8.0),
-        new THREE.Vector3(-13.0, 1.3, -8.5),
-      ]),
-      new THREE.CatmullRomCurve3([
-        new THREE.Vector3(6.0, 0.85, -2.5),
-        new THREE.Vector3(9.5, 0.85, -2.5),
-        new THREE.Vector3(9.5, 1.3, -8.5),
-        new THREE.Vector3(12.5, 1.3, -9.0),
-      ]),
-      new THREE.CatmullRomCurve3([
-        new THREE.Vector3(-6.0, 0.85, 2.5),
-        new THREE.Vector3(-9.5, 0.85, 2.5),
-        new THREE.Vector3(-9.5, 1.3, 7.0),
-        new THREE.Vector3(-14.0, 1.3, 7.2),
-      ]),
-      new THREE.CatmullRomCurve3([
-        new THREE.Vector3(6.0, 0.85, 2.5),
-        new THREE.Vector3(9.5, 0.85, 2.5),
-        new THREE.Vector3(9.5, 1.3, 7.5),
-        new THREE.Vector3(13.0, 1.3, 7.8),
-      ]),
+    const MODULE_DEFS = [
+      // Left-front (About sector)
+      { x: -14, z: -12, w: 6.0, h: 5.2, d: 6.0, name: 'about' },
+      // Right-front (Skills sector)
+      { x:  14, z: -13, w: 6.2, h: 5.8, d: 6.2, name: 'skills' },
+      // Left-back (Projects sector)
+      { x: -16, z:  10, w: 6.4, h: 6.4, d: 6.4, name: 'projects' },
+      // Right-back (Architecture sector)
+      { x:  15, z:  11, w: 6.2, h: 6.8, d: 6.2, name: 'arch' },
+      // Background skyline left
+      { x:  -8, z: -22, w: 4.8, h: 10.0, d: 4.8, name: 'bg1' },
+      // Background skyline centre
+      { x:   0, z: -26, w: 6.2, h: 13.0, d: 6.2, name: 'bg2' },
+      // Background skyline right
+      { x:   8, z: -22, w: 4.8, h:  9.0, d: 4.8, name: 'bg3' },
     ];
 
-    const conduitGeos = [];
-    conduitCurves.forEach((curve) => {
-      const pipeGeo = new THREE.TubeGeometry(curve, 40, 0.1, 8, false);
-      scene.add(new THREE.Mesh(pipeGeo, conduitMat));
-      conduitGeos.push(pipeGeo);
+    const moduleGroups = [];
+    MODULE_DEFS.forEach(mod => {
+      const g = new THREE.Group();
+      g.position.set(mod.x, 0, mod.z);
+
+      // Main chassis
+      const body = new THREE.Mesh(new THREE.BoxGeometry(mod.w, mod.h, mod.d), M.chassis);
+      body.position.y = mod.h / 2;
+      g.add(body);
+
+      // Front panel (slightly different shade for depth)
+      const front = new THREE.Mesh(
+        new THREE.BoxGeometry(mod.w * 0.88, mod.h * 0.86, 0.14), M.frontPanel
+      );
+      front.position.set(0, mod.h / 2, mod.d / 2 + 0.06);
+      g.add(front);
+
+      // Heatsink cap (two stepped layers)
+      const cap1 = new THREE.Mesh(new THREE.BoxGeometry(mod.w * 0.85, 0.50, mod.d * 0.85), M.heatsink);
+      cap1.position.y = mod.h + 0.25;
+      g.add(cap1);
+      const cap2 = new THREE.Mesh(new THREE.BoxGeometry(mod.w * 0.68, 0.32, mod.d * 0.68), M.heatsink);
+      cap2.position.y = mod.h + 0.57;
+      g.add(cap2);
+
+      // Status light on cap
+      const dot = new THREE.Mesh(new THREE.CylinderGeometry(0.16, 0.16, 0.14, 10), M.lime);
+      dot.position.y = mod.h + 0.72;
+      g.add(dot);
+
+      // Server vent slots (horizontal lines of emissive light — lime/cyan alternating)
+      const ventCount = Math.min(5, Math.floor(mod.h / 1.2));
+      for (let v = 1; v <= ventCount; v++) {
+        const vy   = (mod.h / (ventCount + 1)) * v;
+        const vent = new THREE.Mesh(
+          new THREE.BoxGeometry(mod.w * 0.78, 0.09, mod.d + 0.06),
+          v % 2 === 0 ? M.limeDim : M.cyanDim
+        );
+        vent.position.y = vy;
+        g.add(vent);
+      }
+
+      // Front-face SMD chip row
+      for (let ci = -1.8; ci <= 1.8; ci += 1.2) {
+        const chip = new THREE.Mesh(new THREE.BoxGeometry(0.48, 0.24, 0.20), M.silicon);
+        chip.position.set(ci, mod.h * 0.22, mod.d / 2 + 0.18);
+        g.add(chip);
+      }
+
+      // Side heatsink fins (on two sides for key modules)
+      if (['about', 'skills', 'projects', 'arch'].includes(mod.name)) {
+        const sFinGeo = new THREE.BoxGeometry(0.12, mod.h * 0.7, mod.d * 0.75);
+        for (let fi = 0; fi < 5; fi++) {
+          const offset = -mod.w / 2 - 0.06 - fi * 0.24;
+          const fin = new THREE.Mesh(sFinGeo, M.heatsink);
+          fin.position.set(offset, mod.h * 0.5, 0);
+          g.add(fin);
+          const fin2 = new THREE.Mesh(sFinGeo, M.heatsink);
+          fin2.position.set(-offset, mod.h * 0.5, 0);
+          g.add(fin2);
+        }
+      }
+
+      scene.add(g);
+      moduleGroups.push({ group: g, mod });
+    });
+
+    // ─────────────────────────────────────────────────────────────────────
+    // 4. 3D CONDUIT PIPES & LIGHT RUNNERS
+    // ─────────────────────────────────────────────────────────────────────
+    // Strictly orthogonal (L-shaped) conduit curves connecting CPU to modules
+    const CONDUIT_DEFS = [
+      // CPU → About (left-front)
+      [new THREE.Vector3(-6.5, 1.0, -3.0), new THREE.Vector3(-10.0, 1.0, -3.0),
+       new THREE.Vector3(-10.0, 1.4, -9.0), new THREE.Vector3(-14.0, 1.4, -9.5)],
+      // CPU → Skills (right-front)
+      [new THREE.Vector3(6.5, 1.0, -3.0), new THREE.Vector3(10.0, 1.0, -3.0),
+       new THREE.Vector3(10.0, 1.4, -9.5), new THREE.Vector3(13.5, 1.4, -10.0)],
+      // CPU → Projects (left-back)
+      [new THREE.Vector3(-6.5, 1.0, 3.0), new THREE.Vector3(-10.0, 1.0, 3.0),
+       new THREE.Vector3(-10.0, 1.4, 8.0), new THREE.Vector3(-15.0, 1.4, 8.5)],
+      // CPU → Arch (right-back)
+      [new THREE.Vector3(6.5, 1.0, 3.0), new THREE.Vector3(10.0, 1.0, 3.0),
+       new THREE.Vector3(10.0, 1.4, 8.5), new THREE.Vector3(14.0, 1.4, 9.0)],
+      // Cross-link About ↔ Projects
+      [new THREE.Vector3(-14, 2.6, -9), new THREE.Vector3(-14, 2.6, 8)],
+      // Cross-link Skills ↔ Arch
+      [new THREE.Vector3(13, 2.8, -10), new THREE.Vector3(13, 2.8, 9)],
+    ];
+
+    const conduitCurves = CONDUIT_DEFS.map(pts =>
+      new THREE.CatmullRomCurve3(pts.map(p => p.clone()))
+    );
+    const conduitGeos = conduitCurves.map(curve => {
+      const geo = new THREE.TubeGeometry(curve, 48, 0.11, 8, false);
+      scene.add(new THREE.Mesh(geo, M.conduit));
+      return geo;
     });
 
     // Light runner packets
-    const runnerGeo = new THREE.SphereGeometry(0.22, 8, 8);
-    const runners = [];
-    const NUM_RUNNERS = isMobile ? 10 : 24;
-    for (let r = 0; r < NUM_RUNNERS; r++) {
-      const cIdx = r % conduitCurves.length;
-      const isLime = r % 3 !== 0;
-      const runner = new THREE.Mesh(runnerGeo, isLime ? limeMat : cyanMat);
-      scene.add(runner);
+    const runnerGeo  = new THREE.SphereGeometry(0.24, 8, 8);
+    const NUM_RUN    = mobile ? 12 : 28;
+    const runners    = [];
+    for (let r = 0; r < NUM_RUN; r++) {
+      const ci   = r % conduitCurves.length;
+      const lime = r % 3 !== 0;
+      const run  = new THREE.Mesh(runnerGeo, lime ? M.lime : M.cyan);
+      scene.add(run);
       runners.push({
-        mesh: runner,
-        curve: conduitCurves[cIdx],
-        progress: r / NUM_RUNNERS,
-        speed: 0.10 + (r % 5) * 0.025,
+        mesh: run, curve: conduitCurves[ci],
+        t: r / NUM_RUN,
+        speed: 0.08 + (r % 5) * 0.022,
       });
     }
 
     // ─────────────────────────────────────────────────────────────────────
     // 5. HOLOGRAPHIC HUD PANELS
     // ─────────────────────────────────────────────────────────────────────
-    const hudConfigs = [
-      { title: 'ABOUT', number: '01', items: ['B.TECH CSE · LPU PHAGWARA', 'CGPA: 7.07', 'CLASS OF 2028'], x: -10.0, y: 8.0, z: -9.0, rotY: 0.35 },
-      { title: 'SKILLS', number: '02', items: ['MERN STACK · REACT.JS', 'JAVA · DSA · DFS · RECURSION', 'REST APIS · MONGODB'], x: 11.5, y: 8.5, z: -9.5, rotY: -0.38 },
-      { title: 'PROJECTS', number: '03', items: ['CAREER GUIDANCE SYSTEM', 'STOCKSENSE AI', 'MAZE SOLVER (JAVA/DFS)'], x: -13.5, y: 9.0, z: 7.8, rotY: 0.4 },
-      { title: 'ARCHITECTURE', number: '04', items: ['DECOUPLED REST TIERS', 'WEIGHTED-SUM SCORING', 'RENDER CLOUD CI/CD'], x: 12.5, y: 9.2, z: 8.5, rotY: -0.4 },
-      { title: 'CONTACT', number: '05', items: ['ARYANDADWAL709@GMAIL.COM', '+91 8626963353', 'LINKEDIN · GITHUB'], x: 0, y: 7.5, z: 16.0, rotY: 0 },
+    const HUD_DEFS = [
+      { title: 'ABOUT',        num: '01', lines: ['B.TECH CSE · LPU PHAGWARA', 'CGPA: 7.07', 'CLASS OF 2028'],
+        x: -11.0, y: 9.5, z: -10.5, ry: 0.38 },
+      { title: 'SKILLS',       num: '02', lines: ['MERN STACK · REACT.JS', 'JAVA · DSA · DFS', 'REST APIs · MONGODB'],
+        x:  12.5, y: 10.2, z: -11.0, ry: -0.38 },
+      { title: 'PROJECTS',     num: '03', lines: ['CAREER GUIDANCE SYSTEM', 'STOCKSENSE AI', 'MAZE SOLVER (JAVA/DFS)'],
+        x: -14.5, y: 10.8, z:  8.8, ry: 0.42 },
+      { title: 'ARCHITECTURE', num: '04', lines: ['DECOUPLED REST TIERS', 'RENDER CLOUD CI/CD', 'WEIGHTED-SUM SCORING'],
+        x:  13.5, y: 11.0, z:  9.5, ry: -0.42 },
+      { title: 'CONTACT',      num: '05', lines: ['ARYANDADWAL709@GMAIL.COM', '+91 8626963353', 'LINKEDIN · GITHUB'],
+        x:   0,  y: 8.0,  z: 18.0, ry: 0 },
     ];
 
-    const panelGeo = new THREE.PlaneGeometry(5.2, 2.9);
-    const panelFrameGeo = new THREE.EdgesGeometry(panelGeo);
+    const panelGeo  = new THREE.PlaneGeometry(5.5, 2.9);
+    const frameGeo  = new THREE.EdgesGeometry(panelGeo);
     const hudPanels = [];
-
-    hudConfigs.forEach((cfg, idx) => {
-      const tex = createHudPanelTexture(cfg.title, cfg.number, cfg.items);
-      const pMesh = new THREE.Mesh(panelGeo, new THREE.MeshBasicMaterial({ map: tex, transparent: true, opacity: 0.92, side: THREE.DoubleSide }));
-      pMesh.position.set(cfg.x, cfg.y, cfg.z);
-      pMesh.rotation.y = cfg.rotY;
-      pMesh.rotation.x = -0.14;
-      pMesh.add(new THREE.LineSegments(panelFrameGeo, lineMatLime));
-      scene.add(pMesh);
-      hudPanels.push({ mesh: pMesh, tex, baseY: cfg.y, phase: idx * 1.25 });
+    HUD_DEFS.forEach((h, i) => {
+      const tex  = makeHudTexture(h.title, h.num, h.lines);
+      const mesh = new THREE.Mesh(panelGeo,
+        new THREE.MeshBasicMaterial({ map: tex, transparent: true, opacity: 0.92, side: THREE.DoubleSide })
+      );
+      mesh.position.set(h.x, h.y, h.z);
+      mesh.rotation.y = h.ry;
+      mesh.rotation.x = -0.12;
+      mesh.add(new THREE.LineSegments(frameGeo, M.trLime));
+      scene.add(mesh);
+      hudPanels.push({ mesh, baseY: h.y, phase: i * 1.3 });
     });
 
     // ─────────────────────────────────────────────────────────────────────
-    // 6. FLOATING DATA CUBES
+    // 6. AMBIENT PARTICLE FIELD
     // ─────────────────────────────────────────────────────────────────────
-    const cubeConfigs = [
-      { x: -5.5, y: 5.5, z: -5.5, s: 1.2 },
-      { x:  6.5, y: 6.2, z: -4.5, s: 1.4 },
-      { x: -7.5, y: 6.8, z:  6.5, s: 1.3 },
-      { x:  7.5, y: 6.0, z:  6.2, s: 1.1 },
-    ];
-    const dataCubes = [];
-    cubeConfigs.forEach(({ x, y, z, s }, i) => {
-      const group = new THREE.Group();
-      group.position.set(x, y, z);
-      const boxGeo = new THREE.BoxGeometry(s, s, s);
-      const wireframe = new THREE.LineSegments(new THREE.EdgesGeometry(boxGeo), i % 2 === 0 ? lineMatLime : lineMatCyan);
-      group.add(wireframe);
-      const innerChip = new THREE.Mesh(new THREE.BoxGeometry(s * 0.42, s * 0.42, s * 0.42), i % 2 === 0 ? limeMat : cyanMat);
-      group.add(innerChip);
-      scene.add(group);
-      dataCubes.push({ group, baseY: y, phase: i * 1.5, rxSpeed: 0.45 + i * 0.2, rySpeed: 0.65 + i * 0.15 });
-    });
-
-    // ─────────────────────────────────────────────────────────────────────
-    // 7. AMBIENT PARTICLES
-    // ─────────────────────────────────────────────────────────────────────
-    const pCount = isMobile ? 500 : 1200;
-    const pPos = new Float32Array(pCount * 3);
-    for (let p = 0; p < pCount; p++) {
-      pPos[p * 3]     = (Math.random() - 0.5) * 64;
-      pPos[p * 3 + 1] = Math.random() * 30 + 0.5;
-      pPos[p * 3 + 2] = (Math.random() - 0.5) * 64;
+    const pCount = mobile ? 600 : 1400;
+    const pPos   = new Float32Array(pCount * 3);
+    for (let i = 0; i < pCount; i++) {
+      pPos[i * 3]     = (Math.random() - 0.5) * 72;
+      pPos[i * 3 + 1] = Math.random() * 32 + 0.3;
+      pPos[i * 3 + 2] = (Math.random() - 0.5) * 72;
     }
-    const particleGeo = new THREE.BufferGeometry();
-    particleGeo.setAttribute('position', new THREE.BufferAttribute(pPos, 3));
-    const particleMat = new THREE.PointsMaterial({ color: 0x84cc16, size: 0.1, transparent: true, opacity: 0.6 });
-    scene.add(new THREE.Points(particleGeo, particleMat));
+    const pGeo = new THREE.BufferGeometry();
+    pGeo.setAttribute('position', new THREE.BufferAttribute(pPos, 3));
+    const pMat = new THREE.PointsMaterial({ color: 0x84cc16, size: 0.10, transparent: true, opacity: 0.55 });
+    const particles = new THREE.Points(pGeo, pMat);
+    scene.add(particles);
 
     // ─────────────────────────────────────────────────────────────────────
-    // 8. SCROLL-DRIVEN CAMERA CHOREOGRAPHY
+    // 7. SCROLL-DRIVEN CAMERA WAYPOINTS
     // ─────────────────────────────────────────────────────────────────────
+    // Each waypoint: { s: scrollRatio, pos, look }
+    // Camera starts elevated-isometric, gradually descends & circles through scene
     const WAYPOINTS = [
-      { s: 0.00, pos: new THREE.Vector3(28, 34, 28), look: new THREE.Vector3(1, 2, 0) },   // Hero — full overview
-      { s: 0.18, pos: new THREE.Vector3(14, 22, 20), look: new THREE.Vector3(-6, 3, -4) },  // About
-      { s: 0.36, pos: new THREE.Vector3(20, 24, 14), look: new THREE.Vector3(6, 3, -5) },   // Skills
-      { s: 0.55, pos: new THREE.Vector3(12, 20, 22), look: new THREE.Vector3(-6, 2, 6) },   // Projects
-      { s: 0.74, pos: new THREE.Vector3(22, 26, 16), look: new THREE.Vector3(6, 2, 6) },    // Architecture
-      { s: 1.00, pos: new THREE.Vector3(30, 38, 30), look: new THREE.Vector3(0, 1, 0) },    // Contact / End
+      { s: 0.00, pos: new THREE.Vector3(22, 38, 32), look: new THREE.Vector3(2, 1, 0)  },  // Hero
+      { s: 0.18, pos: new THREE.Vector3(12, 26, 22), look: new THREE.Vector3(-8, 2, -5) }, // About
+      { s: 0.36, pos: new THREE.Vector3(18, 28, 14), look: new THREE.Vector3(8, 2, -6)  }, // Skills
+      { s: 0.54, pos: new THREE.Vector3(10, 22, 24), look: new THREE.Vector3(-8, 1, 7)  }, // Projects
+      { s: 0.72, pos: new THREE.Vector3(20, 28, 18), look: new THREE.Vector3(8, 1, 8)   }, // Architecture
+      { s: 1.00, pos: new THREE.Vector3(26, 42, 34), look: new THREE.Vector3(0, 0, 0)   }, // End
     ];
 
-    const currentCamPos = baseCamPos.clone();
-    const currentLookAt = baseLookAt.clone();
-    const targetCamPos = new THREE.Vector3();
-    const targetLookAt = new THREE.Vector3();
+    const scrollRatio = { current: 0 };
+    const mouse       = { x: 0, y: 0 };
+    const curPos      = BASE_POS.clone();
+    const curLook     = BASE_LOOK.clone();
+    const tgtPos      = new THREE.Vector3();
+    const tgtLook     = new THREE.Vector3();
 
-    const handleScroll = () => {
-      const maxScroll = Math.max(1, document.documentElement.scrollHeight - window.innerHeight);
-      scrollRatioRef.current = Math.min(1, Math.max(0, window.scrollY / maxScroll));
+    const onScroll = () => {
+      const max = Math.max(1, document.documentElement.scrollHeight - window.innerHeight);
+      scrollRatio.current = Math.min(1, Math.max(0, window.scrollY / max));
     };
-    const handleMouseMove = (e) => {
-      if (isMobile) return;
-      mouseRef.current.x = (e.clientX / window.innerWidth) * 2 - 1;
-      mouseRef.current.y = -(e.clientY / window.innerHeight) * 2 + 1;
+    const onMouse = e => {
+      if (mobile) return;
+      mouse.x = (e.clientX / window.innerWidth) * 2 - 1;
+      mouse.y = -(e.clientY / window.innerHeight) * 2 + 1;
     };
-    window.addEventListener('scroll', handleScroll, { passive: true });
-    window.addEventListener('mousemove', handleMouseMove, { passive: true });
+    window.addEventListener('scroll', onScroll, { passive: true });
+    window.addEventListener('mousemove', onMouse, { passive: true });
 
     // ─────────────────────────────────────────────────────────────────────
-    // 9. ANIMATION LOOP
+    // 8. ANIMATION LOOP
     // ─────────────────────────────────────────────────────────────────────
-    let rafId = null;
+    let raf = null;
     const clock = new THREE.Clock();
 
     const animate = () => {
-      rafId = requestAnimationFrame(animate);
-      const delta = clock.getDelta();
-      const t = clock.getElapsedTime();
+      raf = requestAnimationFrame(animate);
+      const dt = clock.getDelta();
+      const t  = clock.getElapsedTime();
 
-      if (!prefersReducedMotion) {
-        // CPU core rotation & pulse
-        mechRingMesh.rotation.z += delta * 0.5;
-        innerRingMesh.rotation.z -= delta * 0.35;
-        coreLight.intensity = 26 + 10 * Math.sin(t * 2.6);
-        coreLightLow.intensity = 6 + 3 * Math.sin(t * 1.8 + 1.5);
-        dieMesh.position.y = 1.95 + 0.03 * Math.sin(t * 2.0);
+      if (!reduced) {
+        // CPU core glow pulse
+        coreLight.intensity = 30 + 12 * Math.sin(t * 2.4);
+        fillLow.intensity   = 8 + 4 * Math.sin(t * 1.8 + 1.2);
 
-        // Light runners along conduits
-        runners.forEach((r) => {
-          r.progress = (r.progress + delta * r.speed) % 1.0;
-          r.mesh.position.copy(r.curve.getPointAt(r.progress));
+        // Mechanical rings rotate independently
+        trimRing.rotation.z  += dt * 0.48;
+        innerRing.rotation.z -= dt * 0.32;
+
+        // Die floats very subtly
+        die.position.y = 2.30 + 0.025 * Math.sin(t * 1.9);
+
+        // Light runners travel along conduits
+        runners.forEach(r => {
+          r.t = (r.t + dt * r.speed) % 1.0;
+          r.mesh.position.copy(r.curve.getPointAt(r.t));
         });
 
-        // HUD panel hover
-        hudPanels.forEach((p) => {
-          p.mesh.position.y = p.baseY + Math.sin(t * 1.4 + p.phase) * 0.24;
+        // HUD panels hover sinusoidally
+        hudPanels.forEach(p => {
+          p.mesh.position.y = p.baseY + Math.sin(t * 1.3 + p.phase) * 0.26;
         });
 
-        // Data cube rotation
-        dataCubes.forEach((c) => {
-          c.group.rotation.x += delta * c.rxSpeed;
-          c.group.rotation.y += delta * c.rySpeed;
-          c.group.position.y = c.baseY + Math.sin(t * 1.3 + c.phase) * 0.3;
-        });
+        // Particles drift slowly
+        particles.rotation.y += dt * 0.018;
       }
 
-      // Camera waypoint scroll interpolation
-      const s = scrollRatioRef.current;
+      // ── Camera scroll interpolation ──
+      const s = scrollRatio.current;
       let wpA = WAYPOINTS[0], wpB = WAYPOINTS[WAYPOINTS.length - 1];
       for (let w = 0; w < WAYPOINTS.length - 1; w++) {
         if (s >= WAYPOINTS[w].s && s <= WAYPOINTS[w + 1].s) {
-          wpA = WAYPOINTS[w];
-          wpB = WAYPOINTS[w + 1];
-          break;
+          wpA = WAYPOINTS[w]; wpB = WAYPOINTS[w + 1]; break;
         }
       }
       const frac = wpB.s > wpA.s ? (s - wpA.s) / (wpB.s - wpA.s) : 0;
-      targetCamPos.lerpVectors(wpA.pos, wpB.pos, frac);
-      targetLookAt.lerpVectors(wpA.look, wpB.look, frac);
+      tgtPos.lerpVectors(wpA.pos, wpB.pos, frac);
+      tgtLook.lerpVectors(wpA.look, wpB.look, frac);
 
       // Mouse parallax
-      if (!isMobile) {
-        const mx = mouseRef.current.x * 2.5;
-        const my = mouseRef.current.y * 1.6;
-        targetCamPos.x += mx;
-        targetCamPos.y += my;
-        targetLookAt.x += mx * 0.22;
+      if (!mobile) {
+        tgtPos.x  += mouse.x * 2.8;
+        tgtPos.y  += mouse.y * 1.8;
+        tgtLook.x += mouse.x * 0.28;
       }
 
-      currentCamPos.lerp(targetCamPos, 0.042);
-      currentLookAt.lerp(targetLookAt, 0.042);
-      camera.position.copy(currentCamPos);
-      camera.lookAt(currentLookAt);
+      curPos.lerp(tgtPos, 0.040);
+      curLook.lerp(tgtLook, 0.040);
+      camera.position.copy(curPos);
+      camera.lookAt(curLook);
 
       renderer.render(scene, camera);
     };
     animate();
 
-    // ─────────────────────────────────────────────────────────────────────
-    // 10. RESIZE HANDLER
-    // ─────────────────────────────────────────────────────────────────────
-    const handleResize = () => {
+    // ── Resize ──
+    const onResize = () => {
       camera.aspect = window.innerWidth / window.innerHeight;
       camera.updateProjectionMatrix();
       renderer.setSize(window.innerWidth, window.innerHeight);
     };
-    window.addEventListener('resize', handleResize, { passive: true });
+    window.addEventListener('resize', onResize, { passive: true });
 
-    // ─────────────────────────────────────────────────────────────────────
-    // 11. CLEANUP
-    // ─────────────────────────────────────────────────────────────────────
+    // ── Cleanup ──
     return () => {
-      cancelAnimationFrame(rafId);
-      window.removeEventListener('scroll', handleScroll);
-      window.removeEventListener('mousemove', handleMouseMove);
-      window.removeEventListener('resize', handleResize);
+      cancelAnimationFrame(raf);
+      window.removeEventListener('scroll', onScroll);
+      window.removeEventListener('mousemove', onMouse);
+      window.removeEventListener('resize', onResize);
+      conduitGeos.forEach(g => g.dispose());
       renderer.dispose();
       if (container.contains(renderer.domElement)) {
         container.removeChild(renderer.domElement);
