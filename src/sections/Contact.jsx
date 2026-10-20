@@ -50,7 +50,7 @@ export default function Contact() {
         </motion.p>
 
         {/* Action Buttons */}
-        <div className="flex flex-wrap items-center justify-center gap-4 mb-16">
+        <div data-scroll-reveal className="flex flex-wrap items-center justify-center gap-4 mb-16">
           {/* Email Me Button */}
           <motion.a
             href={socialLinks.email}
@@ -91,7 +91,7 @@ export default function Contact() {
         </div>
 
         {/* Quick Contacts Strip */}
-        <div className="flex flex-wrap items-center justify-center gap-8 text-xs font-mono text-neutral-400 pt-8 border-t border-white/[0.08] w-full max-w-2xl">
+        <div data-scroll-reveal className="flex flex-wrap items-center justify-center gap-8 text-xs font-mono text-neutral-400 pt-8 border-t border-white/[0.08] w-full max-w-2xl">
           <a
             href={socialLinks.linkedin}
             target="_blank"
