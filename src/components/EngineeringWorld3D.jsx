@@ -36,12 +36,12 @@ function makeCpuTexture() {
   const g = c.getContext('2d');
 
   // Dark silicon substrate
-  g.fillStyle = '#03090a';
+  g.fillStyle = '#101a17';
   g.fillRect(0, 0, S, S);
 
   // Very subtle substrate gradient
   const grad = g.createRadialGradient(S / 2, S / 2, 0, S / 2, S / 2, S * 0.7);
-  grad.addColorStop(0, 'rgba(10,30,15,0.7)');
+  grad.addColorStop(0, 'rgba(28,66,39,0.78)');
   grad.addColorStop(1, 'rgba(0,0,0,0)');
   g.fillStyle = grad;
   g.fillRect(0, 0, S, S);
@@ -87,7 +87,7 @@ function makeCpuTexture() {
 
   // Silicon die area
   const DIE = { x: 170, y: 170, w: S - 340, h: S - 340 };
-  g.fillStyle = '#040e08';
+  g.fillStyle = '#0b1b13';
   g.fillRect(DIE.x, DIE.y, DIE.w, DIE.h);
   g.strokeStyle = '#84cc16';
   g.lineWidth = 4;
@@ -145,14 +145,15 @@ function makeCpuTexture() {
   g.font = '600 16px monospace';
   g.fillText('ARYAN DADWAL  ·  v1.0', cx, cy + 138);
 
-  // Bottom status strip
-  g.fillStyle = 'rgba(132,204,22,0.12)';
+  // Discreet processor label; avoid fabricated live telemetry.
+  g.fillStyle = 'rgba(132,204,22,0.16)';
   g.fillRect(DIE.x, DIE.y + DIE.h - 50, DIE.w, 50);
-  g.fillStyle = '#a3e635';
-  g.font = '600 14px monospace';
-  g.fillText('STATUS: ACTIVE  ·  THERMAL: NOMINAL  ·  NODE: PRIMARY', cx, DIE.y + DIE.h - 22);
+  g.fillStyle = '#c4f58a';
+  g.font = '700 17px monospace';
+  g.fillText('PROCESSOR DIE  ·  AD', cx, DIE.y + DIE.h - 22);
 
   const t = new THREE.CanvasTexture(c);
+  t.colorSpace = THREE.SRGBColorSpace;
   t.anisotropy = 8;
   return t;
 }
@@ -164,11 +165,11 @@ function makePcbTexture() {
   c.width = S; c.height = S;
   const g = c.getContext('2d');
 
-  g.fillStyle = '#060e08';
+  g.fillStyle = '#10251a';
   g.fillRect(0, 0, S, S);
 
   // Horizontal trace lines
-  g.strokeStyle = 'rgba(132,204,22,0.28)';
+  g.strokeStyle = 'rgba(132,204,22,0.19)';
   g.lineWidth = 1.5;
   for (let y = 12; y < S; y += 28) {
     g.beginPath();
@@ -318,73 +319,81 @@ export default function EngineeringWorld3D() {
       powerPreference: 'high-performance',
     });
     renderer.setSize(window.innerWidth, window.innerHeight);
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio, mobile ? 1.3 : 2.0));
-    renderer.setClearColor(0x020507, 1);
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, mobile ? 1.25 : 1.7));
+    renderer.outputColorSpace = THREE.SRGBColorSpace;
+    renderer.toneMapping = THREE.ACESFilmicToneMapping;
+    renderer.toneMappingExposure = 1.22;
+    renderer.setClearColor(0x07110d, 1);
     renderer.shadowMap.enabled = false; // keep draw calls low
     container.appendChild(renderer.domElement);
 
     // ── Scene & fog ───────────────────────────────────────────────────────
     const scene = new THREE.Scene();
-    scene.fog = new THREE.FogExp2(0x020507, 0.009);
+    scene.background = new THREE.Color(0x07110d);
+    scene.fog = new THREE.FogExp2(0x07110d, 0.0045);
 
     // ── Camera ────────────────────────────────────────────────────────────
     // Elevated isometric-ish perspective; CPU sits to the right of hero text
-    const CAM_FOV = 33;
+    const CAM_FOV = 36;
     const camera = new THREE.PerspectiveCamera(CAM_FOV, window.innerWidth / window.innerHeight, 0.5, 700);
-    // Hero text is on the LEFT quarter — position camera so the scene fills
-    // the RIGHT 60% of the viewport at the start.
-    const BASE_POS  = new THREE.Vector3(22, 38, 32);
-    const BASE_LOOK = new THREE.Vector3(4, 0, -2);
+    // Keep the computational core to the right of the text column and expose
+    // enough of the top surfaces to read the 3D hardware.
+    const BASE_POS  = new THREE.Vector3(20, 34, 34);
+    const BASE_LOOK = new THREE.Vector3(-3, 1, 0);
     camera.position.copy(BASE_POS);
     camera.lookAt(BASE_LOOK);
 
     // ── Lighting ──────────────────────────────────────────────────────────
-    scene.add(new THREE.AmbientLight(0x06100a, 1.6));
+    scene.add(new THREE.AmbientLight(0x7b9687, 1.35));
+    const hemiLight = new THREE.HemisphereLight(0xdcebe2, 0x1a2730, 1.65);
+    scene.add(hemiLight);
 
-    // Main neon-lime core light (pulsing)
-    const coreLight = new THREE.PointLight(0x84cc16, 35, 52);
+    // Main core light reveals actual surfaces, not only green outlines.
+    const coreLight = new THREE.PointLight(0x9eea45, 25, 54);
     coreLight.position.set(0, 6, 0);
     scene.add(coreLight);
 
-    // Secondary fill lime (low, from below)
-    const fillLow = new THREE.PointLight(0x84cc16, 10, 28);
+    const fillLow = new THREE.PointLight(0x84cc16, 6.5, 32);
     fillLow.position.set(0, -3, 0);
     scene.add(fillLow);
 
-    // Key directional – steel blue, reflects off metallic tops
-    const keyDir = new THREE.DirectionalLight(0x38bdf8, 2.0);
+    // Broad cool key light reveals metal bevels and top surfaces.
+    const keyDir = new THREE.DirectionalLight(0xddeeff, 2.8);
     keyDir.position.set(28, 48, -20);
     scene.add(keyDir);
 
-    // Warm rim from opposite side
-    const rimDir = new THREE.DirectionalLight(0x84cc16, 1.5);
+    const rimDir = new THREE.DirectionalLight(0x84cc16, 2.0);
     rimDir.position.set(-24, 32, 28);
     scene.add(rimDir);
 
-    // Deep back light (very dim, adds subtle silhouette separation)
-    const backDir = new THREE.DirectionalLight(0x0a1e14, 4);
+    const fillDir = new THREE.DirectionalLight(0x4aaed0, 1.15);
+    fillDir.position.set(-30, 16, 24);
+    scene.add(fillDir);
+
+    const backDir = new THREE.DirectionalLight(0x263b36, 1.8);
     backDir.position.set(0, -12, -40);
     scene.add(backDir);
 
     // ── Materials ─────────────────────────────────────────────────────────
     const M = {
-      darkMetal : new THREE.MeshStandardMaterial({ color: 0x0b1218, roughness: 0.25, metalness: 0.95 }),
-      heatsink  : new THREE.MeshStandardMaterial({ color: 0x141e2c, roughness: 0.18, metalness: 0.97 }),
-      chassis   : new THREE.MeshStandardMaterial({ color: 0x0e1622, roughness: 0.38, metalness: 0.82 }),
-      chassisDk : new THREE.MeshStandardMaterial({ color: 0x090e18, roughness: 0.45, metalness: 0.80 }),
-      gold      : new THREE.MeshStandardMaterial({ color: 0xd97706, roughness: 0.20, metalness: 0.98 }),
-      copper    : new THREE.MeshStandardMaterial({ color: 0xb45309, roughness: 0.18, metalness: 0.99 }),
-      silicon   : new THREE.MeshStandardMaterial({ color: 0x061008, emissive: 0x84cc16, emissiveIntensity: 0.40, roughness: 0.15, metalness: 0.90 }),
-      conduit   : new THREE.MeshStandardMaterial({ color: 0x0c1e10, emissive: 0x84cc16, emissiveIntensity: 0.80, roughness: 0.30, metalness: 0.70 }),
+      // Lighter, less mirror-metallic materials stay visible without relying on bloom.
+      darkMetal : new THREE.MeshStandardMaterial({ color: 0x2b3942, roughness: 0.42, metalness: 0.55 }),
+      heatsink  : new THREE.MeshStandardMaterial({ color: 0x657681, roughness: 0.34, metalness: 0.58 }),
+      chassis   : new THREE.MeshStandardMaterial({ color: 0x293943, roughness: 0.46, metalness: 0.48 }),
+      chassisDk : new THREE.MeshStandardMaterial({ color: 0x18262e, roughness: 0.50, metalness: 0.42 }),
+      gold      : new THREE.MeshStandardMaterial({ color: 0xd97706, roughness: 0.28, metalness: 0.78 }),
+      copper    : new THREE.MeshStandardMaterial({ color: 0xb96c27, roughness: 0.28, metalness: 0.72 }),
+      silicon   : new THREE.MeshStandardMaterial({ color: 0x102719, emissive: 0x477d24, emissiveIntensity: 0.28, roughness: 0.38, metalness: 0.36 }),
+      conduit   : new THREE.MeshStandardMaterial({ color: 0x1a321c, emissive: 0x84cc16, emissiveIntensity: 0.52, roughness: 0.40, metalness: 0.38 }),
       lime      : new THREE.MeshBasicMaterial({ color: 0xa3e635 }),
       limeDim   : new THREE.MeshBasicMaterial({ color: 0x4d7c0f }),
       cyan      : new THREE.MeshBasicMaterial({ color: 0x38bdf8 }),
       cyanDim   : new THREE.MeshBasicMaterial({ color: 0x0e7490 }),
-      trLime    : new THREE.LineBasicMaterial({ color: 0x84cc16, transparent: true, opacity: 0.65 }),
-      trCyan    : new THREE.LineBasicMaterial({ color: 0x38bdf8, transparent: true, opacity: 0.55 }),
-      trGold    : new THREE.LineBasicMaterial({ color: 0xd97706, transparent: true, opacity: 0.50 }),
-      frontPanel: new THREE.MeshStandardMaterial({ color: 0x0c1628, roughness: 0.42, metalness: 0.78 }),
-      pcbGreen  : new THREE.MeshStandardMaterial({ color: 0x071a0b, roughness: 0.55, metalness: 0.40 }),
+      trLime    : new THREE.LineBasicMaterial({ color: 0x84cc16, transparent: true, opacity: 0.32 }),
+      trCyan    : new THREE.LineBasicMaterial({ color: 0x38bdf8, transparent: true, opacity: 0.38 }),
+      trGold    : new THREE.LineBasicMaterial({ color: 0xd97706, transparent: true, opacity: 0.22 }),
+      frontPanel: new THREE.MeshStandardMaterial({ color: 0x233541, roughness: 0.48, metalness: 0.34 }),
+      pcbGreen  : new THREE.MeshStandardMaterial({ color: 0x173723, roughness: 0.62, metalness: 0.22 }),
     };
 
     // ─────────────────────────────────────────────────────────────────────
@@ -392,7 +401,7 @@ export default function EngineeringWorld3D() {
     // ─────────────────────────────────────────────────────────────────────
     const pcbTex = makePcbTexture();
     const pcbMat = new THREE.MeshStandardMaterial({
-      color: 0x071a0b, map: pcbTex, roughness: 0.55, metalness: 0.35,
+      color: 0x1a3524, map: pcbTex, roughness: 0.64, metalness: 0.22,
     });
 
     const board = new THREE.Mesh(new THREE.BoxGeometry(72, 0.55, 72), pcbMat);
@@ -400,7 +409,7 @@ export default function EngineeringWorld3D() {
     scene.add(board);
 
     // PCB edge strips (show layering like a real multi-layer PCB)
-    const edgeMat = new THREE.MeshStandardMaterial({ color: 0x0d2415, roughness: 0.50, metalness: 0.45 });
+    const edgeMat = new THREE.MeshStandardMaterial({ color: 0x294432, roughness: 0.55, metalness: 0.30 });
     const edgeGeo = new THREE.BoxGeometry(72, 0.18, 72);
     const edgeBot = new THREE.Mesh(edgeGeo, edgeMat);
     edgeBot.position.y = -0.64;
@@ -409,7 +418,7 @@ export default function EngineeringWorld3D() {
     // ── Orthogonal circuit traces on the board (NO diagonals)
     const trPts = [];
     // Grid of Manhattan traces radiating from centre
-    const gridCoords = [-22, -16, -10, -5, 5, 10, 16, 22];
+    const gridCoords = [-20, -12, -5, 5, 12, 20];
     gridCoords.forEach(v => {
       // Longitudinal (Z direction)
       trPts.push(new THREE.Vector3(v, 0.12, -32), new THREE.Vector3(v, 0.12, v * 0.3 - 0.5));
@@ -429,7 +438,7 @@ export default function EngineeringWorld3D() {
 
     // Gold bus traces (wider, fewer)
     const busPts = [];
-    [-18, -9, 9, 18].forEach(v => {
+    [-16, 16].forEach(v => {
       busPts.push(new THREE.Vector3(v, 0.13, -28), new THREE.Vector3(v, 0.13, 28));
       busPts.push(new THREE.Vector3(-28, 0.13, v), new THREE.Vector3(28, 0.13, v));
     });
@@ -522,61 +531,46 @@ export default function EngineeringWorld3D() {
     ihs.position.y = 1.90;
     cpu.add(ihs);
 
-    // IHS surface engraving (shallow cross-hatch lines)
-    const engPts = [];
-    for (let d = -4.8; d <= 4.8; d += 0.9) {
-      engPts.push(new THREE.Vector3(d, 2.38, -4.8), new THREE.Vector3(d, 2.38, 4.8));
-      engPts.push(new THREE.Vector3(-4.8, 2.38, d), new THREE.Vector3(4.8, 2.38, d));
-    }
-    scene.add(buildTraceLines(engPts, new THREE.LineBasicMaterial({ color: 0x1e3028, transparent: true, opacity: 0.55 })));
+    // Keep the heat-spreader face uncluttered so the processor's real layers read clearly.
 
     // Layer 4: Heatsink base plate
     const hsBase = new THREE.Mesh(new THREE.BoxGeometry(10.0, 0.55, 10.0), M.heatsink);
     hsBase.position.y = 2.62;
     cpu.add(hsBase);
 
-    // Heatsink fins (horizontal stacked slabs — real heatsink look)
-    const finCount = 9;
-    for (let f = 0; f < finCount; f++) {
-      const finH  = 0.24;
-      const finGap = 0.40;
-      const finW  = 9.8 - f * 0.25;
-      const fin   = new THREE.Mesh(new THREE.BoxGeometry(finW, finH, finW), M.heatsink);
-      fin.position.y = 3.05 + f * (finH + finGap);
-      cpu.add(fin);
+    // Cooling fins sit around the package perimeter, never above the die.
+    const coolingFinMat = new THREE.MeshStandardMaterial({
+      color: 0x71838b, roughness: 0.40, metalness: 0.46,
+    });
+    for (let p = -3.45; p <= 3.46; p += 0.78) {
+      const northFin = box(0.48, 0.58, 0.18, coolingFinMat, p, 3.18, -4.42);
+      const southFin = box(0.48, 0.58, 0.18, coolingFinMat, p, 3.18, 4.42);
+      const westFin  = box(0.18, 0.58, 0.48, coolingFinMat, -4.42, 3.18, p);
+      const eastFin  = box(0.18, 0.58, 0.48, coolingFinMat, 4.42, 3.18, p);
+      cpu.add(northFin, southFin, westFin, eastFin);
     }
 
-    // Heat pipes (3 copper cylinders running through fins)
-    const hpGeo = new THREE.CylinderGeometry(0.30, 0.30, 6.5, 12);
-    [-2.5, 0, 2.5].forEach(offset => {
-      const hp = new THREE.Mesh(hpGeo, M.copper);
-      hp.rotation.z = Math.PI / 2;
-      hp.position.set(offset, 4.0, 0);
-      cpu.add(hp);
-    });
-
-    // Layer 5: Silicon die (exposed, with canvas texture)
+    // Exposed silicon die with a high-contrast etched top texture.
     const dieTex = makeCpuTexture();
     const dieTopMat = new THREE.MeshBasicMaterial({ map: dieTex });
     const die = new THREE.Mesh(
-      new THREE.BoxGeometry(7.0, 0.70, 7.0),
+      new THREE.BoxGeometry(7.8, 0.52, 7.8),
       [M.silicon, M.silicon, dieTopMat, M.silicon, M.silicon, M.silicon]
     );
-    die.position.y = 2.30;
+    die.position.y = 3.16;
     cpu.add(die);
 
-    // Rotating mechanical trim ring
-    const ringGeo = new THREE.TorusGeometry(6.2, 0.08, 8, 72);
+    // Orbital traces around, not across, the exposed processor surface.
+    const ringGeo = new THREE.TorusGeometry(6.25, 0.075, 8, 96);
     const trimRing = new THREE.Mesh(ringGeo, M.lime);
     trimRing.rotation.x = Math.PI / 2;
-    trimRing.position.y = 2.30;
+    trimRing.position.y = 3.02;
     cpu.add(trimRing);
 
-    // Secondary inner ring
-    const ring2Geo = new THREE.TorusGeometry(4.0, 0.055, 8, 56);
+    const ring2Geo = new THREE.TorusGeometry(5.58, 0.045, 8, 88);
     const innerRing = new THREE.Mesh(ring2Geo, M.cyan);
     innerRing.rotation.x = Math.PI / 2;
-    innerRing.position.y = 2.32;
+    innerRing.position.y = 3.04;
     cpu.add(innerRing);
 
     // Capacitor array around socket (16 positions in a ring)
@@ -636,11 +630,11 @@ export default function EngineeringWorld3D() {
       // Right-back (Architecture sector)
       { x:  15, z:  11, w: 6.2, h: 6.8, d: 6.2, name: 'arch' },
       // Background skyline left
-      { x:  -8, z: -22, w: 4.8, h: 10.0, d: 4.8, name: 'bg1' },
-      // Background skyline centre
-      { x:   0, z: -26, w: 6.2, h: 13.0, d: 6.2, name: 'bg2' },
+      { x:  -8, z: -22, w: 4.8, h: 6.6, d: 4.8, name: 'bg1' },
+      // Background platforms frame the core rather than towering over it.
+      { x:   0, z: -26, w: 6.2, h: 7.4, d: 6.2, name: 'bg2' },
       // Background skyline right
-      { x:   8, z: -22, w: 4.8, h:  9.0, d: 4.8, name: 'bg3' },
+      { x:   8, z: -22, w: 4.8, h: 6.8, d: 4.8, name: 'bg3' },
     ];
 
     const moduleGroups = [];
@@ -707,7 +701,7 @@ export default function EngineeringWorld3D() {
       }
 
       scene.add(g);
-      moduleGroups.push({ group: g, mod });
+      moduleGroups.push({ group: g, mod, baseY: g.position.y, phase: moduleGroups.length * 0.82 });
     });
 
     // ─────────────────────────────────────────────────────────────────────
@@ -793,7 +787,7 @@ export default function EngineeringWorld3D() {
     // ─────────────────────────────────────────────────────────────────────
     // 6. AMBIENT PARTICLE FIELD
     // ─────────────────────────────────────────────────────────────────────
-    const pCount = mobile ? 600 : 1400;
+    const pCount = mobile ? 260 : 900;
     const pPos   = new Float32Array(pCount * 3);
     for (let i = 0; i < pCount; i++) {
       pPos[i * 3]     = (Math.random() - 0.5) * 72;
@@ -802,7 +796,7 @@ export default function EngineeringWorld3D() {
     }
     const pGeo = new THREE.BufferGeometry();
     pGeo.setAttribute('position', new THREE.BufferAttribute(pPos, 3));
-    const pMat = new THREE.PointsMaterial({ color: 0x84cc16, size: 0.10, transparent: true, opacity: 0.55 });
+    const pMat = new THREE.PointsMaterial({ color: 0xa3e635, size: 0.085, transparent: true, opacity: 0.42, depthWrite: false });
     const particles = new THREE.Points(pGeo, pMat);
     scene.add(particles);
 
@@ -812,7 +806,7 @@ export default function EngineeringWorld3D() {
     // Each waypoint: { s: scrollRatio, pos, look }
     // Camera starts elevated-isometric, gradually descends & circles through scene
     const WAYPOINTS = [
-      { s: 0.00, pos: new THREE.Vector3(22, 38, 32), look: new THREE.Vector3(2, 1, 0)  },  // Hero
+      { s: 0.00, pos: new THREE.Vector3(20, 34, 34), look: new THREE.Vector3(-3, 1, 0)  },  // Hero
       { s: 0.18, pos: new THREE.Vector3(12, 26, 22), look: new THREE.Vector3(-8, 2, -5) }, // About
       { s: 0.36, pos: new THREE.Vector3(18, 28, 14), look: new THREE.Vector3(8, 2, -6)  }, // Skills
       { s: 0.54, pos: new THREE.Vector3(10, 22, 24), look: new THREE.Vector3(-8, 1, 7)  }, // Projects
@@ -851,16 +845,19 @@ export default function EngineeringWorld3D() {
       const t  = clock.getElapsedTime();
 
       if (!reduced) {
-        // CPU core glow pulse
-        coreLight.intensity = 30 + 12 * Math.sin(t * 2.4);
-        fillLow.intensity   = 8 + 4 * Math.sin(t * 1.8 + 1.2);
+        // The chip illumination breathes gently without washing out its surface.
+        coreLight.intensity = 24 + 7 * Math.sin(t * 2.1);
+        fillLow.intensity   = 6.5 + 2.0 * Math.sin(t * 1.65 + 1.2);
 
-        // Mechanical rings rotate independently
-        trimRing.rotation.z  += dt * 0.48;
-        innerRing.rotation.z -= dt * 0.32;
+        // Rotate the edge traces and animate the die by a barely perceptible amount.
+        trimRing.rotation.y  += dt * 0.20;
+        innerRing.rotation.y -= dt * 0.28;
+        die.position.y = 3.16 + 0.018 * Math.sin(t * 1.5);
 
-        // Die floats very subtly
-        die.position.y = 2.30 + 0.025 * Math.sin(t * 1.9);
+        // Hardware modules get individually phased, restrained movement.
+        moduleGroups.forEach(({ group, baseY, phase }) => {
+          group.position.y = baseY + Math.sin(t * 0.48 + phase) * 0.035;
+        });
 
         // Light runners travel along conduits
         runners.forEach(r => {
@@ -885,7 +882,8 @@ export default function EngineeringWorld3D() {
           wpA = WAYPOINTS[w]; wpB = WAYPOINTS[w + 1]; break;
         }
       }
-      const frac = wpB.s > wpA.s ? (s - wpA.s) / (wpB.s - wpA.s) : 0;
+      const rawFrac = wpB.s > wpA.s ? (s - wpA.s) / (wpB.s - wpA.s) : 0;
+      const frac = rawFrac * rawFrac * (3 - 2 * rawFrac); // ease between camera waypoints
       tgtPos.lerpVectors(wpA.pos, wpB.pos, frac);
       tgtLook.lerpVectors(wpA.look, wpB.look, frac);
 
@@ -896,8 +894,9 @@ export default function EngineeringWorld3D() {
         tgtLook.x += mouse.x * 0.28;
       }
 
-      curPos.lerp(tgtPos, 0.040);
-      curLook.lerp(tgtLook, 0.040);
+      const cameraEase = 1 - Math.exp(-dt * 4.4);
+      curPos.lerp(tgtPos, cameraEase);
+      curLook.lerp(tgtLook, cameraEase);
       camera.position.copy(curPos);
       camera.lookAt(curLook);
 
