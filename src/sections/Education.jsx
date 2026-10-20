@@ -62,7 +62,7 @@ export default function Education() {
                   : 'border-white/[0.08]'
               }`}
             >
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4">
+              <div data-scroll-reveal className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4">
                 <span className="text-xs font-mono tracking-widest text-lime-400 uppercase font-semibold">
                   {item.period}
                 </span>
@@ -79,12 +79,12 @@ export default function Education() {
                 {item.institution}
               </h3>
 
-              <div className="flex items-center gap-2 text-xs font-mono text-neutral-400 mb-4">
+              <div data-scroll-reveal className="flex items-center gap-2 text-xs font-mono text-neutral-400 mb-4">
                 <MapPin className="w-3.5 h-3.5 text-neutral-500" />
                 <span>{item.location}</span>
               </div>
 
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pt-4 border-t border-white/[0.06] text-sm">
+              <div data-scroll-reveal className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pt-4 border-t border-white/[0.06] text-sm">
                 <span className="text-neutral-300 font-light">
                   {item.degree} • {item.field}
                 </span>
