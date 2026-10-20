@@ -108,12 +108,12 @@ export default function TechArsenal() {
         </motion.p>
 
         {/* ── Continuous Bidirectional Streams ── */}
-        <div className="w-full mb-12">
+        <div data-scroll-reveal className="w-full mb-12">
           <TechMarquee />
         </div>
 
         {/* ── Compact Skill Explorer ── */}
-        <div className="w-full max-w-5xl rounded-3xl border border-white/[0.08] bg-[#090c12]/85 p-6 sm:p-8 shadow-2xl relative overflow-hidden backdrop-blur-md">
+        <div data-scroll-reveal className="w-full max-w-5xl rounded-3xl border border-white/[0.08] bg-[#090c12]/85 p-6 sm:p-8 shadow-2xl relative overflow-hidden backdrop-blur-md">
           {/* Header & Category Tabs */}
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-white/[0.07] pb-6 mb-7">
             <div>
