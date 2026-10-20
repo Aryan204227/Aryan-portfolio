@@ -169,9 +169,9 @@ export default function Hero() {
   ];
 
   const STATS = [
-    { value: '02+',  label: 'Major Projects'  },
-    { value: 'MERN', label: 'Tech Stack'      },
-    { value: 'AI',   label: 'Interests'       },
+    { value: String(portfolioData.projects.length).padStart(2, '0'), label: 'Projects' },
+    { value: 'MERN', label: 'Tech Stack' },
+    { value: 'AI',   label: 'Interests' },
     { value: 'DSA',  label: 'Problem Solving' },
   ];
 
