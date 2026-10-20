@@ -86,7 +86,7 @@ export default function EngineeringApproach() {
                 whileHover={{ y: -4 }}
                 className="rounded-3xl bg-[#0d0f17] border border-white/[0.08] p-7 shadow-2xl flex flex-col justify-between hover:border-lime-500/40 transition-all duration-300 group"
               >
-                <div>
+                <div data-scroll-reveal>
                   <div className="flex items-center justify-between mb-6">
                     <span className="text-xs font-mono font-bold text-lime-400 bg-lime-500/10 border border-lime-500/20 px-3 py-1 rounded-full">
                       STEP {step.number}
@@ -105,7 +105,7 @@ export default function EngineeringApproach() {
 
                 <div className="pt-6 border-t border-white/[0.06] mt-6 flex items-center justify-between text-[11px] font-mono text-neutral-400">
                   <span>DISCIPLINE</span>
-                  <span className="text-lime-400">VERIFIED</span>
+                  <span className="text-lime-400">CORE PRACTICE</span>
                 </div>
               </motion.div>
             );
