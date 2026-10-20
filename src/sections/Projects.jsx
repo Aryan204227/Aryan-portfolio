@@ -217,7 +217,7 @@ function EditorialProjectCard({ project, idx, onSelectProject }) {
 
                   <div className="p-3 rounded-xl bg-white/[0.02] border border-white/5 flex items-center justify-between text-xs font-mono text-neutral-400">
                     <span>Weighted-Sum Algorithm</span>
-                    <span className="text-emerald-400">22 Career Paths Matched</span>
+                    <span className="text-emerald-400">22 Career Options Scored</span>
                   </div>
                 </div>
               )}
