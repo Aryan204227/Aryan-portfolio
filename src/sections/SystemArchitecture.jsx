@@ -229,7 +229,7 @@ export default function SystemArchitecture() {
                     <div className="absolute top-0 left-6 right-6 h-[2px] bg-lime-400 shadow-[0_0_8px_#a3e635]" />
                   )}
 
-                  <div>
+                  <div data-scroll-reveal>
                     {/* Header: Step & Icon */}
                     <div className="flex items-center justify-between mb-4">
                       <span className="text-[10px] font-mono tracking-widest text-neutral-400 uppercase font-semibold">
@@ -277,7 +277,7 @@ export default function SystemArchitecture() {
               transition={{ duration: 0.3 }}
               className="mt-10 p-6 sm:p-7 rounded-2xl bg-[#090b10] border border-white/10 relative overflow-hidden"
             >
-              <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6">
+              <div data-scroll-reveal className="flex flex-col lg:flex-row lg:items-center justify-between gap-6">
                 <div className="space-y-2 max-w-2xl">
                   <div className="flex items-center gap-2.5">
                     <span className="w-2 h-2 rounded-full bg-lime-400" />
