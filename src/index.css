@@ -20,6 +20,8 @@ html {
   scroll-behavior: smooth;
   background: var(--bg);
   scroll-padding-top: 6.5rem;
+  scrollbar-color: #557d26 var(--bg);
+  scrollbar-gutter: stable;
 }
 
 body {
@@ -72,10 +74,10 @@ body::before {
 /* ═══════════════════════════════════════════════════
    SCROLLBAR
 ═══════════════════════════════════════════════════ */
-::-webkit-scrollbar { width: 4px; }
+::-webkit-scrollbar { width: 6px; }
 ::-webkit-scrollbar-track { background: var(--bg); }
-::-webkit-scrollbar-thumb { background: #222; border-radius: 2px; }
-::-webkit-scrollbar-thumb:hover { background: #333; }
+::-webkit-scrollbar-thumb { background: linear-gradient(180deg, #a3e635, #22c55e 55%, #38bdf8); border: 1px solid rgba(7,8,10,0.9); border-radius: 999px; }
+::-webkit-scrollbar-thumb:hover { background: linear-gradient(180deg, #d9f99d, #4ade80 55%, #7dd3fc); }
 
 /* ═══════════════════════════════════════════════════
    CURSOR FIX
@@ -194,6 +196,7 @@ a, button, [data-cursor], [role="button"] { cursor: none !important; }
    REDUCED MOTION
 ═══════════════════════════════════════════════════ */
 @media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
   *, ::before, ::after {
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
