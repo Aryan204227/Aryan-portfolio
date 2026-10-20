@@ -56,7 +56,7 @@ export default function Training() {
           whileHover={{ y: -4 }}
           className="w-full max-w-4xl rounded-3xl bg-[#0d0f17] border border-white/10 p-8 sm:p-10 shadow-2xl relative overflow-hidden group hover:border-lime-500/40 transition-all duration-300"
         >
-          <div className="flex flex-col md:flex-row md:items-start justify-between gap-6 mb-6">
+          <div data-scroll-reveal className="flex flex-col md:flex-row md:items-start justify-between gap-6 mb-6">
             <div className="space-y-2">
               <span className="text-[10px] font-mono tracking-widest text-lime-400 uppercase font-semibold block">
                 COMPREHENSIVE DSA BOOT CAMP
@@ -91,11 +91,11 @@ export default function Training() {
             </div>
           </div>
 
-          <p className="text-neutral-300 text-sm font-light leading-relaxed mb-6">
+          <p data-scroll-reveal className="text-neutral-300 text-sm font-light leading-relaxed mb-6">
             {bootCamp.description}
           </p>
 
-          <div className="pt-6 border-t border-white/[0.08]">
+          <div data-scroll-reveal className="pt-6 border-t border-white/[0.08]">
             <span className="text-xs font-mono text-neutral-400 uppercase tracking-wider block mb-3">
               CURRICULUM MODULES &amp; COMPETENCIES:
             </span>
